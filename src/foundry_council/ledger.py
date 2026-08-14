@@ -8,7 +8,19 @@ from pathlib import Path
 from typing import Iterator
 
 from .errors import IdempotencyKeyReused, NotFound, StateConflict
-from .models import Approval, AuditEvent, CouncilSession, GateDecision, ProgramRecord
+from .models import Approval, AuditEvent, CouncilSession, GateDecision, ProgramRecord, ProgramStage, Route
+
+
+def _assert_f0_route_invariant(program: ProgramRecord) -> None:
+    """Defense-in-depth guard at the Ledger persistence boundary.
+
+    Independent of the model validator so that a persistence path which bypasses
+    Pydantic model construction (e.g. a direct raw insert) cannot persist an F0
+    Program carrying a preselected route."""
+    if program.stage is ProgramStage.F0 and program.route is not Route.UNSELECTED:
+        raise ValueError(
+            "F0 Program route must remain UNSELECTED; route selection is a governed F5 action"
+        )
 
 
 class SQLiteLedger:
@@ -217,6 +229,7 @@ class SQLiteLedger:
         )
 
     def create_program(self, program: ProgramRecord, event: AuditEvent) -> ProgramRecord:
+        _assert_f0_route_invariant(program)
         with self._connection() as connection:
             connection.execute("BEGIN IMMEDIATE")
             if self._idempotent_replay(connection, event):
@@ -253,6 +266,7 @@ class SQLiteLedger:
         expected_version: int,
         event: AuditEvent,
     ) -> ProgramRecord:
+        _assert_f0_route_invariant(program)
         with self._connection() as connection:
             connection.execute("BEGIN IMMEDIATE")
             if self._idempotent_replay(connection, event):
