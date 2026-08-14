@@ -865,7 +865,9 @@ class CouncilService:
                 "dissent_digest": canonical_digest(dissent),
             },
         )
-        return self.ledger.save_session(updated, expected, event)
+        return self.ledger.save_session(
+            updated, expected, event, record_dissents=True
+        )
 
     def submit_gate_packet_inputs(
         self,

@@ -824,5 +824,84 @@ class F0RouteInvariantTests(unittest.TestCase):
         )
 
 
+class ImmutableDissentTests(unittest.TestCase):
+    """FWI-P0-006: ensure accepted dissent cannot be removed, replaced, or
+    rewritten, and that current aggregate state reconciles from immutable
+    attributable dissent records."""
+
+    def setUp(self) -> None:
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.db_path = Path(self.temp_dir.name) / "foundry.sqlite3"
+        self.ledger = SQLiteLedger(self.db_path)
+        self.service = CouncilService(self.ledger)
+
+    def tearDown(self) -> None:
+        self.temp_dir.cleanup()
+
+    def _session_with_dissent(self):
+        _, session = create_program_and_session(self.service)
+        session = run_to_final_cases(self.service, session)
+        return self.service.submit_dissent(
+            session.session_id,
+            "dissent-immutable",
+            "An immutable attribution dissent for the invariant regression.",
+            Materiality.MATERIAL,
+            command(
+                "agent-reviewer",
+                session.state_version,
+                "cmd-immutable-dissent",
+            ),
+        )
+
+    def test_dissent_persisted_to_immutable_ledger(self) -> None:
+        session = self._session_with_dissent()
+        records = self.ledger.get_dissents(session.session_id)
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0].dissent_id, "dissent-immutable")
+        self.assertEqual(records[0].statement, "An immutable attribution dissent for the invariant regression.")
+
+    def test_removal_of_accepted_dissent_fails_closed(self) -> None:
+        session = self._session_with_dissent()
+        # Simulate an attacker dropping the dissent from the live aggregate.
+        tampered = session.model_copy(update={"dissent": ()})
+        with self.assertRaises(StateConflict):
+            self.ledger._reconcile_dissents(tampered)
+
+    def test_rewrite_of_accepted_dissent_fails_closed(self) -> None:
+        session = self._session_with_dissent()
+        original = session.dissent[0]
+        rewritten = original.model_copy(update={"statement": "A REWRITTEN attribution dissent."})
+        tampered = session.model_copy(update={"dissent": (rewritten,)})
+        with self.assertRaises(StateConflict):
+            self.ledger._reconcile_dissents(tampered)
+
+    def test_session_load_reconciles_with_immutable_ledger(self) -> None:
+        session = self._session_with_dissent()
+        reloaded = self.ledger.get_session(session.session_id)
+        self.assertEqual(len(reloaded.dissent), 1)
+        self.assertEqual(reloaded.dissent[0].dissent_id, "dissent-immutable")
+
+    def test_live_aggregate_mutation_path_regression(self) -> None:
+        """The documented live-aggregate mutation path (submit_dissent -> save_session
+        with immutable append) must persist exactly one attributable record."""
+        session = self._session_with_dissent()
+        self.assertEqual(len(session.dissent), 1)
+        # A second, distinct accepted dissent appends without overwriting the first.
+        session = self.service.submit_dissent(
+            session.session_id,
+            "dissent-second",
+            "A second attributable dissent record.",
+            Materiality.NON_MATERIAL,
+            command(
+                "agent-commander",
+                session.state_version,
+                "cmd-second-dissent",
+            ),
+        )
+        records = self.ledger.get_dissents(session.session_id)
+        self.assertEqual(len(records), 2)
+        self.assertEqual({d.dissent_id for d in records}, {"dissent-immutable", "dissent-second"})
+
+
 if __name__ == "__main__":
     unittest.main()

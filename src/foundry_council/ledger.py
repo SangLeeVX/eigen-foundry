@@ -8,7 +8,16 @@ from pathlib import Path
 from typing import Iterator
 
 from .errors import IdempotencyKeyReused, NotFound, StateConflict
-from .models import Approval, AuditEvent, CouncilSession, GateDecision, ProgramRecord, ProgramStage, Route
+from .models import (
+    Approval,
+    AuditEvent,
+    CouncilSession,
+    Dissent,
+    GateDecision,
+    ProgramRecord,
+    ProgramStage,
+    Route,
+)
 
 
 def _assert_f0_route_invariant(program: ProgramRecord) -> None:
@@ -21,6 +30,26 @@ def _assert_f0_route_invariant(program: ProgramRecord) -> None:
         raise ValueError(
             "F0 Program route must remain UNSELECTED; route selection is a governed F5 action"
         )
+
+
+def _dissent_canonical(dissent: Dissent) -> str:
+    """Stable canonical serialization of an accepted dissent for immutable
+    attribution. Independent of field insertion order and Pydantic dump shape,
+    so the digest is identical across construction and the append-only ledger."""
+    content = {
+        "dissent_id": dissent.dissent_id,
+        "agent_id": dissent.agent_id,
+        "assignment_id": dissent.assignment_id,
+        "role": dissent.role,
+        "statement": dissent.statement,
+        "materiality": dissent.materiality.value,
+        "submitted_at": dissent.submitted_at.isoformat().replace("+00:00", "Z"),
+    }
+    return json.dumps(content, sort_keys=True, separators=(",", ":"))
+
+
+def _dissent_digest(dissent: Dissent) -> str:
+    return f"sha256:{hashlib.sha256(_dissent_canonical(dissent).encode()).hexdigest()}"
 
 
 class SQLiteLedger:
@@ -83,6 +112,15 @@ class SQLiteLedger:
                     program_id TEXT NOT NULL REFERENCES programs(program_id),
                     payload_json TEXT NOT NULL,
                     created_at TEXT NOT NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS dissents (
+                    dissent_id TEXT PRIMARY KEY,
+                    session_id TEXT NOT NULL REFERENCES council_sessions(session_id),
+                    immutable_digest TEXT NOT NULL,
+                    payload_json TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    UNIQUE (session_id, dissent_id)
                 );
 
                 CREATE TABLE IF NOT EXISTS gate_decisions (
@@ -347,13 +385,101 @@ class SQLiteLedger:
             ).fetchone()
         if row is None:
             raise NotFound("council session not found", session_id=session_id)
-        return CouncilSession.model_validate_json(row["payload_json"])
+        session = CouncilSession.model_validate_json(row["payload_json"])
+        return self._reconcile_dissents(session)
+
+    def _reconcile_dissents(self, session: CouncilSession) -> CouncilSession:
+        """Reconcile session dissent state from the immutable append-only dissent
+        ledger. Any attempted removal or rewrite of accepted dissent is detected
+        from the immutable digests and fails closed."""
+        ledger_dissents = self.get_dissents(session.session_id)
+        if not ledger_dissents and not session.dissent:
+            return session
+        # The live aggregate must reconcile exactly to the immutable ledger.
+        ledger_by_id = {d.dissent_id: d for d in ledger_dissents}
+        session_by_id = {d.dissent_id: d for d in session.dissent}
+        if set(ledger_by_id) != set(session_by_id):
+            raise StateConflict(
+                "council session dissent state diverged from the immutable dissent ledger",
+                session_id=session.session_id,
+            )
+        for dissent_id, record in ledger_by_id.items():
+            live = session_by_id[dissent_id]
+            if _dissent_digest(live) != _dissent_digest(record):
+                raise StateConflict(
+                    "accepted dissent was rewritten",
+                    dissent_id=dissent_id,
+                    session_id=session.session_id,
+                )
+            if live.model_dump(mode="json") != record.model_dump(mode="json"):
+                raise StateConflict(
+                    "accepted dissent was mutated",
+                    dissent_id=dissent_id,
+                    session_id=session.session_id,
+                )
+        return session
+
+    def get_dissents(self, session_id: str) -> list[Dissent]:
+        with self._connection() as connection:
+            rows = connection.execute(
+                "SELECT payload_json FROM dissents WHERE session_id = ? ORDER BY created_at", (session_id,)
+            ).fetchall()
+        return [Dissent.model_validate_json(row["payload_json"]) for row in rows]
+
+    def _append_dissents(
+        self, connection: sqlite3.Connection, session: CouncilSession
+    ) -> None:
+        """Append-only persist of any accepted dissents missing from the immutable
+        ledger, in the same transaction as the session update."""
+        existing = {
+            row["dissent_id"]
+            for row in connection.execute(
+                "SELECT dissent_id FROM dissents WHERE session_id = ?", (session.session_id,)
+            ).fetchall()
+        }
+        for dissent in session.dissent:
+            if dissent.dissent_id in existing:
+                continue
+            connection.execute(
+                "INSERT INTO dissents (dissent_id, session_id, immutable_digest, payload_json, created_at) "
+                "VALUES (?, ?, ?, ?, ?)",
+                (
+                    dissent.dissent_id,
+                    session.session_id,
+                    _dissent_digest(dissent),
+                    dissent.model_dump_json(),
+                    dissent.submitted_at.isoformat(),
+                ),
+            )
+
+    def record_dissent(self, dissent: Dissent, session_id: str) -> None:
+        """Append-only persist of an accepted dissent into the immutable ledger.
+        Refuses to overwrite or remove an existing record."""
+        with self._connection() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            try:
+                connection.execute(
+                    "INSERT INTO dissents (dissent_id, session_id, immutable_digest, payload_json, created_at) "
+                    "VALUES (?, ?, ?, ?, ?)",
+                    (
+                        dissent.dissent_id,
+                        session_id,
+                        _dissent_digest(dissent),
+                        dissent.model_dump_json(),
+                        dissent.submitted_at.isoformat(),
+                    ),
+                )
+            except sqlite3.IntegrityError as exc:
+                connection.rollback()
+                raise StateConflict("dissent already recorded", dissent_id=dissent.dissent_id) from exc
+            connection.commit()
 
     def save_session(
         self,
         session: CouncilSession,
         expected_version: int,
         event: AuditEvent,
+        record_dissents: bool = False,
     ) -> CouncilSession:
         with self._connection() as connection:
             connection.execute("BEGIN IMMEDIATE")
@@ -361,6 +487,8 @@ class SQLiteLedger:
                 connection.rollback()
                 return self.get_session(session.session_id)
             self._update_session(connection, session, expected_version)
+            if record_dissents:
+                self._append_dissents(connection, session)
             self._append_event(connection, event)
             connection.commit()
         return session
