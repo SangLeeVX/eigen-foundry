@@ -1,0 +1,64 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-P0-003",
+  "milestone_id": "M1",
+  "legacy_phase_id": "P0",
+  "title": "Fail closed on UNKNOWN evidence during arbitration",
+  "status": "IMPLEMENTED",
+  "source": {
+    "github_issue": 4,
+    "created_by": "human-approved-foundry-build-loop",
+    "created_at": "2026-08-14T07:16:40Z"
+  },
+  "objective": "Make deterministic arbitration refuse ADVANCE whenever any frozen governing claim is UNKNOWN, even when a caller supplies a PASS assessment.",
+  "dependencies": [
+    "FWI-P0-001@0f6ad76093b2ab19a9363c04be07c8d83ffc2469",
+    "M0-migration-baseline@561b818586a3eef54b167bfd7198e5ff717af1b6"
+  ],
+  "allowed_paths": [
+    "src/foundry_council/policy.py",
+    "tests/test_council.py",
+    "forge/work-items/FWI-P0-003.json"
+  ],
+  "forbidden_actions": [
+    "read or reuse credentials from chat",
+    "change evidence semantics beyond failing closed on explicit UNKNOWN claims",
+    "change a formal Foundry Program stage, route, gate, or evidence record",
+    "weaken authentication, authorization, approval, audit, secret scanning, or deterministic policy controls",
+    "self-approve or self-merge",
+    "deploy or authorize scientific, clinical, spending, outreach, transaction, or regulated action"
+  ],
+  "acceptance_criteria": [
+    {"criterion_id": "FWI-P0-003-A1", "description": "A frozen UNKNOWN claim plus a caller-supplied PASS assessment cannot produce eligible ADVANCE.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-003-A2", "description": "The invariant is enforced deterministically and without network or model behavior.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-003-A3", "description": "Existing kernel, Forge contract, secret, schema-drift, and package-build checks remain green on the refreshed exact head.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-003-A4", "description": "A distinct reviewer evaluates the exact refreshed head and base before protected integration.", "status": "PENDING", "evidence": []}
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 forge/validate_contracts.py",
+    "PYTHONPATH=src python3 -m unittest discover -s tests -t . -v",
+    "python3 scripts/export_schemas.py && git diff --exit-code -- schemas/",
+    "PIP_NO_INDEX=1 python3 -m pip wheel --no-deps --no-build-isolation . --wheel-dir dist"
+  ],
+  "risk_class": "HIGH",
+  "retry_policy": {"max_attempts": 2, "idempotent_only": true},
+  "claim": {
+    "run_id": "foundry-codex-20260814-fwi-p0-003-refresh",
+    "actor": "codex-integration-run",
+    "claimed_at": "2026-08-14T11:58:23Z",
+    "expires_at": "2026-08-14T15:58:23Z"
+  },
+  "review": {
+    "independent_required": true,
+    "author_may_approve": false,
+    "review_evidence": []
+  },
+  "protected_actions": [
+    "approve or merge the pull request",
+    "change repository protection or credentials",
+    "change a therapeutic Program record or gate",
+    "deploy or authorize external action"
+  ],
+  "checkpoint_id": "CP-M1"
+}
