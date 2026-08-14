@@ -9,10 +9,14 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from schema_validation import SchemaValidationError, validate_instance
+
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECKPOINTS = ROOT / "forge" / "state" / "checkpoints.json"
 WORK_ITEMS = ROOT / "forge" / "work-items"
+CHECKPOINT_SCHEMA = ROOT / "forge" / "contracts" / "checkpoints.schema.json"
+WORK_ITEM_SCHEMA = ROOT / "forge" / "contracts" / "work-item.schema.json"
 
 PHASE_STATES = {"PENDING", "IN_PROGRESS", "BLOCKED", "COMPLETED"}
 CRITERION_STATES = {"PENDING", "BLOCKED", "VERIFIED"}
@@ -47,8 +51,9 @@ def require(mapping: dict[str, Any], names: tuple[str, ...], context: str) -> No
         raise ValueError(f"{context}: missing {', '.join(missing)}")
 
 
-def validate_checkpoints() -> set[str]:
+def validate_checkpoints(schema: dict[str, Any]) -> set[str]:
     doc = load_json(CHECKPOINTS)
+    validate_instance(doc, schema, "checkpoints")
     require(doc, ("schema_version", "project", "canonical_repository", "phases"), "checkpoints")
     if not isinstance(doc["phases"], list) or not doc["phases"]:
         raise ValueError("checkpoints: phases must be a non-empty array")
@@ -89,8 +94,13 @@ def validate_checkpoints() -> set[str]:
     return checkpoint_ids
 
 
-def validate_work_item(path: Path, checkpoint_ids: set[str]) -> None:
+def validate_work_item(
+    path: Path,
+    checkpoint_ids: set[str],
+    schema: dict[str, Any],
+) -> None:
     item = load_json(path)
+    validate_instance(item, schema, str(path.relative_to(ROOT)))
     require(
         item,
         (
@@ -135,10 +145,13 @@ def validate_work_item(path: Path, checkpoint_ids: set[str]) -> None:
 def main() -> int:
     errors: list[str] = []
     try:
-        checkpoint_ids = validate_checkpoints()
-    except ValueError as exc:
+        checkpoint_schema = load_json(CHECKPOINT_SCHEMA)
+        work_item_schema = load_json(WORK_ITEM_SCHEMA)
+        checkpoint_ids = validate_checkpoints(checkpoint_schema)
+    except (ValueError, SchemaValidationError) as exc:
         errors.append(str(exc))
         checkpoint_ids = set()
+        work_item_schema = {}
 
     for schema in sorted((ROOT / "forge" / "contracts").glob("*.json")):
         try:
@@ -148,8 +161,8 @@ def main() -> int:
 
     for path in sorted(WORK_ITEMS.glob("*.json")):
         try:
-            validate_work_item(path, checkpoint_ids)
-        except ValueError as exc:
+            validate_work_item(path, checkpoint_ids, work_item_schema)
+        except (ValueError, SchemaValidationError) as exc:
             errors.append(str(exc))
 
     if not list(WORK_ITEMS.glob("*.json")):
