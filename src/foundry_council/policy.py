@@ -14,6 +14,7 @@ from .models import (
     ArbitrationResult,
     CaseStatus,
     CaseType,
+    ClaimState,
     CouncilSession,
     Disposition,
     GatePacket,
@@ -299,6 +300,22 @@ def evaluate_session(
         blockers.append("The proposed stage transition is illegal.")
 
     if session.charter.requested_disposition is Disposition.ADVANCE:
+        unknown_claim_ids = tuple(
+            sorted(claim.claim_id for claim in session.claims if claim.state is ClaimState.UNKNOWN)
+        )
+        no_unknown_claims = not unknown_claim_ids
+        rules.append(
+            _rule(
+                "RULE.EVIDENCE.NO_UNKNOWN_CLAIMS",
+                no_unknown_claims,
+                "Every frozen council claim must have a resolved evidence state before ADVANCE.",
+            )
+        )
+        if not no_unknown_claims:
+            blockers.append(
+                "Frozen council evidence contains UNKNOWN claims: " + ", ".join(unknown_claim_ids) + "."
+            )
+
         for assessment in session.final_cases:
             if assessment.status is CaseStatus.FAIL:
                 blockers.append(f"{assessment.case.value} has a hard FAIL.")
