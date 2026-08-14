@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from uuid import uuid4
@@ -32,11 +33,13 @@ from .models import (
     FiveCaseState,
     GateDecision,
     GatePacketInputs,
+    GatePolicyArtifact,
     Materiality,
     ParticipantAssignment,
     ProgramPointers,
     ProgramCaseState,
     ProgramRecord,
+    ProgramStage,
     ProgramStatus,
     RedTeamReport,
     Route,
@@ -74,6 +77,45 @@ class CouncilService:
     def __init__(self, ledger: SQLiteLedger, gate_policy: GatePolicy = DEFAULT_GATE_POLICY) -> None:
         self.ledger = ledger
         self.gate_policy = gate_policy
+
+    def _active_policy_artifact(self) -> GatePolicyArtifact:
+        payload = self.gate_policy.payload()
+        canonical_payload = json.dumps(
+            payload,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+        )
+        return GatePolicyArtifact(
+            snapshot=self.gate_policy.snapshot_ref(),
+            canonical_payload=canonical_payload,
+        )
+
+    @staticmethod
+    def _policy_from_artifact(artifact: GatePolicyArtifact | None) -> GatePolicy:
+        if artifact is None:
+            raise ValidationFailure("a reconstructable gate-policy artifact is required")
+        try:
+            payload = artifact.payload()
+            policy = GatePolicy(
+                policy_id=payload["policy_id"],
+                version=payload["version"],
+                enabled_gates=frozenset(ProgramStage(item) for item in payload["enabled_gates"]),
+                allow_conditional_advance_for=frozenset(
+                    CaseType(item) for item in payload["allow_conditional_advance_for"]
+                ),
+                allowed_not_applicable_rules=frozenset(
+                    (ProgramStage(stage), CaseType(case), rule_id)
+                    for stage, case, rule_id in payload["allowed_not_applicable_rules"]
+                ),
+            )
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValidationFailure("gate-policy artifact cannot be reconstructed") from exc
+        if policy.snapshot_ref() != artifact.snapshot or policy.payload() != payload:
+            raise ValidationFailure(
+                "gate-policy artifact is incompatible with the deterministic policy engine"
+            )
+        return policy
 
     @staticmethod
     def _new_id(prefix: str) -> str:
@@ -153,6 +195,15 @@ class CouncilService:
     ) -> ProgramRecord:
         if "program_drafter" not in context.principal_roles:
             raise Forbidden("program drafts require an authorized drafter")
+        active_artifact = self._active_policy_artifact()
+        if pointers.gate_policy != active_artifact.snapshot:
+            raise ValidationFailure("Program draft must bind the active gate-policy snapshot")
+        if (
+            pointers.gate_policy_artifact is not None
+            and pointers.gate_policy_artifact != active_artifact
+        ):
+            raise ValidationFailure("caller-supplied gate-policy artifact does not match the active policy")
+        pointers = pointers.model_copy(update={"gate_policy_artifact": active_artifact})
         program = ProgramRecord(
             program_id=program_id,
             title=title,
@@ -186,6 +237,7 @@ class CouncilService:
             raise Forbidden("gate-policy binding migration requires an authenticated human policy admin")
         program = self.ledger.get_program(program_id)
         target_policy = self.gate_policy.snapshot_ref()
+        target_artifact = self._active_policy_artifact()
         event = self._event(
             context,
             "PROGRAM",
@@ -195,18 +247,25 @@ class CouncilService:
             {
                 "expected_program_version": context.expected_version,
                 "target_gate_policy": target_policy.model_dump(mode="json"),
+                "target_gate_policy_artifact_digest": target_artifact.snapshot.digest,
             },
         )
         if self.ledger.is_idempotent_replay(event):
             return program
         expected = self._require_expected(program.state_version, context)
-        if program.current_versions.gate_policy == target_policy:
+        if (
+            program.current_versions.gate_policy == target_policy
+            and program.current_versions.gate_policy_artifact == target_artifact
+        ):
             raise ValidationFailure("Program is already bound to the active gate policy")
         updated = program.model_copy(
             update={
                 "state_version": program.state_version + 1,
                 "current_versions": program.current_versions.model_copy(
-                    update={"gate_policy": target_policy}
+                    update={
+                        "gate_policy": target_policy,
+                        "gate_policy_artifact": target_artifact,
+                    }
                 ),
                 "updated_at": utc_now(),
             }
@@ -296,6 +355,17 @@ class CouncilService:
             raise ValidationFailure("program snapshot digest does not match the Program record")
         if charter.gate_policy != self.gate_policy.snapshot_ref():
             raise Forbidden("council session references a gate policy that is not active in this control plane")
+        active_artifact = self._active_policy_artifact()
+        program_artifact = program.current_versions.gate_policy_artifact
+        bound_policy = self._policy_from_artifact(program_artifact)
+        if bound_policy.snapshot_ref() != charter.gate_policy or program_artifact != active_artifact:
+            raise ValidationFailure("Program policy artifact does not match the active charter binding")
+        if (
+            charter.gate_policy_artifact is not None
+            and charter.gate_policy_artifact != program_artifact
+        ):
+            raise ValidationFailure("decision charter supplies a mismatched gate-policy artifact")
+        charter = charter.model_copy(update={"gate_policy_artifact": program_artifact})
         if charter.current_stage not in self.gate_policy.enabled_gates:
             raise Forbidden("this stage-specific gate policy is not enabled")
         if (
@@ -311,6 +381,10 @@ class CouncilService:
             "risk_register": (program.current_versions.risk_register, charter.risk_register),
             "standard_of_care": (program.current_versions.standard_of_care, charter.standard_of_care),
             "gate_policy": (program.current_versions.gate_policy, charter.gate_policy),
+            "gate_policy_artifact": (
+                program.current_versions.gate_policy_artifact,
+                charter.gate_policy_artifact,
+            ),
         }
         mismatched = [name for name, (current, bound) in pointer_bindings.items() if current != bound]
         if mismatched:
@@ -725,9 +799,10 @@ class CouncilService:
         arbiter = next(p for p in session.participants if p.role == "policy_arbiter")
         if context.actor_kind is not ActorKind.SERVICE or context.actor_id != arbiter.actor_id:
             raise Forbidden("only the deterministic policy service may arbitrate")
-        if session.charter.gate_policy != self.gate_policy.snapshot_ref():
-            raise ValidationFailure("the policy service does not match the gate-policy snapshot bound to this session")
-        arbitration = evaluate_session(session, result_id, arbiter.actor_id, self.gate_policy)
+        bound_policy = self._policy_from_artifact(session.charter.gate_policy_artifact)
+        if session.charter.gate_policy != bound_policy.snapshot_ref():
+            raise ValidationFailure("gate-policy artifact does not match the session binding")
+        arbitration = evaluate_session(session, result_id, arbiter.actor_id, bound_policy)
         updated = self._next_session(
             session,
             phase=SessionPhase.ARBITRATION if arbitration.eligible else SessionPhase.RETURNED,
@@ -986,12 +1061,15 @@ class CouncilService:
             raise ValidationFailure("review packet digest changed after approval was requested")
         if session.charter.gate_policy != self.gate_policy.snapshot_ref():
             raise ApprovalRequired("the reviewed gate policy is no longer active")
+        bound_policy = self._policy_from_artifact(session.charter.gate_policy_artifact)
+        if bound_policy.snapshot_ref() != session.charter.gate_policy:
+            raise ValidationFailure("reviewed gate-policy artifact does not match its snapshot")
         policy_projection = session.model_copy(update={"phase": SessionPhase.FINAL_CASE_STATUSES})
         policy_recheck = evaluate_session(
             policy_projection,
             arbitration.result_id,
             arbitration.arbiter_agent_id,
-            self.gate_policy,
+            bound_policy,
         )
         if not policy_recheck.eligible or policy_recheck.recommended_disposition is not arbitration.recommended_disposition:
             raise ApprovalRequired("current gate policy no longer permits the reviewed disposition")
@@ -1093,6 +1171,7 @@ class CouncilService:
                     risk_register=proposed.risk_register or session.charter.risk_register,
                     standard_of_care=proposed.standard_of_care or session.charter.standard_of_care,
                     gate_policy=session.charter.gate_policy,
+                    gate_policy_artifact=session.charter.gate_policy_artifact,
                 ),
                 "current_five_cases": five_cases,
                 "falsifiers": session.gate_packet_inputs.falsifiers,
