@@ -1,7 +1,7 @@
 ## Forge work item
 
 - Work-item ID:
-- Delivery phase / checkpoint:
+- Product milestone / checkpoint:
 - GitHub issue:
 - Authoring run ID:
 - Base and head commits:
@@ -44,8 +44,8 @@ Rollback or recovery plan:
 - Reviewer identity/run:
 - Review evidence:
 
-## Checkpoint impact
+## Milestone checkpoint impact
 
-Checkpoint criteria changed, with evidence, or `none`:
+Milestone criteria changed, with exact evidence, or `none`. Software evidence cannot change a therapeutic Program stage:
 
 This pull request remains a draft until deterministic validation is complete. Merge authority remains protected and separate from authoring/review automation.

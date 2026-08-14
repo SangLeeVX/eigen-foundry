@@ -1,0 +1,87 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-M0-011",
+  "milestone_id": "M0",
+  "title": "Activate approved M0-M9 checkpoint graph",
+  "status": "IMPLEMENTED",
+  "source": {
+    "github_issue": 19,
+    "created_by": "human-approved-foundry-build-loop",
+    "created_at": "2026-08-14T10:55:19Z"
+  },
+  "objective": "Activate the approved M0-M9 build graph as machine-readable Forge state while preserving legacy history and preventing software milestones from changing therapeutic Program state.",
+  "dependencies": [
+    "FWI-P0-010@ae1e6acebfde703312b882302c4137bfd06faa9e",
+    "human-approval:issue-17-comment-5292491688",
+    "independent-review:pr-18-review-4936490163"
+  ],
+  "allowed_paths": [
+    "PLANS.md",
+    "AGENTS.md",
+    "BUILD_SPEC.md",
+    "README.md",
+    "docs/forge-lite.md",
+    ".github/ISSUE_TEMPLATE/forge-work-item.yml",
+    ".github/pull_request_template.md",
+    "forge/contracts/checkpoints.schema.json",
+    "forge/contracts/legacy/checkpoints-v1.schema.json",
+    "forge/contracts/work-item.schema.json",
+    "forge/state/checkpoints.json",
+    "forge/state/legacy/checkpoints-v1.0.0.json",
+    "forge/validate_contracts.py",
+    "forge/work-items/FWI-P0-001.json",
+    "forge/work-items/FWI-M0-011.json",
+    "tests/test_forge_contracts.py"
+  ],
+  "forbidden_actions": [
+    "modify the approved master-plan bytes",
+    "inherit a legacy completion or evidence status",
+    "change a formal Foundry Program stage",
+    "read, rotate, install, or reuse credentials",
+    "change repository visibility, branch protection, or merge policy",
+    "self-approve or self-merge",
+    "deploy to production or authorize scientific, clinical, spending, outreach, transaction, or regulated action"
+  ],
+  "acceptance_criteria": [
+    {"criterion_id": "FWI-M0-011-A1", "description": "Canonical milestone inventory is exactly M0-M9 in approved dependency order.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M0-011-A2", "description": "The active mandate binds the exact plan digest, repository head, three human sign-offs, and distinct independent review.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M0-011-A3", "description": "Legacy checkpoint state and schema are archived and bound to exact digests.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M0-011-A4", "description": "All P0-P7, B0/B0.5/B1/B2, and namespaced legacy F1-F10 labels map completely with status inheritance disabled.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M0-011-A5", "description": "Program F0-F12 coverage remains separately namespaced and the migration changes no Program state.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M0-011-A6", "description": "M0 remains incomplete pending protected merge and no product capability is overstated.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M0-011-A7", "description": "Completion requires verified durable evidence, completed dependencies, and no applicable open blocker.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M0-011-A8", "description": "Work-item schemas, templates, and operating documents use M milestones while preserving stable legacy work-item IDs.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M0-011-A9", "description": "Adversarial mutations of inventory, graph, digests, approval, review, evidence, mapping, blocker, and Program boundaries fail closed.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M0-011-A10", "description": "All governed local validation commands pass before publication.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M0-011-A11", "description": "A distinct reviewer evaluates the exact published head before protected merge.", "status": "PENDING", "evidence": []}
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 forge/validate_contracts.py",
+    "PYTHONPATH=src python3 -m unittest discover -s tests -t . -v",
+    "python3 scripts/export_schemas.py && git diff --exit-code -- schemas/",
+    "PIP_NO_INDEX=1 python3 -m pip wheel --no-deps --no-build-isolation . --wheel-dir dist"
+  ],
+  "risk_class": "HIGH",
+  "retry_policy": {"max_attempts": 2, "idempotent_only": true},
+  "claim": {
+    "run_id": "foundry-codex-20260814-m0-checkpoint-migration",
+    "actor": "codex-author-run",
+    "claimed_at": "2026-08-14T10:55:49Z",
+    "expires_at": "2026-08-14T14:55:49Z"
+  },
+  "review": {
+    "independent_required": true,
+    "author_may_approve": false,
+    "review_evidence": []
+  },
+  "protected_actions": [
+    "approve or merge the pull request",
+    "activate the mandate before protected-baseline evidence exists",
+    "complete M0 within the migration pull request",
+    "change a therapeutic Program record or gate",
+    "rotate or install production credentials",
+    "configure repository visibility, branch protection, or required checks"
+  ],
+  "checkpoint_id": "CP-M0"
+}

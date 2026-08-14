@@ -81,13 +81,13 @@ docs/
   implementation-plan.md
 forge/
   contracts/        machine-readable checkpoint and work-item schemas
-  state/            evidence-backed phase checkpoint state
+  state/            evidence-backed M0–M9 milestone checkpoint state
   work-items/       bounded software work-item records
 .github/
   workflows/ci.yml  secret, contract, test, schema, and package checks
 ```
 
-`BUILD_SPEC.md`, `AGENTS.md`, and `PLANS.md` define the resumable GitHub-native Forge loop. Passing local checks is supporting evidence only; a phase gate requires durable commit, CI, review, and approval evidence in `forge/state/checkpoints.json`.
+`BUILD_SPEC.md`, `AGENTS.md`, and `PLANS.md` define the resumable GitHub-native Forge loop. Passing local checks is supporting evidence only; a milestone gate requires criterion-bound commit, CI, review, and approval evidence in `forge/state/checkpoints.json`. M0–M9 software state never advances a therapeutic Program F0–F12 stage.
 
 ## Authority boundary
 

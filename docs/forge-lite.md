@@ -8,8 +8,8 @@ Forge Lite is the software delivery loop for Foundry and Conclave. It is deliber
 
 | Object | Canonical location | Purpose |
 |---|---|---|
-| Phase plan | `PLANS.md` | Human-readable sequence and dependencies |
-| Phase truth | `forge/state/checkpoints.json` | Machine-readable gate criteria and durable evidence |
+| Milestone plan | `PLANS.md` | Human-readable M0–M9 sequence and dependencies |
+| Milestone truth | `forge/state/checkpoints.json` | Machine-readable gate criteria, crosswalk, approval, and durable evidence |
 | Work item | GitHub issue plus `forge/work-items/<id>.json` | One bounded objective, scope, tests, retry policy, and authority boundaries |
 | Implementation | `agent/<id>-<slug>` branch | Isolated, replaceable worktree state |
 | Review packet | Draft pull request | Diff, deterministic evidence, independent challenge, rollback plan |
@@ -21,7 +21,7 @@ An hourly watcher may resume the loop, but it is not a continuously trusted proc
 
 The watcher remains silent during routine work. It reports only:
 
-- a phase whose every criterion is verified on the protected baseline; or
+- a milestone whose every criterion and dependency is verified on the protected baseline; or
 - a genuine security/authority blocker that prevents any remaining independent work.
 
 It must never declare success from a local worktree, chat message, model assertion, open draft PR, or passing test that is not bound to a commit and CI run.
@@ -32,7 +32,9 @@ Implementation and independent review require different actor/run identities. Re
 
 ## Secrets
 
-Issues, branches, logs, fixtures, and prompts carry secret names only. Previously exposed values are considered revoked. The baseline scanner checks current text files; repository-history scanning and provider rotation remain explicit P0 evidence requirements.
+Issues, branches, logs, fixtures, and prompts carry secret names only. Previously exposed values are considered revoked. Repository-history scanning and provider rotation remain explicit M1 evidence requirements.
+
+Legacy P0–P7 identifiers are archived crosswalk inputs. New work items use M0–M9 milestone IDs. Neither namespace changes therapeutic Program stages F0–F12.
 
 ## Protected Foundry actions
 

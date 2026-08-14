@@ -49,9 +49,11 @@ Record exact commands and outcomes. Never claim a checkpoint from uncommitted lo
 - No autonomous therapeutic recommendation, program-stage change, evidence promotion, experiment authorization, external communication, transaction, regulatory action, or clinical use.
 - A human must approve every protected Foundry decision. The same run cannot self-approve or serve as its only independent review.
 
-## Checkpoints and reporting
+## Milestone checkpoints and reporting
 
 - Update `forge/state/checkpoints.json` only through the same reviewed pull request as its evidence or through a dedicated evidence-only pull request.
 - `COMPLETED` is invalid while any required exit criterion is not `VERIFIED`.
-- Report to the operator only when a phase gate is completed or a genuine security/authority dependency prevents further progress. Routine iteration remains in the GitHub issue/PR trail.
+- A milestone cannot complete until every dependency is complete and no applicable blocker remains open.
+- Software milestones `M0`–`M9` never change therapeutic Program stages `F0`–`F12`.
+- Report to the operator only when a milestone gate is completed or a genuine security/authority dependency prevents further progress. Routine iteration remains in the GitHub issue/PR trail.
 - Use observed facts. Label unverified engineering assumptions and never imply a service, integration, experiment, or approval exists without durable evidence.

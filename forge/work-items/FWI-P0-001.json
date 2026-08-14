@@ -1,9 +1,10 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "work_item_id": "FWI-P0-001",
-  "phase_id": "P0",
+  "milestone_id": "M1",
+  "legacy_phase_id": "P0",
   "title": "Bootstrap reproducible baseline and Forge Lite contracts",
-  "status": "CLAIMED",
+  "status": "READY",
   "source": {
     "github_issue": 1,
     "created_by": "recovery-bootstrap",
@@ -49,17 +50,12 @@
   ],
   "risk_class": "MEDIUM",
   "retry_policy": {"max_attempts": 2, "idempotent_only": true},
-  "claim": {
-    "run_id": "forge-20260814T061552Z-bootstrap",
-    "actor": "codex-author-run",
-    "claimed_at": "2026-08-14T06:15:52Z",
-    "expires_at": "2026-08-14T07:00:52Z"
-  },
+  "claim": null,
   "review": {"independent_required": true, "author_may_approve": false, "review_evidence": []},
   "protected_actions": [
     "rotate or install production credentials",
     "configure repository visibility or branch protection",
     "approve or merge the pull request"
   ],
-  "checkpoint_id": "CP-P0"
+  "checkpoint_id": "CP-M1"
 }

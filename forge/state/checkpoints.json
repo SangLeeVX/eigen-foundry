@@ -1,103 +1,516 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "project": "Eigen Foundry",
   "canonical_repository": "SangLeeVX/eigen-foundry",
   "classification": "NONCANONICAL_ENGINEERING_STATE",
-  "updated_at": "2026-08-14T06:10:34Z",
-  "phases": [
+  "updated_at": "2026-08-14T10:55:49Z",
+  "active_build_mandate": {
+    "mandate_id": "BUILD-EIGEN-FOUNDRY-003",
+    "version": "1.0",
+    "document_path": "FOUNDRY_MASTER_BUILD_PLAN.md",
+    "plan_sha256": "sha256:91956a8194ed22697c8c013115d766f097143e6ed376da8b87cd504163ee7e45",
+    "approved_repository_head": "ae1e6acebfde703312b882302c4137bfd06faa9e",
+    "authoring_run_id": "foundry-codex-20260814-master-plan",
+    "status": "APPROVED_PENDING_ACTIVATION",
+    "approved_at": "2026-08-14T10:53:39Z",
+    "approvals": [
+      {
+        "approval_id": "APR-BUILD-EIGEN-FOUNDRY-003-MANDATE",
+        "approver": "Sang H. Lee",
+        "actor_ref": "github:SangLeeVX",
+        "actor_kind": "HUMAN",
+        "role": "BUILD_MANDATE_OWNER",
+        "decision": "APPROVED",
+        "approved_at": "2026-08-14T10:53:39Z",
+        "expires_at": null,
+        "conditions": "Invalidates on a material change to the bound plan or reviewed repository head.",
+        "bound_plan_sha256": "sha256:91956a8194ed22697c8c013115d766f097143e6ed376da8b87cd504163ee7e45",
+        "bound_repository_head": "ae1e6acebfde703312b882302c4137bfd06faa9e",
+        "evidence": "https://github.com/SangLeeVX/eigen-foundry/issues/17#issuecomment-5292491688"
+      },
+      {
+        "approval_id": "APR-BUILD-EIGEN-FOUNDRY-003-ENGINEERING",
+        "approver": "Sang H. Lee",
+        "actor_ref": "github:SangLeeVX",
+        "actor_kind": "HUMAN",
+        "role": "ENGINEERING_AUTHORITY",
+        "decision": "APPROVED",
+        "approved_at": "2026-08-14T10:53:39Z",
+        "expires_at": null,
+        "conditions": "Invalidates on a material change to the bound plan or reviewed repository head.",
+        "bound_plan_sha256": "sha256:91956a8194ed22697c8c013115d766f097143e6ed376da8b87cd504163ee7e45",
+        "bound_repository_head": "ae1e6acebfde703312b882302c4137bfd06faa9e",
+        "evidence": "https://github.com/SangLeeVX/eigen-foundry/issues/17#issuecomment-5292491688"
+      },
+      {
+        "approval_id": "APR-BUILD-EIGEN-FOUNDRY-003-GOVERNANCE",
+        "approver": "Sang H. Lee",
+        "actor_ref": "github:SangLeeVX",
+        "actor_kind": "HUMAN",
+        "role": "FOUNDRY_GOVERNANCE_SAFETY_AUTHORITY",
+        "decision": "APPROVED",
+        "approved_at": "2026-08-14T10:53:39Z",
+        "expires_at": null,
+        "conditions": "Invalidates on a material change to the bound plan or reviewed repository head.",
+        "bound_plan_sha256": "sha256:91956a8194ed22697c8c013115d766f097143e6ed376da8b87cd504163ee7e45",
+        "bound_repository_head": "ae1e6acebfde703312b882302c4137bfd06faa9e",
+        "evidence": "https://github.com/SangLeeVX/eigen-foundry/issues/17#issuecomment-5292491688"
+      }
+    ],
+    "independent_review": {
+      "review_id": "github-pr-review:4936490163",
+      "reviewer_run_id": "/root/master_plan_review",
+      "authoring_run_id": "foundry-codex-20260814-master-plan",
+      "verdict": "PASS",
+      "reviewed_repository_head": "ae1e6acebfde703312b882302c4137bfd06faa9e",
+      "evidence": "https://github.com/SangLeeVX/eigen-foundry/pull/18#pullrequestreview-4936490163"
+    }
+  },
+  "migration": {
+    "migration_id": "MIGRATE-P-CHECKPOINTS-TO-M-v2",
+    "created_at": "2026-08-14T10:55:49Z",
+    "actor_run_id": "foundry-codex-20260814-m0-checkpoint-migration",
+    "status": "PENDING_PROTECTED_MERGE",
+    "status_inheritance": false,
+    "therapeutic_program_state_changes": false,
+    "source": {
+      "schema_version": "1.0.0",
+      "schema_sha256": "sha256:a88c4abce157a16a676d1ce3be0738900f59fdbaea62c80b78a994f7f90048aa",
+      "state_sha256": "sha256:996d5d73344e63535f5a8d77b42c10046d7dac1a56251a1916b518414359ddf6",
+      "archived_schema_path": "forge/contracts/legacy/checkpoints-v1.schema.json",
+      "archived_state_path": "forge/state/legacy/checkpoints-v1.0.0.json"
+    },
+    "blueprint": {
+      "document_id": "BUILD-EIGEN-FOUNDRY-002",
+      "version": "0.2",
+      "library_path": "/Drug Foundry w eigenfield/EIGEN_FOUNDRY_EXECUTION_BLUEPRINT_v0.2.md",
+      "sha256": "sha256:78f386f1132a57824a879c77ffce611b7bf2726619e7a68a32b576fac6f03b9c"
+    },
+    "crosswalk": [
+      {
+        "source_id": "P0",
+        "namespace": "LEGACY_ENGINEERING_PHASE",
+        "target_milestones": ["M1"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": [
+          {"source_criterion_id": "P0-C1", "target_milestones": ["M1"]},
+          {"source_criterion_id": "P0-C2", "target_milestones": ["M1"]},
+          {"source_criterion_id": "P0-C3", "target_milestones": ["M1"]},
+          {"source_criterion_id": "P0-C4", "target_milestones": ["M1"]},
+          {"source_criterion_id": "P0-C5", "target_milestones": ["M1"]}
+        ]
+      },
+      {
+        "source_id": "P1",
+        "namespace": "LEGACY_ENGINEERING_PHASE",
+        "target_milestones": ["M1"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": [
+          {"source_criterion_id": "P1-C1", "target_milestones": ["M1"]}
+        ]
+      },
+      {
+        "source_id": "P2",
+        "namespace": "LEGACY_ENGINEERING_PHASE",
+        "target_milestones": ["M1"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": [
+          {"source_criterion_id": "P2-C1", "target_milestones": ["M1"]}
+        ]
+      },
+      {
+        "source_id": "P3",
+        "namespace": "LEGACY_ENGINEERING_PHASE",
+        "target_milestones": ["M2"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": [
+          {"source_criterion_id": "P3-C1", "target_milestones": ["M2"]}
+        ]
+      },
+      {
+        "source_id": "P4",
+        "namespace": "LEGACY_ENGINEERING_PHASE",
+        "target_milestones": ["M3", "M4"],
+        "treatment": "SPLIT",
+        "status_inherited": false,
+        "criterion_routes": [
+          {"source_criterion_id": "P4-C1", "target_milestones": ["M3"]}
+        ]
+      },
+      {
+        "source_id": "P5",
+        "namespace": "LEGACY_ENGINEERING_PHASE",
+        "target_milestones": ["M6"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": [
+          {"source_criterion_id": "P5-C1", "target_milestones": ["M6"]}
+        ]
+      },
+      {
+        "source_id": "P6",
+        "namespace": "LEGACY_ENGINEERING_PHASE",
+        "target_milestones": ["M5"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": [
+          {"source_criterion_id": "P6-C1", "target_milestones": ["M5"]}
+        ]
+      },
+      {
+        "source_id": "P7",
+        "namespace": "LEGACY_ENGINEERING_PHASE",
+        "target_milestones": ["M7", "M9"],
+        "treatment": "SPLIT",
+        "status_inherited": false,
+        "criterion_routes": [
+          {"source_criterion_id": "P7-C1", "target_milestones": ["M7", "M9"]}
+        ]
+      },
+      {
+        "source_id": "B0",
+        "namespace": "LEGACY_BUILD_FOUNDATION",
+        "target_milestones": ["M1"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": []
+      },
+      {
+        "source_id": "B0.5",
+        "namespace": "LEGACY_BUILD_FOUNDATION",
+        "target_milestones": ["M1"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": []
+      },
+      {
+        "source_id": "B1",
+        "namespace": "LEGACY_BUILD_FOUNDATION",
+        "target_milestones": ["M1"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": []
+      },
+      {
+        "source_id": "B2",
+        "namespace": "LEGACY_BUILD_FOUNDATION",
+        "target_milestones": ["M1"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": []
+      },
+      {
+        "source_id": "LEGACY_BUILD_F1",
+        "namespace": "LEGACY_BUILD_INCREMENT",
+        "target_milestones": ["M2"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": []
+      },
+      {
+        "source_id": "LEGACY_BUILD_F2",
+        "namespace": "LEGACY_BUILD_INCREMENT",
+        "target_milestones": ["M3"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": []
+      },
+      {
+        "source_id": "LEGACY_BUILD_F3",
+        "namespace": "LEGACY_BUILD_INCREMENT",
+        "target_milestones": ["M4"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": []
+      },
+      {
+        "source_id": "LEGACY_BUILD_F4",
+        "namespace": "LEGACY_BUILD_INCREMENT",
+        "target_milestones": ["M6"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": []
+      },
+      {
+        "source_id": "LEGACY_BUILD_F5",
+        "namespace": "LEGACY_BUILD_INCREMENT",
+        "target_milestones": ["M6"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": []
+      },
+      {
+        "source_id": "LEGACY_BUILD_F6",
+        "namespace": "LEGACY_BUILD_INCREMENT",
+        "target_milestones": ["M6"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": []
+      },
+      {
+        "source_id": "LEGACY_BUILD_F7",
+        "namespace": "LEGACY_BUILD_INCREMENT",
+        "target_milestones": ["M5"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": []
+      },
+      {
+        "source_id": "LEGACY_BUILD_F8",
+        "namespace": "LEGACY_BUILD_INCREMENT",
+        "target_milestones": ["M5", "M7"],
+        "treatment": "SPLIT",
+        "status_inherited": false,
+        "criterion_routes": []
+      },
+      {
+        "source_id": "LEGACY_BUILD_F9",
+        "namespace": "LEGACY_BUILD_INCREMENT",
+        "target_milestones": ["M7"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": []
+      },
+      {
+        "source_id": "LEGACY_BUILD_F10",
+        "namespace": "LEGACY_BUILD_INCREMENT",
+        "target_milestones": ["M7"],
+        "treatment": "CARRIED",
+        "status_inherited": false,
+        "criterion_routes": []
+      }
+    ],
+    "program_gate_coverage": [
+      {"source_id": "PROGRAM_GATE_F0_F2", "target_milestone": "M6", "changes_program_state": false},
+      {"source_id": "PROGRAM_GATE_F3_F8", "target_milestone": "M7", "changes_program_state": false},
+      {"source_id": "PROGRAM_GATE_F9_F12", "target_milestone": "M8", "changes_program_state": false}
+    ]
+  },
+  "milestones": [
     {
-      "phase_id": "P0",
-      "checkpoint_id": "CP-P0",
-      "name": "Secure baseline",
+      "milestone_id": "M0",
+      "checkpoint_id": "CP-M0",
+      "name": "Approved mandate",
       "status": "IN_PROGRESS",
+      "dependencies": [],
+      "maximum_claim_on_completion": "NO_PRODUCT_CLAIM",
       "exit_criteria": [
-        {"criterion_id": "P0-C1", "description": "Recovered source is committed on the intended private repository baseline.", "status": "PENDING", "evidence": []},
-        {"criterion_id": "P0-C2", "description": "A clean Python 3.12 checkout installs, tests, and builds reproducibly.", "status": "PENDING", "evidence": []},
-        {"criterion_id": "P0-C3", "description": "Required CI and independent review controls pass on the protected baseline.", "status": "PENDING", "evidence": []},
-        {"criterion_id": "P0-C4", "description": "Current files and repository history contain no credential material.", "status": "PENDING", "evidence": []},
-        {"criterion_id": "P0-C5", "description": "Previously exposed DeepSeek and EigenField credentials are rotated and replacements are stored only in an approved secret store.", "status": "BLOCKED", "evidence": []}
+        {
+          "criterion_id": "M0-C1",
+          "description": "The exact master-plan digest has three recorded human functional approvals.",
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M0-C1-HUMAN-APPROVAL",
+              "type": "GITHUB_ISSUE_COMMENT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/issues/17#issuecomment-5292491688",
+              "immutable_revision": "issuecomment-5292491688",
+              "bound_criterion_id": "M0-C1",
+              "result": "APPROVED"
+            }
+          ]
+        },
+        {
+          "criterion_id": "M0-C2",
+          "description": "A distinct reviewer run records no blocking ambiguity against the approved repository head.",
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M0-C2-INDEPENDENT-REVIEW",
+              "type": "GITHUB_PR_REVIEW",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/pull/18#pullrequestreview-4936490163",
+              "immutable_revision": "pullrequestreview-4936490163@ae1e6acebfde703312b882302c4137bfd06faa9e",
+              "bound_criterion_id": "M0-C2",
+              "result": "PASS"
+            }
+          ]
+        },
+        {
+          "criterion_id": "M0-C3",
+          "description": "The approved master plan is merged to the protected engineering baseline at the reviewed digest.",
+          "status": "PENDING",
+          "evidence": []
+        },
+        {
+          "criterion_id": "M0-C4",
+          "description": "The v2 milestone migration is merged, CI-green, and recorded on the protected baseline.",
+          "status": "PENDING",
+          "evidence": []
+        }
       ]
     },
     {
-      "phase_id": "P1",
-      "checkpoint_id": "CP-P1",
-      "name": "Repair kernel",
-      "status": "PENDING",
+      "milestone_id": "M1",
+      "checkpoint_id": "CP-M1",
+      "name": "Trustworthy foundation",
+      "status": "PARTIAL",
+      "dependencies": ["M0"],
+      "maximum_claim_on_completion": "TECHNICAL_FOUNDATION",
       "exit_criteria": [
-        {"criterion_id": "P1-C1", "description": "Four known integrity defects have regression tests and reviewed fixes.", "status": "PENDING", "evidence": []}
+        {"criterion_id": "M1-C1", "description": "Recovered source is committed on the intended private repository baseline.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M1-C2", "description": "A clean Python 3.12 checkout installs, tests, and builds reproducibly.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M1-C3", "description": "Required CI, branch protection, merge policy, and independent review controls pass on the protected baseline.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M1-C4", "description": "Current files and reachable repository history contain no credential material.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M1-C5", "description": "Previously exposed DeepSeek and EigenField credentials are rotated and replacements are stored only in an approved secret store.", "status": "BLOCKED", "evidence": []},
+        {"criterion_id": "M1-C6", "description": "UNKNOWN evidence remains distinct from an observed measured null and cannot support a material PASS.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M1-C7", "description": "Policy activation cannot strand Programs; governed binding migration or an explicit legacy path fails closed.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M1-C8", "description": "Formal Program route remains UNSELECTED before the authorized F5 route decision.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M1-C9", "description": "Submitted dissent is immutable, attributable, evidence-bound, and cannot be omitted by the policy caller.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M1-C10", "description": "One authorized work item moves from READY to an independently reviewed pull request without another prompt.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M1-C11", "description": "Forced crash, lease expiry, checkpoint resume, and replay protection create no duplicate commit or event.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M1-C12", "description": "Protected-path refusal, kill switch, budget ceilings, secret isolation, and audit evidence pass.", "status": "PENDING", "evidence": []}
       ]
     },
     {
-      "phase_id": "P2",
-      "checkpoint_id": "CP-P2",
-      "name": "Forge Lite",
-      "status": "PENDING",
+      "milestone_id": "M2",
+      "checkpoint_id": "CP-M2",
+      "name": "Persistent Foundry core",
+      "status": "NOT_STARTED",
+      "dependencies": ["M1"],
+      "maximum_claim_on_completion": "TECHNICAL_FOUNDATION",
       "exit_criteria": [
-        {"criterion_id": "P2-C1", "description": "One ready work item reaches a reviewed pull request through claim, validation, retry/recovery, and evidence capture.", "status": "PENDING", "evidence": []}
+        {"criterion_id": "M2-C1", "description": "Postgres persists immutable versions, events, and a transactional outbox.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M2-C2", "description": "OIDC or service identity enforces program-scoped authorization and human approval roles.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M2-C3", "description": "Idempotency, restart recovery, optimistic concurrency, and two-writer conflict tests pass.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M2-C4", "description": "Exactly one restricted commit service path changes formal Program state.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M2-C5", "description": "Raw artifacts remain external and are represented by immutable authorized pointers.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M2-C6", "description": "Authenticated operator UX retrieves and displays durable state without chat reconstruction.", "status": "PENDING", "evidence": []}
       ]
     },
     {
-      "phase_id": "P3",
-      "checkpoint_id": "CP-P3",
-      "name": "Foundry Ledger and API",
-      "status": "PENDING",
+      "milestone_id": "M3",
+      "checkpoint_id": "CP-M3",
+      "name": "Synthetic Conclave harness",
+      "status": "NOT_STARTED",
+      "dependencies": ["M2"],
+      "maximum_claim_on_completion": "SYNTHETIC_CONCLAVE_HARNESS",
       "exit_criteria": [
-        {"criterion_id": "P3-C1", "description": "The restricted commit service is the only server-controlled path that changes formal Program state.", "status": "PENDING", "evidence": []}
+        {"criterion_id": "M3-C1", "description": "Corrected evidence, result, measured-null, gap, dissent, challenge, and successor-session contracts are enforced.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M3-C2", "description": "Axiom-first mock seats complete a frozen, blind, challenged, independently reviewed F0 Crucible.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M3-C3", "description": "Exact human approval gates one atomic synthetic commit.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M3-C4", "description": "Material UNKNOWN, FAIL, dissent, stale input, wrong role, expiry, and self-approval fail closed.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M3-C5", "description": "Duplicate and reordered synthetic commands do not duplicate or regress state.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M3-C6", "description": "All outputs and UX label the result only as a synthetic Conclave harness.", "status": "PENDING", "evidence": []}
       ]
     },
     {
-      "phase_id": "P4",
-      "checkpoint_id": "CP-P4",
-      "name": "Conclave v1",
-      "status": "PENDING",
+      "milestone_id": "M4",
+      "checkpoint_id": "CP-M4",
+      "name": "Working Conclave",
+      "status": "NOT_STARTED",
+      "dependencies": ["M3"],
+      "maximum_claim_on_completion": "WORKING_CONCLAVE",
       "exit_criteria": [
-        {"criterion_id": "P4-C1", "description": "A synthetic F0 Crucible completes with independent challenge, deterministic policy, and human-gated commit.", "status": "PENDING", "evidence": []}
+        {"criterion_id": "M4-C1", "description": "Live seats use versioned prompts/models, distinct run identities, and seat-specific tool envelopes.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M4-C2", "description": "Structured outputs, traces, limits, reproducibility manifests, and bounded failures are enforced.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M4-C3", "description": "Live seats reproduce the synthetic F0 flow without gaining approval, commit, policy, or evidence-promotion authority.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M4-C4", "description": "Authenticated humans approve exact immutable packets and atomic commit rechecks Axiom.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M4-C5", "description": "Live-seat outage, malformed output, timeout, and partial-session recovery remain visible and safe.", "status": "PENDING", "evidence": []}
       ]
     },
     {
-      "phase_id": "P5",
-      "checkpoint_id": "CP-P5",
-      "name": "Eigen integration",
-      "status": "PENDING",
+      "milestone_id": "M5",
+      "checkpoint_id": "CP-M5",
+      "name": "Working Foundry MVP",
+      "status": "NOT_STARTED",
+      "dependencies": ["M4"],
+      "maximum_claim_on_completion": "WORKING_FOUNDRY_MVP",
       "exit_criteria": [
-        {"criterion_id": "P5-C1", "description": "An authorized read-only evidence adapter binds immutable EigenField snapshots and separates predictions from observations.", "status": "PENDING", "evidence": []}
+        {"criterion_id": "M5-C1", "description": "One synthetic Sentinel evidence event maps to one Program exactly once.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M5-C2", "description": "A governed decisive-work order binds prediction, alternatives, falsifier, kill criterion, protocol, rights, budget, owner, deadline, and QC.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M5-C3", "description": "Result/QC ingestion preserves positive, negative, null, contradictory, failed-QC, and failed-replication outcomes.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M5-C4", "description": "Failure attribution and learn-back create a successor snapshot and Crucible without overwriting history.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M5-C5", "description": "The full 18-step closed-loop and adversarial suite passes through authenticated staging UX and API.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M5-C6", "description": "Crash, replay, state-conflict, connector failure, and operator recovery paths pass visibly.", "status": "PENDING", "evidence": []}
       ]
     },
     {
-      "phase_id": "P6",
-      "checkpoint_id": "CP-P6",
-      "name": "Closed Foundry loop",
-      "status": "PENDING",
+      "milestone_id": "M6",
+      "checkpoint_id": "CP-M6",
+      "name": "Eigen-grounded F0-F2",
+      "status": "NOT_STARTED",
+      "dependencies": ["M5"],
+      "maximum_claim_on_completion": "WORKING_FOUNDRY_MVP",
       "exit_criteria": [
-        {"criterion_id": "P6-C1", "description": "Synthetic work order, QC/result, learn-back, and successor Conclave flow completes without automatic advancement.", "status": "PENDING", "evidence": []}
+        {"criterion_id": "M6-C1", "description": "Only the Evidence Steward has purpose-bound read-only EigenField access inside a Crucible.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M6-C2", "description": "Immutable EvidencePackets preserve provenance, rights, contradictions, nulls, dependency, staleness, and one snapshot root.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M6-C3", "description": "The Eigen-1 gateway produces versioned MODEL_PREDICTION/L3 records with calibration, OOD, leakage, and frozen inputs.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M6-C4", "description": "F0-F2 TPP, disease-map, evidence-audit, and causal-question policies fail closed.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M6-C5", "description": "One authorized CRC or PRAD dry run produces traceable F0-F2 packets; model output never satisfies an experimental gate.", "status": "PENDING", "evidence": []}
       ]
     },
     {
-      "phase_id": "P7",
-      "checkpoint_id": "CP-P7",
-      "name": "Production expansion",
-      "status": "PENDING",
+      "milestone_id": "M7",
+      "checkpoint_id": "CP-M7",
+      "name": "Preclinical complete-program lifecycle",
+      "status": "NOT_STARTED",
+      "dependencies": ["M6"],
+      "maximum_claim_on_completion": "WORKING_FOUNDRY_MVP",
       "exit_criteria": [
-        {"criterion_id": "P7-C1", "description": "Production acceptance, restore/rollback, soak, and two route dry-run evidence are independently reviewed.", "status": "PENDING", "evidence": []}
+        {"criterion_id": "M7-C1", "description": "Approved public and private Sentinel connectors preserve quarantine, rights, lineage, deduplication, change detection, and replay.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M7-C2", "description": "F3-F8 model, assay, mechanism, target, route, modality, asset, rights, execution, investment, and nomination policies/workspaces are complete.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M7-C3", "description": "Six executable routes compare against one frozen TPP without averaging away a hard failure.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M7-C4", "description": "Existing-asset or rescue and de novo routes each complete governed F0-F8 dry runs with no gate skips.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M7-C5", "description": "A nominated package is third-party readable, reproducible, controllable, transferable, and financeable.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M7-C6", "description": "Portfolio and Opportunity Radar controls enforce capacity, correlated risk, reserves, catalysts, expiries, and upstream stability.", "status": "PENDING", "evidence": []}
+      ]
+    },
+    {
+      "milestone_id": "M8",
+      "checkpoint_id": "CP-M8",
+      "name": "Development lifecycle support",
+      "status": "NOT_STARTED",
+      "dependencies": ["M7"],
+      "maximum_claim_on_completion": "WORKING_FOUNDRY_MVP",
+      "exit_criteria": [
+        {"criterion_id": "M8-C1", "description": "F9-F12 policies and artifact contracts cover IND-enabling, human proof, clinical proof, registration, externalization, lifecycle, and termination.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M8-C2", "description": "Required clinical, regulatory, safety, quality, legal, finance, and executive approval paths are explicit and enforced.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M8-C3", "description": "Every enabled integration boundary, failure route, hold, expiry, and transition path passes a synthetic or approved retrospective dry run.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M8-C4", "description": "No software dry run changes or is reported as real therapeutic Program advancement.", "status": "PENDING", "evidence": []}
+      ]
+    },
+    {
+      "milestone_id": "M9",
+      "checkpoint_id": "CP-M9",
+      "name": "Production qualification",
+      "status": "NOT_STARTED",
+      "dependencies": ["M8"],
+      "maximum_claim_on_completion": "PRODUCTION_QUALIFIED_FOUNDRY",
+      "exit_criteria": [
+        {"criterion_id": "M9-C1", "description": "Security, authorization, prompt-injection, secret-handling, and protected-operation suites pass.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M9-C2", "description": "Backup, restore, rollback, release recovery, and data-integrity tests pass.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M9-C3", "description": "Observability, connector recovery, operational controls, alerts, and soak pass against the exact deployed release.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M9-C4", "description": "CRC and PRAD current-gate packages regenerate without chat history and both route dry runs remain reproducible.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M9-C5", "description": "A transferable package passes third-party review and no enabled gate has undefined policy.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "M9-C6", "description": "The qualified release, CI, deployment, acceptance, and rollback artifacts are immutably recorded.", "status": "PENDING", "evidence": []}
       ]
     }
   ],
   "blockers": [
     {
-      "blocker_id": "BLK-P0-KEY-ROTATION",
-      "phase_id": "P0",
+      "blocker_id": "BLK-M1-KEY-ROTATION",
+      "milestone_id": "M1",
+      "criterion_ids": ["M1-C5"],
       "type": "SECURITY",
       "description": "Credentials previously exposed in chat must be revoked, rotated, and installed by an authorized human before live integration.",
       "owner": "authorized credential owner",
-      "status": "OPEN"
+      "status": "OPEN",
+      "evidence": []
     },
     {
-      "blocker_id": "BLK-P0-REPO-POLICY",
-      "phase_id": "P0",
+      "blocker_id": "BLK-M1-REPO-POLICY",
+      "milestone_id": "M1",
+      "criterion_ids": ["M1-C3"],
       "type": "AUTHORITY",
       "description": "Private repository visibility, branch protection, required checks, and merge policy require repository-admin verification.",
       "owner": "repository administrator",
-      "status": "OPEN"
+      "status": "OPEN",
+      "evidence": []
     }
   ]
 }
+
