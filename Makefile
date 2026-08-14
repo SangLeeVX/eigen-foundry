@@ -1,4 +1,4 @@
-.PHONY: bootstrap test secrets contracts schemas package reproducible check
+.PHONY: bootstrap test secrets history-secrets contracts schemas package reproducible check
 
 bootstrap:
 	python3 -m pip install --disable-pip-version-check --require-hashes -r requirements-ci.lock
@@ -9,6 +9,9 @@ test:
 
 secrets:
 	python3 forge/check_secrets.py
+
+history-secrets:
+	python3 scripts/check_git_history.py
 
 contracts:
 	python3 forge/validate_contracts.py
@@ -23,4 +26,4 @@ package:
 reproducible:
 	PIP_NO_INDEX=1 python3 scripts/check_reproducible_wheel.py
 
-check: secrets contracts test schemas reproducible
+check: secrets history-secrets contracts test schemas reproducible
