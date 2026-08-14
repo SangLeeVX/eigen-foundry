@@ -1,0 +1,8 @@
+# CI-only lock for Python 3.12. Runtime compatibility remains declared in pyproject.toml.
+annotated-types==0.8.0
+pydantic==2.13.4
+pydantic-core==2.46.4
+setuptools==83.0.0
+typing-extensions==4.16.0
+typing-inspection==0.4.2
+wheel==0.47.0

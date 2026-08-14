@@ -1,0 +1,112 @@
+name: Forge work item
+description: Propose one bounded, testable software change for the governed Forge loop.
+title: "[FWI-Px-nnn] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        One issue is one objective. Never include credentials, proprietary datasets, transaction terms, or raw molecular files.
+
+  - type: input
+    id: work_item_id
+    attributes:
+      label: Work-item ID
+      description: Use the next durable ID in the form FWI-P2-001.
+      placeholder: FWI-P2-001
+    validations:
+      required: true
+
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Delivery phase
+      options:
+        - P0 — Secure baseline
+        - P1 — Repair kernel
+        - P2 — Forge Lite
+        - P3 — Foundry Ledger/API
+        - P4 — Conclave v1
+        - P5 — Eigen integration
+        - P6 — Closed Foundry loop
+        - P7 — Production expansion
+    validations:
+      required: true
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: Single objective
+      description: State the one observable outcome this item owns.
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and canonical inputs
+      description: List work-item IDs, commit SHAs, approved interfaces, and immutable input versions. Use "none" when empty.
+    validations:
+      required: true
+
+  - type: textarea
+    id: paths
+    attributes:
+      label: Allowed paths
+      description: List the only paths the implementing run may change.
+      placeholder: |
+        - src/component/**
+        - tests/test_component.py
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Use independently observable, deterministic pass/fail criteria.
+      placeholder: |
+        - [ ] A1: ...
+        - [ ] A2: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation commands
+      description: Give exact commands and required CI checks.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Risk class
+      options:
+        - LOW
+        - MEDIUM
+        - HIGH
+        - PROTECTED
+    validations:
+      required: true
+
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Forbidden and protected actions
+      description: Identify security, authority, integration, data, merge, and human-approval boundaries.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: controls
+    attributes:
+      label: Control acknowledgements
+      options:
+        - label: This item contains no credential or secret copied from chat, logs, or local configuration.
+          required: true
+        - label: The authoring run will not be its sole reviewer or approve/merge its own change.
+          required: true
+        - label: This item cannot approve a program gate, evidence promotion, spend, outreach, transaction, production action, or clinical use.
+          required: true

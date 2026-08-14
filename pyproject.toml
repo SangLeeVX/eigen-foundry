@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools==83.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eigen-foundry-council"
+version = "0.1.0"
+description = "Governed, auditable council runtime for the Eigen Drug Foundry"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["pydantic>=2.12,<3"]
+
+[project.scripts]
+foundry-council = "foundry_council.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

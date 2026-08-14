@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://foundry.eigenbio.ai/schemas/forge-work-item-v1.json",
+  "title": "Forge bounded work item",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "work_item_id",
+    "phase_id",
+    "title",
+    "status",
+    "source",
+    "objective",
+    "dependencies",
+    "allowed_paths",
+    "forbidden_actions",
+    "acceptance_criteria",
+    "validation_commands",
+    "risk_class",
+    "retry_policy",
+    "claim",
+    "review",
+    "protected_actions",
+    "checkpoint_id"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "work_item_id": {"type": "string", "pattern": "^FWI-P[0-9]+-[0-9]{3}$"},
+    "phase_id": {"type": "string", "pattern": "^P[0-9]+$"},
+    "title": {"type": "string", "minLength": 1},
+    "status": {
+      "enum": [
+        "DRAFT", "READY", "CLAIMED", "IMPLEMENTED", "VALIDATED", "REVIEWED",
+        "MERGE_APPROVED", "DONE", "BLOCKED", "FAILED", "SUPERSEDED"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["github_issue", "created_by", "created_at"],
+      "properties": {
+        "github_issue": {"type": ["integer", "null"], "minimum": 1},
+        "created_by": {"type": "string", "minLength": 1},
+        "created_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "objective": {"type": "string", "minLength": 1},
+    "dependencies": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "allowed_paths": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "forbidden_actions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "acceptance_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterion_id", "description", "status", "evidence"],
+        "properties": {
+          "criterion_id": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 1},
+          "status": {"enum": ["PENDING", "BLOCKED", "VERIFIED"]},
+          "evidence": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "validation_commands": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "risk_class": {"enum": ["LOW", "MEDIUM", "HIGH", "PROTECTED"]},
+    "retry_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_attempts", "idempotent_only"],
+      "properties": {
+        "max_attempts": {"type": "integer", "minimum": 0, "maximum": 5},
+        "idempotent_only": {"const": true}
+      }
+    },
+    "claim": {
+      "type": ["object", "null"],
+      "properties": {
+        "run_id": {"type": "string", "minLength": 1},
+        "actor": {"type": "string", "minLength": 1},
+        "claimed_at": {"type": "string", "format": "date-time"},
+        "expires_at": {"type": "string", "format": "date-time"}
+      },
+      "required": ["run_id", "actor", "claimed_at", "expires_at"],
+      "additionalProperties": false
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["independent_required", "author_may_approve", "review_evidence"],
+      "properties": {
+        "independent_required": {"const": true},
+        "author_may_approve": {"const": false},
+        "review_evidence": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "protected_actions": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "checkpoint_id": {"type": "string", "pattern": "^CP-P[0-9]+$"}
+  }
+}

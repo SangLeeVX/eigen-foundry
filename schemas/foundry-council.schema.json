@@ -1,0 +1,2623 @@
+{
+  "$defs": {
+    "ActorKind": {
+      "enum": [
+        "HUMAN",
+        "AGENT",
+        "SERVICE"
+      ],
+      "title": "ActorKind",
+      "type": "string"
+    },
+    "Approval": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Approval Id",
+          "type": "string"
+        },
+        "approver_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Approver Id",
+          "type": "string"
+        },
+        "approver_kind": {
+          "$ref": "#/$defs/ActorKind"
+        },
+        "conditions": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Conditions",
+          "type": "array"
+        },
+        "conflicts": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Conflicts",
+          "type": "array"
+        },
+        "decided_at": {
+          "format": "date-time",
+          "title": "Decided At",
+          "type": "string"
+        },
+        "decision": {
+          "$ref": "#/$defs/ApprovalDecision"
+        },
+        "gate_packet_digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Gate Packet Digest",
+          "type": "string"
+        },
+        "program_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Program Id",
+          "type": "string"
+        },
+        "rationale": {
+          "maxLength": 3000,
+          "minLength": 3,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "request_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "role": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Role",
+          "type": "string"
+        },
+        "session_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "approval_id",
+        "request_id",
+        "session_id",
+        "program_id",
+        "approver_id",
+        "approver_kind",
+        "role",
+        "decision",
+        "gate_packet_digest",
+        "rationale"
+      ],
+      "title": "Approval",
+      "type": "object"
+    },
+    "ApprovalDecision": {
+      "enum": [
+        "APPROVED",
+        "REJECTED"
+      ],
+      "title": "ApprovalDecision",
+      "type": "string"
+    },
+    "ApprovalRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "exact_scope": {
+          "maxLength": 3000,
+          "minLength": 3,
+          "title": "Exact Scope",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "gate_packet_digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Gate Packet Digest",
+          "type": "string"
+        },
+        "program_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Program Id",
+          "type": "string"
+        },
+        "request_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "required_roles": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+            "type": "string"
+          },
+          "title": "Required Roles",
+          "type": "array"
+        },
+        "session_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id",
+        "session_id",
+        "program_id",
+        "gate_packet_digest",
+        "required_roles",
+        "exact_scope",
+        "expires_at"
+      ],
+      "title": "ApprovalRequest",
+      "type": "object"
+    },
+    "ArbitrationResult": {
+      "additionalProperties": false,
+      "properties": {
+        "arbiter_agent_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Arbiter Agent Id",
+          "type": "string"
+        },
+        "blockers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blockers",
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "dissent": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Dissent"
+          },
+          "title": "Dissent",
+          "type": "array"
+        },
+        "eligible": {
+          "title": "Eligible",
+          "type": "boolean"
+        },
+        "recommended_disposition": {
+          "$ref": "#/$defs/Disposition"
+        },
+        "requested_disposition": {
+          "$ref": "#/$defs/Disposition"
+        },
+        "result_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Result Id",
+          "type": "string"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/RuleResult"
+          },
+          "title": "Rules",
+          "type": "array"
+        }
+      },
+      "required": [
+        "result_id",
+        "arbiter_agent_id",
+        "requested_disposition",
+        "recommended_disposition",
+        "eligible",
+        "blockers",
+        "rules"
+      ],
+      "title": "ArbitrationResult",
+      "type": "object"
+    },
+    "AuditEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Action",
+          "type": "string"
+        },
+        "actor_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "actor_kind": {
+          "$ref": "#/$defs/ActorKind"
+        },
+        "aggregate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Aggregate Id",
+          "type": "string"
+        },
+        "aggregate_type": {
+          "enum": [
+            "PROGRAM",
+            "COUNCIL_SESSION",
+            "APPROVAL"
+          ],
+          "title": "Aggregate Type",
+          "type": "string"
+        },
+        "aggregate_version": {
+          "minimum": 1,
+          "title": "Aggregate Version",
+          "type": "integer"
+        },
+        "event_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": true,
+          "title": "Payload",
+          "type": "object"
+        },
+        "reason": {
+          "maxLength": 3000,
+          "minLength": 3,
+          "title": "Reason",
+          "type": "string"
+        },
+        "timestamp": {
+          "format": "date-time",
+          "title": "Timestamp",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id",
+        "idempotency_key",
+        "aggregate_type",
+        "aggregate_id",
+        "aggregate_version",
+        "actor_id",
+        "actor_kind",
+        "action",
+        "reason"
+      ],
+      "title": "AuditEvent",
+      "type": "object"
+    },
+    "CaseCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "condition": {
+          "maxLength": 2000,
+          "minLength": 3,
+          "title": "Condition",
+          "type": "string"
+        },
+        "deadline": {
+          "format": "date-time",
+          "title": "Deadline",
+          "type": "string"
+        },
+        "expiry": {
+          "format": "date-time",
+          "title": "Expiry",
+          "type": "string"
+        },
+        "owner": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Owner",
+          "type": "string"
+        }
+      },
+      "required": [
+        "condition",
+        "owner",
+        "deadline",
+        "expiry"
+      ],
+      "title": "CaseCondition",
+      "type": "object"
+    },
+    "CaseOpinion": {
+      "additionalProperties": false,
+      "properties": {
+        "captain_agent_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Captain Agent Id",
+          "type": "string"
+        },
+        "case": {
+          "$ref": "#/$defs/CaseType"
+        },
+        "claim_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+            "type": "string"
+          },
+          "title": "Claim Ids",
+          "type": "array"
+        },
+        "conditions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CaseCondition"
+          },
+          "title": "Conditions",
+          "type": "array"
+        },
+        "opinion_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Opinion Id",
+          "type": "string"
+        },
+        "rationale": {
+          "maxLength": 6000,
+          "minLength": 3,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CaseStatus"
+        },
+        "submitted_at": {
+          "format": "date-time",
+          "title": "Submitted At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "opinion_id",
+        "case",
+        "captain_agent_id",
+        "status",
+        "rationale",
+        "claim_ids"
+      ],
+      "title": "CaseOpinion",
+      "type": "object"
+    },
+    "CaseStatus": {
+      "enum": [
+        "PASS",
+        "CONDITIONAL",
+        "FAIL",
+        "UNKNOWN",
+        "NOT_APPLICABLE"
+      ],
+      "title": "CaseStatus",
+      "type": "string"
+    },
+    "CaseType": {
+      "enum": [
+        "SCIENTIFIC",
+        "PRODUCT",
+        "CONTROL",
+        "EXECUTION",
+        "INVESTMENT"
+      ],
+      "title": "CaseType",
+      "type": "string"
+    },
+    "Challenge": {
+      "additionalProperties": false,
+      "properties": {
+        "challenge_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Challenge Id",
+          "type": "string"
+        },
+        "challenge_type": {
+          "enum": [
+            "EVIDENCE",
+            "CAUSAL_MODEL",
+            "CONTEXT",
+            "EXPOSURE",
+            "SAFETY",
+            "CONTROL",
+            "EXECUTION",
+            "ECONOMICS",
+            "OTHER"
+          ],
+          "title": "Challenge Type",
+          "type": "string"
+        },
+        "challenger_agent_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Challenger Agent Id",
+          "type": "string"
+        },
+        "claim_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SnapshotRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "gate_impact": {
+          "maxLength": 2000,
+          "minLength": 3,
+          "title": "Gate Impact",
+          "type": "string"
+        },
+        "grounds": {
+          "maxLength": 4000,
+          "minLength": 3,
+          "title": "Grounds",
+          "type": "string"
+        },
+        "materiality": {
+          "$ref": "#/$defs/Materiality"
+        },
+        "proposed_falsifier": {
+          "maxLength": 2000,
+          "minLength": 3,
+          "title": "Proposed Falsifier",
+          "type": "string"
+        },
+        "target_claim_version": {
+          "minimum": 1,
+          "title": "Target Claim Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "challenge_id",
+        "claim_id",
+        "target_claim_version",
+        "challenger_agent_id",
+        "challenge_type",
+        "grounds",
+        "materiality",
+        "gate_impact",
+        "proposed_falsifier"
+      ],
+      "title": "Challenge",
+      "type": "object"
+    },
+    "ChallengeDisposition": {
+      "enum": [
+        "CONCEDE",
+        "AMEND",
+        "REBUT",
+        "MARK_UNKNOWN",
+        "OUT_OF_SCOPE"
+      ],
+      "title": "ChallengeDisposition",
+      "type": "string"
+    },
+    "ChallengeResolution": {
+      "additionalProperties": false,
+      "properties": {
+        "challenge_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Challenge Id",
+          "type": "string"
+        },
+        "outcome": {
+          "$ref": "#/$defs/ResolutionOutcome"
+        },
+        "rationale": {
+          "maxLength": 4000,
+          "minLength": 3,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "resolution_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Resolution Id",
+          "type": "string"
+        },
+        "resolved_at": {
+          "format": "date-time",
+          "title": "Resolved At",
+          "type": "string"
+        },
+        "reviewer_agent_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Reviewer Agent Id",
+          "type": "string"
+        },
+        "unresolved_material_disagreement": {
+          "default": false,
+          "title": "Unresolved Material Disagreement",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "resolution_id",
+        "challenge_id",
+        "reviewer_agent_id",
+        "outcome",
+        "rationale"
+      ],
+      "title": "ChallengeResolution",
+      "type": "object"
+    },
+    "ChallengeResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "challenge_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Challenge Id",
+          "type": "string"
+        },
+        "disposition": {
+          "$ref": "#/$defs/ChallengeDisposition"
+        },
+        "owner_agent_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Owner Agent Id",
+          "type": "string"
+        },
+        "rationale": {
+          "maxLength": 4000,
+          "minLength": 3,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "replacement_claim": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Claim"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "responded_at": {
+          "format": "date-time",
+          "title": "Responded At",
+          "type": "string"
+        },
+        "response_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Response Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "response_id",
+        "challenge_id",
+        "owner_agent_id",
+        "disposition",
+        "rationale"
+      ],
+      "title": "ChallengeResponse",
+      "type": "object"
+    },
+    "Claim": {
+      "additionalProperties": false,
+      "properties": {
+        "assumptions": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        },
+        "claim_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "context": {
+          "maxLength": 2000,
+          "minLength": 3,
+          "title": "Context",
+          "type": "string"
+        },
+        "dependency_clusters": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+            "type": "string"
+          },
+          "title": "Dependency Clusters",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SnapshotRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "gate_impact": {
+          "maxLength": 2000,
+          "minLength": 3,
+          "title": "Gate Impact",
+          "type": "string"
+        },
+        "materiality": {
+          "$ref": "#/$defs/Materiality"
+        },
+        "measured_null": {
+          "default": false,
+          "title": "Measured Null",
+          "type": "boolean"
+        },
+        "owner_agent_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Owner Agent Id",
+          "type": "string"
+        },
+        "proposed_falsifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Falsifier"
+        },
+        "state": {
+          "$ref": "#/$defs/ClaimState"
+        },
+        "statement": {
+          "maxLength": 4000,
+          "minLength": 3,
+          "title": "Statement",
+          "type": "string"
+        },
+        "supersedes_claim_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supersedes Claim Id"
+        },
+        "version": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "claim_id",
+        "owner_agent_id",
+        "statement",
+        "state",
+        "materiality",
+        "context",
+        "gate_impact"
+      ],
+      "title": "Claim",
+      "type": "object"
+    },
+    "ClaimState": {
+      "enum": [
+        "OBSERVED",
+        "SUPPORTED_INFERENCE",
+        "MODEL_PREDICTION",
+        "EXPERIMENTALLY_VALIDATED",
+        "TRANSLATIONALLY_VALIDATED",
+        "CONTRADICTED",
+        "UNKNOWN"
+      ],
+      "title": "ClaimState",
+      "type": "string"
+    },
+    "CouncilSession": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+            "type": "string"
+          },
+          "title": "Approval Ids",
+          "type": "array"
+        },
+        "approval_request": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ApprovalRequest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "arbitration": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArbitrationResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "challenges": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Challenge"
+          },
+          "title": "Challenges",
+          "type": "array"
+        },
+        "charter": {
+          "$ref": "#/$defs/DecisionCharter"
+        },
+        "claims": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Claim"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "dissent": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Dissent"
+          },
+          "title": "Dissent",
+          "type": "array"
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceManifest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "final_cases": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/FinalCaseAssessment"
+          },
+          "title": "Final Cases",
+          "type": "array"
+        },
+        "gate_packet": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GatePacket"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "gate_packet_inputs": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GatePacketInputs"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "opinions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CaseOpinion"
+          },
+          "title": "Opinions",
+          "type": "array"
+        },
+        "participants": {
+          "items": {
+            "$ref": "#/$defs/ParticipantAssignment"
+          },
+          "title": "Participants",
+          "type": "array"
+        },
+        "phase": {
+          "$ref": "#/$defs/SessionPhase",
+          "default": "CONSTITUTED"
+        },
+        "program_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Program Id",
+          "type": "string"
+        },
+        "red_team_report": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RedTeamReport"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "resolutions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ChallengeResolution"
+          },
+          "title": "Resolutions",
+          "type": "array"
+        },
+        "responses": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ChallengeResponse"
+          },
+          "title": "Responses",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "session_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "state_version": {
+          "default": 1,
+          "minimum": 1,
+          "title": "State Version",
+          "type": "integer"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "program_id",
+        "charter",
+        "participants"
+      ],
+      "title": "CouncilSession",
+      "type": "object"
+    },
+    "CouncilSessionView": {
+      "additionalProperties": false,
+      "properties": {
+        "challenges": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Challenge"
+          },
+          "title": "Challenges",
+          "type": "array"
+        },
+        "claims": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Claim"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "dissent": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Dissent"
+          },
+          "title": "Dissent",
+          "type": "array"
+        },
+        "evidence_snapshot": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "final_cases": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/FinalCaseAssessment"
+          },
+          "title": "Final Cases",
+          "type": "array"
+        },
+        "opinions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CaseOpinion"
+          },
+          "title": "Opinions",
+          "type": "array"
+        },
+        "phase": {
+          "$ref": "#/$defs/SessionPhase"
+        },
+        "program_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Program Id",
+          "type": "string"
+        },
+        "red_team_report": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RedTeamReport"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "responses": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ChallengeResponse"
+          },
+          "title": "Responses",
+          "type": "array"
+        },
+        "session_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "state_version": {
+          "minimum": 1,
+          "title": "State Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "session_id",
+        "program_id",
+        "phase",
+        "state_version"
+      ],
+      "title": "CouncilSessionView",
+      "type": "object"
+    },
+    "DecisionCharter": {
+      "additionalProperties": false,
+      "properties": {
+        "budget": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "current_stage": {
+          "$ref": "#/$defs/ProgramStage"
+        },
+        "exact_scope": {
+          "maxLength": 3000,
+          "minLength": 5,
+          "title": "Exact Scope",
+          "type": "string"
+        },
+        "expected_program_state_version": {
+          "minimum": 1,
+          "title": "Expected Program State Version",
+          "type": "integer"
+        },
+        "gate_policy": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "hold_expiry": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hold Expiry"
+        },
+        "hold_trigger": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hold Trigger"
+        },
+        "portfolio_mandate": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "program_snapshot": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "proposed_action": {
+          "maxLength": 3000,
+          "minLength": 5,
+          "title": "Proposed Action",
+          "type": "string"
+        },
+        "proposed_outputs": {
+          "$ref": "#/$defs/ProposedProgramOutputs"
+        },
+        "proposed_route": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Route"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "proposed_stage": {
+          "$ref": "#/$defs/ProgramStage"
+        },
+        "question": {
+          "maxLength": 3000,
+          "minLength": 5,
+          "title": "Question",
+          "type": "string"
+        },
+        "requested_disposition": {
+          "$ref": "#/$defs/Disposition"
+        },
+        "rights": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "risk_register": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "session_deadline": {
+          "format": "date-time",
+          "title": "Session Deadline",
+          "type": "string"
+        },
+        "standard_of_care": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "tpp": {
+          "$ref": "#/$defs/SnapshotRef"
+        }
+      },
+      "required": [
+        "question",
+        "proposed_action",
+        "exact_scope",
+        "requested_disposition",
+        "current_stage",
+        "proposed_stage",
+        "expected_program_state_version",
+        "program_snapshot",
+        "portfolio_mandate",
+        "tpp",
+        "rights",
+        "budget",
+        "risk_register",
+        "standard_of_care",
+        "gate_policy",
+        "session_deadline"
+      ],
+      "title": "DecisionCharter",
+      "type": "object"
+    },
+    "Disposition": {
+      "enum": [
+        "ADVANCE",
+        "HOLD",
+        "REDESIGN_ONCE",
+        "PARTNER",
+        "LICENSE_OR_ACQUIRE",
+        "SPINOUT",
+        "TERMINATE",
+        "ESCALATE"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "Dissent": {
+      "additionalProperties": false,
+      "properties": {
+        "agent_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Agent Id",
+          "type": "string"
+        },
+        "assignment_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Assignment Id",
+          "type": "string"
+        },
+        "dissent_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Dissent Id",
+          "type": "string"
+        },
+        "materiality": {
+          "$ref": "#/$defs/Materiality"
+        },
+        "role": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Role",
+          "type": "string"
+        },
+        "statement": {
+          "maxLength": 4000,
+          "minLength": 3,
+          "title": "Statement",
+          "type": "string"
+        },
+        "submitted_at": {
+          "format": "date-time",
+          "title": "Submitted At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dissent_id",
+        "agent_id",
+        "assignment_id",
+        "role",
+        "statement",
+        "materiality"
+      ],
+      "title": "Dissent",
+      "type": "object"
+    },
+    "EntryPoint": {
+      "enum": [
+        "UNSPECIFIED",
+        "DISEASE_FIRST",
+        "TARGET_FIRST",
+        "ASSET_FIRST",
+        "FAILED_TRIAL_FIRST",
+        "PATIENT_SEGMENT_FIRST",
+        "DATA_FIRST",
+        "MODALITY_FIRST",
+        "INBOUND_FIRST",
+        "PORTFOLIO_GAP_FIRST"
+      ],
+      "title": "EntryPoint",
+      "type": "string"
+    },
+    "EvidenceManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/SnapshotRef"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "snapshot": {
+          "$ref": "#/$defs/SnapshotRef"
+        }
+      },
+      "required": [
+        "snapshot",
+        "items"
+      ],
+      "title": "EvidenceManifest",
+      "type": "object"
+    },
+    "FinalCaseAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "assessment_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Assessment Id",
+          "type": "string"
+        },
+        "captain_agent_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Captain Agent Id",
+          "type": "string"
+        },
+        "case": {
+          "$ref": "#/$defs/CaseType"
+        },
+        "claim_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+            "type": "string"
+          },
+          "title": "Claim Ids",
+          "type": "array"
+        },
+        "conditions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CaseCondition"
+          },
+          "title": "Conditions",
+          "type": "array"
+        },
+        "material_unknown": {
+          "default": false,
+          "title": "Material Unknown",
+          "type": "boolean"
+        },
+        "not_applicable_rule_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Not Applicable Rule Id"
+        },
+        "rationale": {
+          "maxLength": 6000,
+          "minLength": 3,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CaseStatus"
+        },
+        "unresolved_material_disagreement": {
+          "default": false,
+          "title": "Unresolved Material Disagreement",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "assessment_id",
+        "case",
+        "captain_agent_id",
+        "status",
+        "rationale"
+      ],
+      "title": "FinalCaseAssessment",
+      "type": "object"
+    },
+    "FiveCaseState": {
+      "additionalProperties": false,
+      "properties": {
+        "control": {
+          "$ref": "#/$defs/ProgramCaseState"
+        },
+        "execution": {
+          "$ref": "#/$defs/ProgramCaseState"
+        },
+        "investment": {
+          "$ref": "#/$defs/ProgramCaseState"
+        },
+        "product": {
+          "$ref": "#/$defs/ProgramCaseState"
+        },
+        "scientific": {
+          "$ref": "#/$defs/ProgramCaseState"
+        }
+      },
+      "title": "FiveCaseState",
+      "type": "object"
+    },
+    "GateDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+            "type": "string"
+          },
+          "title": "Approval Ids",
+          "type": "array"
+        },
+        "committed_at": {
+          "format": "date-time",
+          "title": "Committed At",
+          "type": "string"
+        },
+        "committed_program_revision": {
+          "minimum": 2,
+          "title": "Committed Program Revision",
+          "type": "integer"
+        },
+        "decision_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "disposition": {
+          "$ref": "#/$defs/Disposition"
+        },
+        "gate_packet_digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Gate Packet Digest",
+          "type": "string"
+        },
+        "previous_stage": {
+          "$ref": "#/$defs/ProgramStage"
+        },
+        "program_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Program Id",
+          "type": "string"
+        },
+        "resulting_stage": {
+          "$ref": "#/$defs/ProgramStage"
+        },
+        "session_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "decision_id",
+        "program_id",
+        "session_id",
+        "gate_packet_digest",
+        "disposition",
+        "previous_stage",
+        "resulting_stage",
+        "approval_ids",
+        "committed_program_revision"
+      ],
+      "title": "GateDecision",
+      "type": "object"
+    },
+    "GatePacket": {
+      "additionalProperties": false,
+      "properties": {
+        "arbitration": {
+          "$ref": "#/$defs/ArbitrationResult"
+        },
+        "budget": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "charter_digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Charter Digest",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "current_stage": {
+          "$ref": "#/$defs/ProgramStage"
+        },
+        "decision_question": {
+          "maxLength": 3000,
+          "minLength": 5,
+          "title": "Decision Question",
+          "type": "string"
+        },
+        "deliberation_digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Deliberation Digest",
+          "type": "string"
+        },
+        "digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Digest",
+          "type": "string"
+        },
+        "evidence": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "exact_scope": {
+          "maxLength": 3000,
+          "minLength": 5,
+          "title": "Exact Scope",
+          "type": "string"
+        },
+        "final_cases": {
+          "items": {
+            "$ref": "#/$defs/FinalCaseAssessment"
+          },
+          "title": "Final Cases",
+          "type": "array"
+        },
+        "gate_policy": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "inputs": {
+          "$ref": "#/$defs/GatePacketInputs"
+        },
+        "packet_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Packet Id",
+          "type": "string"
+        },
+        "portfolio_mandate": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "program_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Program Id",
+          "type": "string"
+        },
+        "program_snapshot": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "proposed_action": {
+          "maxLength": 3000,
+          "minLength": 5,
+          "title": "Proposed Action",
+          "type": "string"
+        },
+        "proposed_outputs": {
+          "$ref": "#/$defs/ProposedProgramOutputs"
+        },
+        "proposed_route": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Route"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "proposed_stage": {
+          "$ref": "#/$defs/ProgramStage"
+        },
+        "requested_disposition": {
+          "$ref": "#/$defs/Disposition"
+        },
+        "required_approver_roles": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+            "type": "string"
+          },
+          "title": "Required Approver Roles",
+          "type": "array"
+        },
+        "rights": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "risk_register": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "session_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "session_version": {
+          "minimum": 1,
+          "title": "Session Version",
+          "type": "integer"
+        },
+        "standard_of_care": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "tpp": {
+          "$ref": "#/$defs/SnapshotRef"
+        }
+      },
+      "required": [
+        "packet_id",
+        "session_id",
+        "program_id",
+        "session_version",
+        "evidence",
+        "program_snapshot",
+        "portfolio_mandate",
+        "tpp",
+        "rights",
+        "budget",
+        "risk_register",
+        "standard_of_care",
+        "gate_policy",
+        "proposed_outputs",
+        "decision_question",
+        "proposed_action",
+        "exact_scope",
+        "charter_digest",
+        "deliberation_digest",
+        "current_stage",
+        "proposed_stage",
+        "requested_disposition",
+        "final_cases",
+        "arbitration",
+        "inputs",
+        "required_approver_roles",
+        "digest"
+      ],
+      "title": "GatePacket",
+      "type": "object"
+    },
+    "GatePacketInputs": {
+      "additionalProperties": false,
+      "properties": {
+        "budget_time_capacity_and_catalyst": {
+          "maxLength": 6000,
+          "minLength": 3,
+          "title": "Budget Time Capacity And Catalyst",
+          "type": "string"
+        },
+        "capital_tranche": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "contradiction_claim_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+            "type": "string"
+          },
+          "title": "Contradiction Claim Ids",
+          "type": "array"
+        },
+        "decisive_claim_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Decisive Claim Ids",
+          "type": "array"
+        },
+        "exception_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+            "type": "string"
+          },
+          "title": "Exception Ids",
+          "type": "array"
+        },
+        "falsifiers": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Falsifiers",
+          "type": "array"
+        },
+        "intended_disposition_rationale": {
+          "maxLength": 6000,
+          "minLength": 3,
+          "title": "Intended Disposition Rationale",
+          "type": "string"
+        },
+        "kill_criteria": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Kill Criteria",
+          "type": "array"
+        },
+        "null_claim_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+            "type": "string"
+          },
+          "title": "Null Claim Ids",
+          "type": "array"
+        },
+        "product_and_standard_of_care_delta": {
+          "maxLength": 6000,
+          "minLength": 3,
+          "title": "Product And Standard Of Care Delta",
+          "type": "string"
+        },
+        "proposed_task_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+            "type": "string"
+          },
+          "title": "Proposed Task Ids",
+          "type": "array"
+        },
+        "results_vs_frozen_predictions": {
+          "maxLength": 6000,
+          "minLength": 3,
+          "title": "Results Vs Frozen Predictions",
+          "type": "string"
+        },
+        "rights_ip_control_supply_delta": {
+          "maxLength": 6000,
+          "minLength": 3,
+          "title": "Rights Ip Control Supply Delta",
+          "type": "string"
+        },
+        "risk_register_delta": {
+          "maxLength": 6000,
+          "minLength": 3,
+          "title": "Risk Register Delta",
+          "type": "string"
+        },
+        "unknown_claim_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+            "type": "string"
+          },
+          "title": "Unknown Claim Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "decisive_claim_ids",
+        "product_and_standard_of_care_delta",
+        "rights_ip_control_supply_delta",
+        "results_vs_frozen_predictions",
+        "risk_register_delta",
+        "falsifiers",
+        "kill_criteria",
+        "budget_time_capacity_and_catalyst",
+        "intended_disposition_rationale"
+      ],
+      "title": "GatePacketInputs",
+      "type": "object"
+    },
+    "Materiality": {
+      "enum": [
+        "NON_MATERIAL",
+        "MATERIAL",
+        "FATAL"
+      ],
+      "title": "Materiality",
+      "type": "string"
+    },
+    "ParticipantAssignment": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "actor_kind": {
+          "$ref": "#/$defs/ActorKind"
+        },
+        "assignment_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Assignment Id",
+          "type": "string"
+        },
+        "case": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CaseType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "conflicts": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Conflicts",
+          "type": "array"
+        },
+        "independence_group": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Independence Group",
+          "type": "string"
+        },
+        "model_version": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Version"
+        },
+        "prompt_version": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Version"
+        },
+        "role": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Role",
+          "type": "string"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Id"
+        }
+      },
+      "required": [
+        "assignment_id",
+        "actor_id",
+        "actor_kind",
+        "role",
+        "independence_group"
+      ],
+      "title": "ParticipantAssignment",
+      "type": "object"
+    },
+    "ProgramCaseState": {
+      "additionalProperties": false,
+      "properties": {
+        "conditions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CaseCondition"
+          },
+          "title": "Conditions",
+          "type": "array"
+        },
+        "rationale": {
+          "default": "Not yet reviewed.",
+          "title": "Rationale",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CaseStatus",
+          "default": "UNKNOWN"
+        }
+      },
+      "title": "ProgramCaseState",
+      "type": "object"
+    },
+    "ProgramPointers": {
+      "additionalProperties": false,
+      "properties": {
+        "budget": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "evidence_snapshot": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "gate_policy": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "portfolio_mandate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "rights_snapshot": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "risk_register": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "standard_of_care": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "tpp": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "ProgramPointers",
+      "type": "object"
+    },
+    "ProgramRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "active_tasks": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+            "type": "string"
+          },
+          "title": "Active Tasks",
+          "type": "array"
+        },
+        "active_workstreams": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Active Workstreams",
+          "type": "array"
+        },
+        "conversation_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Conversation Key",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "current_five_cases": {
+          "$ref": "#/$defs/FiveCaseState"
+        },
+        "current_versions": {
+          "$ref": "#/$defs/ProgramPointers"
+        },
+        "entry_point": {
+          "$ref": "#/$defs/EntryPoint",
+          "default": "UNSPECIFIED"
+        },
+        "falsifiers": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Falsifiers",
+          "type": "array"
+        },
+        "hold_expiry": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hold Expiry"
+        },
+        "hold_trigger": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hold Trigger"
+        },
+        "kill_criteria": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Kill Criteria",
+          "type": "array"
+        },
+        "last_gate_decision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Gate Decision Id"
+        },
+        "last_gate_packet_digest": {
+          "anyOf": [
+            {
+              "pattern": "^sha256:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Gate Packet Digest"
+        },
+        "open_conditions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CaseCondition"
+          },
+          "title": "Open Conditions",
+          "type": "array"
+        },
+        "open_findings": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+            "type": "string"
+          },
+          "title": "Open Findings",
+          "type": "array"
+        },
+        "owner": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner"
+        },
+        "program_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Program Id",
+          "type": "string"
+        },
+        "redesign_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Redesign Count",
+          "type": "integer"
+        },
+        "route": {
+          "$ref": "#/$defs/Route",
+          "default": "UNSELECTED"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "stage": {
+          "$ref": "#/$defs/ProgramStage",
+          "default": "F0"
+        },
+        "state_version": {
+          "default": 1,
+          "minimum": 1,
+          "title": "State Version",
+          "type": "integer"
+        },
+        "status": {
+          "$ref": "#/$defs/ProgramStatus",
+          "default": "DRAFT"
+        },
+        "title": {
+          "maxLength": 300,
+          "minLength": 3,
+          "title": "Title",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "program_id",
+        "title",
+        "conversation_key"
+      ],
+      "title": "ProgramRecord",
+      "type": "object"
+    },
+    "ProgramStage": {
+      "enum": [
+        "F0",
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "F6A",
+        "F6B",
+        "F6C",
+        "F7",
+        "F8",
+        "F9",
+        "F10",
+        "F11",
+        "F12"
+      ],
+      "title": "ProgramStage",
+      "type": "string"
+    },
+    "ProgramStatus": {
+      "enum": [
+        "DRAFT",
+        "ACTIVE",
+        "HOLD",
+        "REDESIGN",
+        "PARTNERING",
+        "LICENSE_NEGOTIATION",
+        "SPINOUT",
+        "TERMINATED",
+        "COMPLETED"
+      ],
+      "title": "ProgramStatus",
+      "type": "string"
+    },
+    "ProposedProgramOutputs": {
+      "additionalProperties": false,
+      "properties": {
+        "budget": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "portfolio_mandate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "rights": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "risk_register": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "standard_of_care": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "tpp": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "ProposedProgramOutputs",
+      "type": "object"
+    },
+    "RedTeamFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "ALTERNATIVE_CAUSAL_MODEL",
+            "EVIDENCE_DEPENDENCE",
+            "EXPOSURE",
+            "THERAPEUTIC_WINDOW",
+            "STANDARD_OF_CARE",
+            "RIGHTS_CONTROL",
+            "EXECUTION",
+            "ECONOMICS",
+            "OTHER"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SnapshotRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "finding_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "materiality": {
+          "$ref": "#/$defs/Materiality"
+        },
+        "statement": {
+          "maxLength": 4000,
+          "minLength": 3,
+          "title": "Statement",
+          "type": "string"
+        },
+        "unresolved": {
+          "title": "Unresolved",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "finding_id",
+        "category",
+        "statement",
+        "materiality",
+        "unresolved"
+      ],
+      "title": "RedTeamFinding",
+      "type": "object"
+    },
+    "RedTeamReport": {
+      "additionalProperties": false,
+      "properties": {
+        "conclusion": {
+          "maxLength": 6000,
+          "minLength": 3,
+          "title": "Conclusion",
+          "type": "string"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/RedTeamFinding"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "report_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Report Id",
+          "type": "string"
+        },
+        "reviewer_agent_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Reviewer Agent Id",
+          "type": "string"
+        },
+        "submitted_at": {
+          "format": "date-time",
+          "title": "Submitted At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "report_id",
+        "reviewer_agent_id",
+        "findings",
+        "conclusion"
+      ],
+      "title": "RedTeamReport",
+      "type": "object"
+    },
+    "ResolutionOutcome": {
+      "enum": [
+        "ACCEPTED",
+        "PARTIAL",
+        "REJECTED",
+        "UNRESOLVED"
+      ],
+      "title": "ResolutionOutcome",
+      "type": "string"
+    },
+    "Route": {
+      "enum": [
+        "UNSELECTED",
+        "EXISTING_ASSET",
+        "REPOSITIONING",
+        "ASSET_RESCUE",
+        "TARGET_RESCUE",
+        "TRIAL_RESCUE",
+        "COMBINATION",
+        "KNOWN_TARGET_NEW_CANDIDATE",
+        "NOVEL_TARGET_DE_NOVO",
+        "INBOUND_DILIGENCE"
+      ],
+      "title": "Route",
+      "type": "string"
+    },
+    "RuleResult": {
+      "additionalProperties": false,
+      "properties": {
+        "explanation": {
+          "maxLength": 2000,
+          "minLength": 3,
+          "title": "Explanation",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "rule_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Rule Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "passed",
+        "explanation"
+      ],
+      "title": "RuleResult",
+      "type": "object"
+    },
+    "SessionPhase": {
+      "enum": [
+        "CONSTITUTED",
+        "EVIDENCE_FROZEN",
+        "BLIND_OPINIONS",
+        "CLAIMS_REVEALED",
+        "CHALLENGES",
+        "RESPONSES",
+        "RED_TEAM",
+        "FINAL_CASE_STATUSES",
+        "ARBITRATION",
+        "AWAITING_HUMAN_APPROVAL",
+        "COMMITTED",
+        "RETURNED",
+        "VOID"
+      ],
+      "title": "SessionPhase",
+      "type": "string"
+    },
+    "SnapshotRef": {
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Digest",
+          "type": "string"
+        },
+        "object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "object_id",
+        "version",
+        "digest"
+      ],
+      "title": "SnapshotRef",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "approval": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Approval"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "approval_request": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ApprovalRequest"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "arbitration_result": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ArbitrationResult"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "audit_event": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AuditEvent"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "case_opinion": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CaseOpinion"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "challenge": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Challenge"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "challenge_resolution": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ChallengeResolution"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "challenge_response": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ChallengeResponse"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "council_session": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CouncilSession"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "council_session_view": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CouncilSessionView"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "final_case_assessment": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FinalCaseAssessment"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "gate_decision": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GateDecision"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "gate_packet": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GatePacket"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "gate_packet_inputs": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GatePacketInputs"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "program_record": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProgramRecord"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "red_team_report": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RedTeamReport"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "title": "FoundryCouncilSchemaBundle",
+  "type": "object"
+}
