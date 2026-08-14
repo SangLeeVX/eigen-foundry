@@ -1055,6 +1055,17 @@
         "gate_policy": {
           "$ref": "#/$defs/SnapshotRef"
         },
+        "gate_policy_artifact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GatePolicyArtifact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "hold_expiry": {
           "anyOf": [
             {
@@ -1720,6 +1731,27 @@
       "title": "GatePacketInputs",
       "type": "object"
     },
+    "GatePolicyArtifact": {
+      "additionalProperties": false,
+      "description": "Immutable, content-addressed representation of an executable gate policy.",
+      "properties": {
+        "canonical_payload": {
+          "maxLength": 100000,
+          "minLength": 2,
+          "title": "Canonical Payload",
+          "type": "string"
+        },
+        "snapshot": {
+          "$ref": "#/$defs/SnapshotRef"
+        }
+      },
+      "required": [
+        "snapshot",
+        "canonical_payload"
+      ],
+      "title": "GatePolicyArtifact",
+      "type": "object"
+    },
     "Materiality": {
       "enum": [
         "NON_MATERIAL",
@@ -1877,6 +1909,17 @@
           "anyOf": [
             {
               "$ref": "#/$defs/SnapshotRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "gate_policy_artifact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GatePolicyArtifact"
             },
             {
               "type": "null"

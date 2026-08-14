@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 from datetime import datetime, timezone
 from enum import StrEnum
 from typing import Annotated, Any, Literal
@@ -164,6 +166,41 @@ class SnapshotRef(FrozenModel):
     object_id: StableId
     version: Annotated[int, Field(ge=1)]
     digest: Digest
+
+
+class GatePolicyArtifact(FrozenModel):
+    """Immutable, content-addressed representation of an executable gate policy."""
+
+    snapshot: SnapshotRef
+    canonical_payload: Annotated[str, Field(min_length=2, max_length=100_000)]
+
+    @model_validator(mode="after")
+    def content_matches_snapshot(self) -> "GatePolicyArtifact":
+        try:
+            payload = json.loads(self.canonical_payload)
+        except json.JSONDecodeError as exc:
+            raise ValueError("gate-policy artifact payload must be valid JSON") from exc
+        if not isinstance(payload, dict):
+            raise ValueError("gate-policy artifact payload must be a JSON object")
+        canonical = json.dumps(
+            payload,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+        )
+        if canonical != self.canonical_payload:
+            raise ValueError("gate-policy artifact payload must use canonical JSON encoding")
+        digest = f"sha256:{hashlib.sha256(canonical.encode()).hexdigest()}"
+        if digest != self.snapshot.digest:
+            raise ValueError("gate-policy artifact digest does not match its canonical content")
+        if payload.get("policy_id") != self.snapshot.object_id:
+            raise ValueError("gate-policy artifact ID does not match its snapshot")
+        if payload.get("version") != self.snapshot.version:
+            raise ValueError("gate-policy artifact version does not match its snapshot")
+        return self
+
+    def payload(self) -> dict[str, Any]:
+        return json.loads(self.canonical_payload)
 
 
 class EvidenceManifest(FrozenModel):
@@ -436,6 +473,7 @@ class DecisionCharter(FrozenModel):
     risk_register: SnapshotRef
     standard_of_care: SnapshotRef
     gate_policy: SnapshotRef
+    gate_policy_artifact: GatePolicyArtifact | None = None
     proposed_outputs: ProposedProgramOutputs = Field(default_factory=ProposedProgramOutputs)
     proposed_route: Route | None = None
     session_deadline: AwareDatetime
@@ -538,6 +576,7 @@ class ProgramPointers(FrozenModel):
     risk_register: SnapshotRef | None = None
     standard_of_care: SnapshotRef | None = None
     gate_policy: SnapshotRef | None = None
+    gate_policy_artifact: GatePolicyArtifact | None = None
 
 
 class ProgramCaseState(FrozenModel):
