@@ -1,6 +1,6 @@
 name: Forge work item
 description: Propose one bounded, testable software change for the governed Forge loop.
-title: "[FWI-Px-nnn] "
+title: "[FWI-Mx-nnn] "
 labels: []
 body:
   - type: markdown
@@ -12,24 +12,26 @@ body:
     id: work_item_id
     attributes:
       label: Work-item ID
-      description: Use the next durable ID in the form FWI-P2-001.
-      placeholder: FWI-P2-001
+      description: Use the next durable ID in the form FWI-M2-001. Existing FWI-P IDs remain historical.
+      placeholder: FWI-M2-001
     validations:
       required: true
 
   - type: dropdown
-    id: phase
+    id: milestone
     attributes:
-      label: Delivery phase
+      label: Product build milestone
       options:
-        - P0 — Secure baseline
-        - P1 — Repair kernel
-        - P2 — Forge Lite
-        - P3 — Foundry Ledger/API
-        - P4 — Conclave v1
-        - P5 — Eigen integration
-        - P6 — Closed Foundry loop
-        - P7 — Production expansion
+        - M0 — Approved mandate
+        - M1 — Trustworthy foundation
+        - M2 — Persistent Foundry core
+        - M3 — Synthetic Conclave harness
+        - M4 — Working Conclave
+        - M5 — Working Foundry MVP
+        - M6 — Eigen-grounded F0-F2
+        - M7 — Preclinical complete-program lifecycle
+        - M8 — Development lifecycle support
+        - M9 — Production qualification
     validations:
       required: true
 

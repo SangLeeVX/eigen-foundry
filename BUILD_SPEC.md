@@ -1,8 +1,8 @@
 # Eigen Foundry build specification
 
-**Build:** `EIGEN-FOUNDRY-B0`  
+**Build mandate:** `BUILD-EIGEN-FOUNDRY-003`  
 **Classification:** `NONCANONICAL ENGINEERING DRAFT`  
-**Scope:** governance kernel, Forge Lite delivery loop, and evidence-backed build checkpoints
+**Scope:** governance kernel, Forge Lite delivery loop, and evidence-backed M0–M9 product milestones
 
 This specification governs software delivery. It does not approve a therapeutic program, promote scientific evidence, authorize spend, or change a formal Foundry stage.
 
@@ -14,7 +14,7 @@ Produce a private, reproducible, auditable control plane with three distinct res
 - **Foundry** holds versioned program, evidence-pointer, task, approval, and decision state.
 - **Conclave** performs bounded, independently challenged deliberation inside Foundry; deterministic policy decides admissibility and humans approve protected decisions.
 
-The current repository is only the F0 governance kernel and a SQLite development ledger. All wider capabilities remain unverified until their phase exit evidence is committed.
+The current repository is only an F0 governance kernel and a SQLite development ledger inside `M1 — Trustworthy foundation / PARTIAL`. It is not a working Conclave or Foundry.
 
 ## Non-negotiable invariants
 
@@ -25,7 +25,7 @@ The current repository is only the F0 governance kernel and a SQLite development
 5. Model output is untrusted proposal data. A deterministic policy service remains the only admissibility authority; a restricted commit service remains the only stage-change path.
 6. Credentials live only in an approved secret manager or GitHub encrypted secrets. Never copy secrets from chat, issues, logs, fixtures, commits, or pull-request text.
 7. Exposed credentials are treated as revoked. Integration stays blocked until a human rotates and installs replacements.
-8. Checkpoint completion requires committed evidence for every exit criterion. Narrative claims do not satisfy a gate.
+8. Milestone completion requires committed evidence for every exit criterion, completed dependencies, and no applicable open blocker. Narrative claims do not satisfy a gate.
 9. Unknown evidence remains `UNKNOWN`; it is never represented as a measured null or an inferred pass.
 10. Failures, dissent, nulls, retries, and rollback evidence are preserved and attributable.
 
@@ -45,7 +45,7 @@ make check
 ```text
 GitHub issue -> work-item JSON -> isolated branch -> bounded implementation
              -> deterministic validation -> independent review -> draft PR
-             -> human-protected merge -> checkpoint evidence update
+             -> human-protected merge -> milestone evidence update
 ```
 
 Each loop iteration must:
@@ -57,13 +57,13 @@ Each loop iteration must:
 5. Run every declared validation command and attach exact command, result, commit SHA, and artifact pointer.
 6. Open or update a draft pull request. A different actor/run performs review.
 7. Retry only idempotent operations, within the item's retry budget. Preserve the terminal failure reason.
-8. Update a phase checkpoint only after its evidence is present on the protected baseline.
+8. Update a milestone checkpoint only after its evidence is present on the protected baseline.
 
 The loop is resumable because durable state is in GitHub. It must not depend on a long-lived local process or remembered chat context.
 
-## B0 secure-baseline exit
+## M1 trustworthy-foundation exit
 
-B0 is complete only when all of these are verified on `main`:
+M1 is complete only when all of these are verified on the protected baseline:
 
 - recovered source is committed to the intended private repository;
 - a clean checkout installs and passes tests on Python 3.12;
@@ -71,9 +71,12 @@ B0 is complete only when all of these are verified on `main`:
 - branch protection and required review/check settings are recorded;
 - exposed DeepSeek and EigenField credentials are rotated and replacements exist only in an approved secret store;
 - no secret exists in repository history;
-- the checkpoint record contains commit- and run-addressable evidence.
+- all four audited semantic defects fail closed with deterministic regressions;
+- one authorized Forge item reaches independent review without another prompt;
+- forced crash, lease expiry, resume, replay, protected-path refusal, kill switch, and budget controls pass; and
+- the milestone record contains commit- and run-addressable evidence.
 
-Until then, B0 remains `IN_PROGRESS` and live integrations remain blocked.
+Until then, M1 remains `PARTIAL` and live integrations remain blocked.
 
 ## Failure and recovery
 
@@ -86,4 +89,4 @@ Until then, B0 remains `IN_PROGRESS` and live integrations remain blocked.
 
 ## Evidence format
 
-Phase truth lives in `forge/state/checkpoints.json`. An exit criterion can be `VERIFIED` only when its `evidence` array names durable artifacts such as a commit SHA, Actions run URL/ID, pull request, signed approval record, or security report. Local-only output is supporting evidence, never final phase proof.
+Milestone truth lives in `forge/state/checkpoints.json`. An exit criterion can be `VERIFIED` only when its typed evidence binds the criterion and exact immutable revision. Local output, chat, and unmerged draft claims are supporting context, never final milestone proof. Software milestones never change therapeutic Program stages `F0`–`F12`.
