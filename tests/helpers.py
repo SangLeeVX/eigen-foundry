@@ -186,6 +186,7 @@ def create_program_and_session(
         risk_register=pointers.risk_register,
         standard_of_care=pointers.standard_of_care,
         gate_policy=pointers.gate_policy,
+        gate_policy_artifact=program.current_versions.gate_policy_artifact,
         session_deadline=datetime.now(timezone.utc) + timedelta(days=1),
     )
     session = service.create_session(
