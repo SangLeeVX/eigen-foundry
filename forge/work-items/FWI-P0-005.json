@@ -1,0 +1,62 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-P0-005",
+  "milestone_id": "M1",
+  "legacy_phase_id": "P0",
+  "title": "Enforce the F0 route invariant at every boundary",
+  "status": "IMPLEMENTED",
+  "source": {
+    "github_issue": 6,
+    "created_by": "human-approved-foundry-build-loop",
+    "created_at": "2026-08-14T16:55:00Z"
+  },
+  "objective": "Reject any F0 Program whose route is not UNSELECTED at model construction, schema validation, and Ledger persistence boundaries.",
+  "dependencies": [
+    "FWI-P0-001@cb02bc2c83b2d163a7d51c9466247ebdb6bc3772"
+  ],
+  "allowed_paths": [
+    "src/foundry_council/models.py",
+    "src/foundry_council/service.py",
+    "src/foundry_council/ledger.py",
+    "src/foundry_council/**",
+    "schemas/**",
+    "tests/**",
+    "forge/work-items/FWI-P0-005.json"
+  ],
+  "forbidden_actions": [
+    "read or reuse credentials from chat",
+    "commit directly to a protected baseline",
+    "self-approve or self-merge",
+    "change a formal Foundry Program stage",
+    "authorize scientific, clinical, spending, outreach, transaction, or production action"
+  ],
+  "acceptance_criteria": [
+    {"criterion_id": "FWI-P0-005-A1", "description": "Direct model construction of F0 with a preselected route fails.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-005-A2", "description": "Schema-level validation of F0 with a preselected route fails.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-005-A3", "description": "Direct Ledger/persistence insertion cannot bypass the invariant.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-005-A4", "description": "A governed later-stage route selection remains representable.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-005-A5", "description": "Existing tests and schema-drift validation remain green.", "status": "PENDING", "evidence": []}
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 forge/validate_contracts.py",
+    "PYTHONPATH=src python3 -m unittest discover -s tests -t . -v",
+    "python3 scripts/export_schemas.py && git diff --exit-code -- schemas/",
+    "PIP_NO_INDEX=1 python3 -m pip wheel --no-deps --no-build-isolation . --wheel-dir dist"
+  ],
+  "risk_class": "MEDIUM",
+  "retry_policy": {"max_attempts": 2, "idempotent_only": true},
+  "claim": {
+    "run_id": "foundry-loop-f0-route-20260814",
+    "actor": "foundry-build-loop-agent",
+    "claimed_at": "2026-08-14T16:55:00Z",
+    "expires_at": "2026-08-14T20:55:00Z"
+  },
+  "review": {"independent_required": true, "author_may_approve": false, "review_evidence": []},
+  "protected_actions": [
+    "approve or merge the pull request",
+    "configure repository visibility or branch protection",
+    "rotate or install production credentials"
+  ],
+  "checkpoint_id": "CP-M1"
+}
