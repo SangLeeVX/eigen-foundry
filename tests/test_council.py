@@ -29,6 +29,7 @@ from foundry_council.models import (
     Disposition,
     EntryPoint,
     FinalCaseAssessment,
+    GatePolicyArtifact,
     Materiality,
     ProgramStage,
     RedTeamFinding,
@@ -407,6 +408,14 @@ class CouncilRuntimeTests(unittest.TestCase):
         migrated = self.service.migrate_program_policy_binding(program.program_id, migration_context)
         self.assertEqual(migrated.state_version, program.state_version + 1)
         self.assertEqual(migrated.current_versions.gate_policy, replacement.snapshot_ref())
+        self.assertEqual(
+            migrated.current_versions.gate_policy_artifact.snapshot,
+            replacement.snapshot_ref(),
+        )
+        self.assertEqual(
+            migrated.current_versions.gate_policy_artifact.payload(),
+            replacement.payload(),
+        )
         original = self.ledger.get_program_version(program.program_id, program.state_version)
         self.assertEqual(original.current_versions.gate_policy, DEFAULT_GATE_POLICY.snapshot_ref())
         self.assertEqual(
@@ -415,6 +424,49 @@ class CouncilRuntimeTests(unittest.TestCase):
         )
         replayed = self.service.migrate_program_policy_binding(program.program_id, migration_context)
         self.assertEqual(replayed.state_version, migrated.state_version)
+
+    def test_policy_artifact_is_stored_and_replays_after_active_policy_changes(self) -> None:
+        program, session = create_program_and_session(self.service)
+        artifact = program.current_versions.gate_policy_artifact
+        assert artifact is not None
+        self.assertEqual(artifact.snapshot, DEFAULT_GATE_POLICY.snapshot_ref())
+        self.assertEqual(artifact.payload(), DEFAULT_GATE_POLICY.payload())
+
+        session = run_to_final_cases(self.service, session)
+        self.service.gate_policy = GatePolicy(
+            policy_id="policy-foundry-council-v0.2",
+            version=2,
+            enabled_gates=frozenset(),
+        )
+        session = self.service.arbitrate(
+            session.session_id,
+            "arbitration-bound-policy-replay",
+            "packet-bound-policy-replay",
+            command(
+                "policy-engine",
+                session.state_version,
+                "cmd-bound-policy-replay",
+                kind=ActorKind.SERVICE,
+            ),
+        )
+        self.assertTrue(session.arbitration.eligible)
+        self.assertEqual(session.charter.gate_policy_artifact, artifact)
+
+    def test_missing_or_tampered_policy_artifact_fails_closed(self) -> None:
+        _, session = create_program_and_session(self.service)
+        artifact = session.charter.gate_policy_artifact
+        assert artifact is not None
+        tampered = GatePolicyArtifact.model_construct(
+            snapshot=artifact.snapshot,
+            canonical_payload=artifact.canonical_payload.replace(
+                '"enabled_gates":["F0"]',
+                '"enabled_gates":[]',
+            ),
+        )
+        with self.assertRaises(ValidationFailure):
+            self.service._policy_from_artifact(tampered)
+        with self.assertRaises(ValidationFailure):
+            self.service._policy_from_artifact(None)
 
     def test_unresolved_red_team_finding_and_attributed_dissent_block_advance(self) -> None:
         _, session = create_program_and_session(self.service)
