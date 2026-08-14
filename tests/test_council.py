@@ -364,6 +364,44 @@ class CouncilRuntimeTests(unittest.TestCase):
                 gate_impact="Prevents missing evidence from being reported as a result.",
             )
 
+    def test_unknown_claim_blocks_advance_despite_pass_assessment(self) -> None:
+        _, session = create_program_and_session(self.service)
+        session = run_to_final_cases(
+            self.service,
+            session,
+            claim_state_by_case={CaseType.SCIENTIFIC: ClaimState.UNKNOWN},
+        )
+
+        self.assertEqual(
+            next(item for item in session.final_cases if item.case is CaseType.SCIENTIFIC).status,
+            CaseStatus.PASS,
+        )
+        session = self.service.arbitrate(
+            session.session_id,
+            "arbitration-unknown-pass",
+            "packet-unknown-pass",
+            command(
+                "policy-engine",
+                session.state_version,
+                "cmd-unknown-pass-arbitrate",
+                kind=ActorKind.SERVICE,
+            ),
+        )
+
+        self.assertFalse(session.arbitration.eligible)
+        self.assertEqual(session.phase, SessionPhase.RETURNED)
+        self.assertIn(
+            "Frozen council evidence contains UNKNOWN claims: "
+            "claim-session-f0-alpha-scientific.",
+            session.arbitration.blockers,
+        )
+        rule = next(
+            item
+            for item in session.arbitration.rules
+            if item.rule_id == "RULE.EVIDENCE.NO_UNKNOWN_CLAIMS"
+        )
+        self.assertFalse(rule.passed)
+
     def test_f0_program_creation_rejects_formal_route_selection(self) -> None:
         program, _ = create_program_and_session(self.service)
         with self.assertRaises(ValidationFailure):
