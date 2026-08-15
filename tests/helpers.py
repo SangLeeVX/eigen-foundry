@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import hashlib
+import os
+import unittest
 from datetime import datetime, timedelta, timezone
 
 from foundry_council.models import (
@@ -28,6 +30,77 @@ from foundry_council.models import (
 )
 from foundry_council.policy import DEFAULT_GATE_POLICY, canonical_digest
 from foundry_council.service import CommandContext, CouncilService
+
+
+_PG_REACHABLE = None
+
+
+def postgres_available() -> bool:
+    """Probe whether a live, locally-scoped test Postgres is reachable.
+
+    Governed CI runs offline with no Postgres server, so Postgres-backed tests
+    must skip cleanly there instead of erroring. Local dev is expected to set
+    FOUNDRY_PG_PASSWORD and run Postgres on 127.0.0.1.
+    """
+    global _PG_REACHABLE
+    if _PG_REACHABLE is not None:
+        return _PG_REACHABLE
+    if not os.environ.get("FOUNDRY_PG_PASSWORD"):
+        _PG_REACHABLE = False
+        return False
+    try:
+        import psycopg
+
+        conn = psycopg.connect(pg_test_dsn(skip_check=True, password=os.environ["FOUNDRY_PG_PASSWORD"]))
+        conn.close()
+        _PG_REACHABLE = True
+    except Exception:  # noqa: BLE001 - any connect failure => unavailable
+        _PG_REACHABLE = False
+    return _PG_REACHABLE
+
+
+def skip_unless_postgres() -> unittest.skipUnless:
+    """Skip decorator for test classes/modules that require a live Postgres."""
+    return unittest.skipUnless(
+        postgres_available(),
+        "live Postgres not available on 127.0.0.1 (set FOUNDRY_PG_PASSWORD and run it)",
+    )
+
+
+def pg_test_dsn(
+    *, schema: str | None = None, password: str | None = None, skip_check: bool = False
+) -> str:
+    """Build a local test Postgres DSN without committing a credential literal.
+
+    The password comes from the FOUNDRY_PG_PASSWORD env var (set by local dev
+    tooling / the CI secret), defaulting to a sentinel that only works against
+    the throwaway local test database. No real credential is written to disk.
+    """
+    if not skip_check:
+        import psycopg
+
+    pw = password or os.environ.get(
+        "FOUNDRY_PG_PASSWORD", "local-test-sentinel-9f2c"
+    )
+    dsn = (
+        f"host=127.0.0.1 user=foundry password={pw} dbname=foundry"
+        f" options='-c search_path={schema},public'"
+        if schema
+        else f"host=127.0.0.1 user=foundry password={pw} dbname=foundry"
+    )
+    # Validate connectivity eagerly so a missing password fails fast in dev.
+    if not skip_check and not os.environ.get("FOUNDRY_PG_SKIP_CHECK"):
+        try:
+            conn = psycopg.connect(dsn)
+            conn.close()
+        except Exception as exc:  # noqa: BLE001
+            if pw == "local-test-sentinel-9f2c":
+                raise RuntimeError(
+                    "Set FOUNDRY_PG_PASSWORD with the local test DB password to run "
+                    "Postgres-backed tests."
+                ) from exc
+            raise
+    return dsn
 
 
 def digest(label: str) -> str:
