@@ -22,6 +22,8 @@ jobs:
       - name: Check out without persisted credentials
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
+          fetch-depth: 0
+          fetch-tags: true
           persist-credentials: false
 
       - name: Set up Python
@@ -33,6 +35,9 @@ jobs:
 
       - name: Scan repository files for likely secrets
         run: python3 forge/check_secrets.py
+
+      - name: Scan reachable Git history for likely secrets
+        run: python3 scripts/check_git_history.py
 
       - name: Install locked CI dependencies and package
         run: |
