@@ -438,12 +438,11 @@ class ForgeCheckpointMigrationTests(unittest.TestCase):
         self.assert_invalid(malformed, "resolved blocker requires durable evidence")
 
     def test_pending_and_active_statuses_require_merge_evidence(self) -> None:
-        # Post-activation baseline: migration ACTIVE, M0 COMPLETED. A downstream
-        # milestone cannot be started before its dependency is complete.
+        # Post-activation baseline: migration ACTIVE, M0 COMPLETED, M1 IN_PROGRESS.
+        # A downstream milestone cannot be started before its dependency completes.
         malformed = copy.deepcopy(self.document)
-        malformed["milestones"][1]["status"] = "IN_PROGRESS"
-        malformed["milestones"][1]["exit_criteria"][0]["status"] = "VERIFIED"
-        self.assert_invalid(malformed, "criterion PENDING|VERIFIED")
+        malformed["milestones"][2]["status"] = "IN_PROGRESS"  # M2; dep M1 not completed
+        self.assert_invalid(malformed, "work cannot start before dependencies complete")
         # The mandate evidence binding must be preserved even in ACTIVE state.
         malformed = copy.deepcopy(self.document)
         malformed["milestones"][0]["exit_criteria"][0]["status"] = "VERIFIED"
