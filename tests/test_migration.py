@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sqlite3
 import tempfile
 import unittest
@@ -157,6 +158,42 @@ class TestBuildLedger(unittest.TestCase):
             ledger = build_ledger(path)
             self.assertIsInstance(ledger, SQLiteLedger)
 
+    def test_build_ledger_none_defaults_to_sqlite_without_env(self) -> None:
+        import os
+        from unittest import mock
+
+        from foundry_council import build_ledger as bl
+
+        with tempfile.TemporaryDirectory() as tmp:
+            prev = os.getcwd()
+            os.chdir(tmp)
+            try:
+                with mock.patch.dict(os.environ, {}, clear=False):
+                    os.environ.pop("FOUNDRY_LEDGER_DSN", None)
+                    ledger = bl(None)  # -> SQLite default in this cwd
+                self.assertIsInstance(ledger, SQLiteLedger)
+            finally:
+                os.chdir(prev)
+
+    @skip_unless_postgres()
+    def test_build_ledger_env_dsn_promotes_to_postgres(self) -> None:
+        import os
+        import psycopg
+        from unittest import mock
+
+        from foundry_council import build_ledger as bl
+
+        schema = _new_schema()
+        dsn = _dsn(schema)
+        try:
+            with mock.patch.dict(os.environ, {"FOUNDRY_LEDGER_DSN": dsn}, clear=True):
+                ledger = bl(None)
+            self.assertIsInstance(ledger, PostgresLedger)
+        finally:
+            conn = psycopg.connect(pg_test_dsn(), autocommit=True)
+            conn.execute(f'DROP SCHEMA IF EXISTS "{schema}" CASCADE')
+            conn.close()
+
     @skip_unless_postgres()
     def test_build_ledger_postgres_dsn(self) -> None:
         import psycopg
@@ -170,6 +207,71 @@ class TestBuildLedger(unittest.TestCase):
             conn = psycopg.connect(pg_test_dsn(), autocommit=True)
             conn.execute(f'DROP SCHEMA IF EXISTS "{schema}" CASCADE')
             conn.close()
+
+
+@skip_unless_postgres()
+class TestPromoteRunbook(MigrationBase):
+    """End-to-end coverage of scripts/promote_ledger.py cutover."""
+
+    def test_promote_script_migrates_and_emits(self) -> None:
+        import subprocess
+        import sys
+        from pathlib import Path
+
+        root = Path(__file__).resolve().parents[1]
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            # seed a SQLite ledger
+            from foundry_council.ledger import SQLiteLedger
+            from foundry_council.models import AuditEvent, ProgramRecord
+
+            sqlite_path = tmp / "src.db"
+            src = SQLiteLedger(str(sqlite_path))
+            prog = ProgramRecord(
+                program_id="PROMO_T",
+                title="Promo Test",
+                conversation_key="conv_promo_t",
+            )
+            src.create_program(
+                prog,
+                AuditEvent(
+                    event_id="evt_promo_t",
+                    idempotency_key="key_promo_t",
+                    aggregate_type="PROGRAM",
+                    aggregate_id=prog.program_id,
+                    aggregate_version=1,
+                    actor_id="actor_t",
+                    actor_kind="AGENT",
+                    action="CREATE",
+                    reason="promo test",
+                ),
+            )
+
+            emit = tmp / "dsn.env"
+            script = root / "scripts" / "promote_ledger.py"
+            env = dict(os.environ)
+            env["FOUNDRY_LEDGER_DSN"] = pg_test_dsn()
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(script),
+                    "--sqlite",
+                    str(sqlite_path),
+                    "--emit-dsn",
+                    str(emit),
+                ],
+                capture_output=True,
+                text=True,
+                env=env,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("programs: 1", result.stdout)
+            self.assertTrue(emit.exists())
+            self.assertIn("FOUNDRY_LEDGER_DSN=", emit.read_text())
+        finally:
+            import shutil
+
+            shutil.rmtree(tmp, ignore_errors=True)
 
 
 if __name__ == "__main__":

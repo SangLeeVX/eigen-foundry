@@ -10,7 +10,12 @@ from psycopg import Connection
 from psycopg.rows import dict_row
 
 from .errors import IdempotencyKeyReused, NotFound, StateConflict
-from .ledger import _assert_f0_route_invariant, _dissent_canonical, _dissent_digest
+from .ledger import (
+    _assert_f0_route_invariant,
+    _assert_single_commit_path,
+    _dissent_canonical,
+    _dissent_digest,
+)
 from .models import (
     Approval,
     AuditEvent,
@@ -409,6 +414,22 @@ class PostgresLedger:
             raise NotFound("program not found", program_id=program_id)
         return ProgramRecord.model_validate_json(row["payload_json"])
 
+    def list_program_ids(self) -> tuple[str, ...]:
+        """Report the durable set of Program aggregate IDs (operator-visible state)."""
+        with self._connection() as connection:
+            rows = connection.execute(
+                "SELECT program_id FROM programs ORDER BY program_id"
+            ).fetchall()
+        return tuple(r["program_id"] for r in rows)
+
+    def list_session_ids(self) -> tuple[str, ...]:
+        """Report the durable set of Council session aggregate IDs."""
+        with self._connection() as connection:
+            rows = connection.execute(
+                "SELECT session_id FROM council_sessions ORDER BY session_id"
+            ).fetchall()
+        return tuple(r["session_id"] for r in rows)
+
     def save_program(
         self, program: ProgramRecord, expected_version: int, event: AuditEvent
     ) -> ProgramRecord:
@@ -417,11 +438,15 @@ class PostgresLedger:
             if self._idempotent_replay(connection, event):
                 return self.get_program(program.program_id)
             row = connection.execute(
-                "SELECT state_version FROM programs WHERE program_id = %s FOR UPDATE",
+                "SELECT state_version, payload_json FROM programs WHERE program_id = %s FOR UPDATE",
                 (program.program_id,),
             ).fetchone()
             if row is None:
                 raise NotFound("program not found", program_id=program.program_id)
+            _assert_single_commit_path(
+                ProgramRecord.model_validate_json(row["payload_json"]),
+                program,
+            )
             if row["state_version"] != expected_version or program.state_version != expected_version + 1:
                 raise StateConflict(
                     "program changed after it was read",
