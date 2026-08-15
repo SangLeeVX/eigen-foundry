@@ -1,0 +1,114 @@
+name: Forge work item
+description: Propose one bounded, testable software change for the governed Forge loop.
+title: "[FWI-Mx-nnn] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        One issue is one objective. Never include credentials, proprietary datasets, transaction terms, or raw molecular files.
+
+  - type: input
+    id: work_item_id
+    attributes:
+      label: Work-item ID
+      description: Use the next durable ID in the form FWI-M2-001. Existing FWI-P IDs remain historical.
+      placeholder: FWI-M2-001
+    validations:
+      required: true
+
+  - type: dropdown
+    id: milestone
+    attributes:
+      label: Product build milestone
+      options:
+        - M0 — Approved mandate
+        - M1 — Trustworthy foundation
+        - M2 — Persistent Foundry core
+        - M3 — Synthetic Conclave harness
+        - M4 — Working Conclave
+        - M5 — Working Foundry MVP
+        - M6 — Eigen-grounded F0-F2
+        - M7 — Preclinical complete-program lifecycle
+        - M8 — Development lifecycle support
+        - M9 — Production qualification
+    validations:
+      required: true
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: Single objective
+      description: State the one observable outcome this item owns.
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and canonical inputs
+      description: List work-item IDs, commit SHAs, approved interfaces, and immutable input versions. Use "none" when empty.
+    validations:
+      required: true
+
+  - type: textarea
+    id: paths
+    attributes:
+      label: Allowed paths
+      description: List the only paths the implementing run may change.
+      placeholder: |
+        - src/component/**
+        - tests/test_component.py
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Use independently observable, deterministic pass/fail criteria.
+      placeholder: |
+        - [ ] A1: ...
+        - [ ] A2: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation commands
+      description: Give exact commands and required CI checks.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Risk class
+      options:
+        - LOW
+        - MEDIUM
+        - HIGH
+        - PROTECTED
+    validations:
+      required: true
+
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Forbidden and protected actions
+      description: Identify security, authority, integration, data, merge, and human-approval boundaries.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: controls
+    attributes:
+      label: Control acknowledgements
+      options:
+        - label: This item contains no credential or secret copied from chat, logs, or local configuration.
+          required: true
+        - label: The authoring run will not be its sole reviewer or approve/merge its own change.
+          required: true
+        - label: This item cannot approve a program gate, evidence promotion, spend, outreach, transaction, production action, or clinical use.
+          required: true

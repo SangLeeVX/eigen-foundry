@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0.0",
+  "project": "Eigen Foundry",
+  "canonical_repository": "SangLeeVX/eigen-foundry",
+  "classification": "NONCANONICAL_ENGINEERING_STATE",
+  "updated_at": "2026-08-14T06:10:34Z",
+  "phases": [
+    {
+      "phase_id": "P0",
+      "checkpoint_id": "CP-P0",
+      "name": "Secure baseline",
+      "status": "IN_PROGRESS",
+      "exit_criteria": [
+        {"criterion_id": "P0-C1", "description": "Recovered source is committed on the intended private repository baseline.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "P0-C2", "description": "A clean Python 3.12 checkout installs, tests, and builds reproducibly.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "P0-C3", "description": "Required CI and independent review controls pass on the protected baseline.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "P0-C4", "description": "Current files and repository history contain no credential material.", "status": "PENDING", "evidence": []},
+        {"criterion_id": "P0-C5", "description": "Previously exposed DeepSeek and EigenField credentials are rotated and replacements are stored only in an approved secret store.", "status": "BLOCKED", "evidence": []}
+      ]
+    },
+    {
+      "phase_id": "P1",
+      "checkpoint_id": "CP-P1",
+      "name": "Repair kernel",
+      "status": "PENDING",
+      "exit_criteria": [
+        {"criterion_id": "P1-C1", "description": "Four known integrity defects have regression tests and reviewed fixes.", "status": "PENDING", "evidence": []}
+      ]
+    },
+    {
+      "phase_id": "P2",
+      "checkpoint_id": "CP-P2",
+      "name": "Forge Lite",
+      "status": "PENDING",
+      "exit_criteria": [
+        {"criterion_id": "P2-C1", "description": "One ready work item reaches a reviewed pull request through claim, validation, retry/recovery, and evidence capture.", "status": "PENDING", "evidence": []}
+      ]
+    },
+    {
+      "phase_id": "P3",
+      "checkpoint_id": "CP-P3",
+      "name": "Foundry Ledger and API",
+      "status": "PENDING",
+      "exit_criteria": [
+        {"criterion_id": "P3-C1", "description": "The restricted commit service is the only server-controlled path that changes formal Program state.", "status": "PENDING", "evidence": []}
+      ]
+    },
+    {
+      "phase_id": "P4",
+      "checkpoint_id": "CP-P4",
+      "name": "Conclave v1",
+      "status": "PENDING",
+      "exit_criteria": [
+        {"criterion_id": "P4-C1", "description": "A synthetic F0 Crucible completes with independent challenge, deterministic policy, and human-gated commit.", "status": "PENDING", "evidence": []}
+      ]
+    },
+    {
+      "phase_id": "P5",
+      "checkpoint_id": "CP-P5",
+      "name": "Eigen integration",
+      "status": "PENDING",
+      "exit_criteria": [
+        {"criterion_id": "P5-C1", "description": "An authorized read-only evidence adapter binds immutable EigenField snapshots and separates predictions from observations.", "status": "PENDING", "evidence": []}
+      ]
+    },
+    {
+      "phase_id": "P6",
+      "checkpoint_id": "CP-P6",
+      "name": "Closed Foundry loop",
+      "status": "PENDING",
+      "exit_criteria": [
+        {"criterion_id": "P6-C1", "description": "Synthetic work order, QC/result, learn-back, and successor Conclave flow completes without automatic advancement.", "status": "PENDING", "evidence": []}
+      ]
+    },
+    {
+      "phase_id": "P7",
+      "checkpoint_id": "CP-P7",
+      "name": "Production expansion",
+      "status": "PENDING",
+      "exit_criteria": [
+        {"criterion_id": "P7-C1", "description": "Production acceptance, restore/rollback, soak, and two route dry-run evidence are independently reviewed.", "status": "PENDING", "evidence": []}
+      ]
+    }
+  ],
+  "blockers": [
+    {
+      "blocker_id": "BLK-P0-KEY-ROTATION",
+      "phase_id": "P0",
+      "type": "SECURITY",
+      "description": "Credentials previously exposed in chat must be revoked, rotated, and installed by an authorized human before live integration.",
+      "owner": "authorized credential owner",
+      "status": "OPEN"
+    },
+    {
+      "blocker_id": "BLK-P0-REPO-POLICY",
+      "phase_id": "P0",
+      "type": "AUTHORITY",
+      "description": "Private repository visibility, branch protection, required checks, and merge policy require repository-admin verification.",
+      "owner": "repository administrator",
+      "status": "OPEN"
+    }
+  ]
+}

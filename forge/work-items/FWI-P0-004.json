@@ -1,0 +1,69 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-P0-004",
+  "milestone_id": "M1",
+  "legacy_phase_id": "P0",
+  "title": "Persist immutable replayable policy artifacts",
+  "status": "IMPLEMENTED",
+  "source": {
+    "github_issue": 5,
+    "created_by": "human-approved-foundry-build-loop",
+    "created_at": "2026-08-14T07:16:42Z"
+  },
+  "objective": "Refresh the reviewed PR #13 repair onto the exact governed integration base so each policy binding carries immutable reconstructable content and historical evaluation fails closed when that content is missing, tampered, or incompatible.",
+  "dependencies": [
+    "FWI-P0-001@0f6ad76093b2ab19a9363c04be07c8d83ffc2469",
+    "FWI-P0-003@c848a458323988c2fff20af455baf24bfb68c94b",
+    "M0-migration-baseline@561b818586a3eef54b167bfd7198e5ff717af1b6"
+  ],
+  "allowed_paths": [
+    "src/foundry_council/models.py",
+    "src/foundry_council/service.py",
+    "schemas/foundry-council.schema.json",
+    "tests/helpers.py",
+    "tests/test_council.py",
+    "forge/work-items/FWI-P0-004.json"
+  ],
+  "forbidden_actions": [
+    "read or reuse credentials from chat",
+    "change the executable gate-policy semantics or activate a policy",
+    "change a formal Foundry Program stage, route, gate, evidence record, or checkpoint",
+    "weaken authentication, authorization, approval, audit, secret scanning, or deterministic policy controls",
+    "self-approve or self-merge",
+    "deploy or authorize scientific, clinical, spending, outreach, transaction, or regulated action"
+  ],
+  "acceptance_criteria": [
+    {"criterion_id": "FWI-P0-004-A1", "description": "Every new or migrated policy binding includes immutable canonical policy content whose SHA-256 digest matches its bound snapshot.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-004-A2", "description": "Historical arbitration reconstructs and evaluates the exact bound policy after the active service policy changes.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-004-A3", "description": "Missing, tampered, noncanonical, or incompatible policy artifacts fail closed.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-004-A4", "description": "Existing kernel, Forge contract, secret, schema-drift, and package-build checks remain green on the refreshed exact head.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-004-A5", "description": "A distinct reviewer evaluates the exact refreshed head and base before protected integration.", "status": "PENDING", "evidence": []}
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 forge/validate_contracts.py",
+    "PYTHONPATH=src python3 -m unittest discover -s tests -t . -v",
+    "python3 scripts/export_schemas.py && git diff --exit-code -- schemas/",
+    "PIP_NO_INDEX=1 python3 -m pip wheel --no-deps --no-build-isolation . --wheel-dir dist"
+  ],
+  "risk_class": "HIGH",
+  "retry_policy": {"max_attempts": 2, "idempotent_only": true},
+  "claim": {
+    "run_id": "foundry-codex-20260814-fwi-p0-004-refresh-v2",
+    "actor": "codex-authoring-run",
+    "claimed_at": "2026-08-14T12:14:12Z",
+    "expires_at": "2026-08-14T16:14:12Z"
+  },
+  "review": {
+    "independent_required": true,
+    "author_may_approve": false,
+    "review_evidence": []
+  },
+  "protected_actions": [
+    "approve or merge the pull request",
+    "activate M0 or update a milestone checkpoint",
+    "change repository protection, credentials, policy, or a therapeutic Program record",
+    "deploy or authorize external action"
+  ],
+  "checkpoint_id": "CP-M1"
+}

@@ -1,0 +1,63 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-P0-006",
+  "milestone_id": "M1",
+  "legacy_phase_id": "P0",
+  "title": "Make current dissent storage immutable",
+  "status": "IMPLEMENTED",
+  "source": {
+    "github_issue": 7,
+    "created_by": "human-approved-foundry-build-loop",
+    "created_at": "2026-08-14T17:05:00Z"
+  },
+  "objective": "Ensure dissent accepted into the live aggregate cannot be removed, replaced, or rewritten while preserving attributable historical versions.",
+  "dependencies": [
+    "FWI-P0-001@cb02bc2c83b2d163a7d51c9466247ebdb6bc3772"
+  ],
+  "allowed_paths": [
+    "src/foundry_council/models.py",
+    "src/foundry_council/service.py",
+    "src/foundry_council/ledger.py",
+    "src/foundry_council/**",
+    "schemas/**",
+    "tests/**",
+    "forge/work-items/FWI-P0-006.json"
+  ],
+  "forbidden_actions": [
+    "read or reuse credentials from chat",
+    "commit directly to a protected baseline",
+    "self-approve or self-merge",
+    "delete or rewrite immutable historical records",
+    "change a formal Foundry Program stage",
+    "authorize scientific, clinical, spending, outreach, transaction, or production action"
+  ],
+  "acceptance_criteria": [
+    {"criterion_id": "FWI-P0-006-A1", "description": "Attempted removal or rewrite of accepted dissent fails closed.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-006-A2", "description": "Current aggregate state is reconciled from immutable attributable dissent records.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-006-A3", "description": "A regression covers the reviewed live-aggregate mutation path.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-006-A4", "description": "Existing kernel tests remain green.", "status": "PENDING", "evidence": []}
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 forge/validate_contracts.py",
+    "PYTHONPATH=src python3 -m unittest discover -s tests -t . -v",
+    "python3 scripts/export_schemas.py && git diff --exit-code -- schemas/",
+    "PIP_NO_INDEX=1 python3 -m pip wheel --no-deps --no-build-isolation . --wheel-dir dist"
+  ],
+  "risk_class": "MEDIUM",
+  "retry_policy": {"max_attempts": 2, "idempotent_only": true},
+  "claim": {
+    "run_id": "foundry-loop-immutable-dissent-20260814",
+    "actor": "foundry-build-loop-agent",
+    "claimed_at": "2026-08-14T17:05:00Z",
+    "expires_at": "2026-08-14T21:05:00Z"
+  },
+  "review": {"independent_required": true, "author_may_approve": false, "review_evidence": []},
+  "protected_actions": [
+    "delete or rewrite immutable historical records",
+    "approve or merge the pull request",
+    "configure repository visibility or branch protection",
+    "rotate or install production credentials"
+  ],
+  "checkpoint_id": "CP-M1"
+}

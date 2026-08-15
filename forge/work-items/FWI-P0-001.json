@@ -1,0 +1,61 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-P0-001",
+  "milestone_id": "M1",
+  "legacy_phase_id": "P0",
+  "title": "Bootstrap reproducible baseline and Forge Lite contracts",
+  "status": "READY",
+  "source": {
+    "github_issue": 1,
+    "created_by": "recovery-bootstrap",
+    "created_at": "2026-08-14T06:10:34Z"
+  },
+  "objective": "Commit the recovered F0 kernel with reproducible CI, security boundaries, and durable Forge work/checkpoint contracts.",
+  "dependencies": [],
+  "allowed_paths": [
+    ".github/**",
+    ".gitignore",
+    "AGENTS.md",
+    "BUILD_SPEC.md",
+    "Makefile",
+    "PLANS.md",
+    "README.md",
+    "docs/**",
+    "forge/**",
+    "pyproject.toml",
+    "requirements-ci.lock",
+    "schemas/**",
+    "scripts/**",
+    "src/**",
+    "tests/**"
+  ],
+  "forbidden_actions": [
+    "read or reuse credentials from chat",
+    "commit directly to a protected baseline",
+    "self-approve or self-merge",
+    "change a formal Foundry Program stage",
+    "authorize scientific, clinical, spending, outreach, transaction, or production action"
+  ],
+  "acceptance_criteria": [
+    {"criterion_id": "FWI-P0-001-A1", "description": "Build and agent control documents are present and internally consistent.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-001-A2", "description": "Unit tests, contract validation, secret scan, schema drift check, and wheel build pass in CI.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-P0-001-A3", "description": "A different actor/run reviews the draft pull request and required checks pass.", "status": "PENDING", "evidence": []}
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 forge/validate_contracts.py",
+    "PYTHONPATH=src python3 -m unittest discover -s tests -t . -v",
+    "python3 scripts/export_schemas.py && git diff --exit-code -- schemas/",
+    "PIP_NO_INDEX=1 python3 -m pip wheel --no-deps --no-build-isolation . --wheel-dir dist"
+  ],
+  "risk_class": "MEDIUM",
+  "retry_policy": {"max_attempts": 2, "idempotent_only": true},
+  "claim": null,
+  "review": {"independent_required": true, "author_may_approve": false, "review_evidence": []},
+  "protected_actions": [
+    "rotate or install production credentials",
+    "configure repository visibility or branch protection",
+    "approve or merge the pull request"
+  ],
+  "checkpoint_id": "CP-M1"
+}
