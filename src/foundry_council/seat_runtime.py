@@ -206,17 +206,23 @@ class SeatRuntime:
         expected_version: int | None,
         actor_kind: ActorKind | None = None,
         roles: frozenset[str] = frozenset(),
+        idempotency_key: str | None = None,
     ) -> CommandContext:
         """Build the CommandContext for this seat, stamped with its run identity.
 
         The returned context asserts only the seat's own actor/roles — never
-        another role or any authority beyond the assignment.
+        another role or any authority beyond the assignment. ``idempotency_key``
+        defaults to the seat's stable run key (correct for a single-command
+        seat); pass an explicit key when the same seat issues multiple distinct
+        commands (e.g. a case captain proposing a claim and later a case
+        determination) so idempotency stays scoped per command.
         """
         assignment = self.seat.assignment
+        key = idempotency_key or f"{assignment.run_id or assignment.assignment_id}:{self.seat.run_digest}"
         return CommandContext(
             actor_id=assignment.actor_id,
             actor_kind=actor_kind or assignment.actor_kind,
-            idempotency_key=f"{assignment.run_id or assignment.assignment_id}:{self.seat.run_digest}",
+            idempotency_key=key,
             expected_version=expected_version,
             reason=f"Working Conclave seat run {assignment.run_id or assignment.assignment_id} (model {assignment.model_version or 'n/a'})",
             principal_roles=frozenset({assignment.role}),

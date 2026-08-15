@@ -12,6 +12,7 @@ from .seat_runtime import (
 )
 from .service import CouncilService
 from .synthetic_conclave import SyntheticConclave
+from .working_conclave import WorkingConclave
 
 __all__ = [
     "CouncilService",
@@ -21,6 +22,7 @@ __all__ = [
     "migrate_sqlite_to_postgres",
     "OutboxDispatcher",
     "SyntheticConclave",
+    "WorkingConclave",
     "SeatRuntime",
     "SeatOutput",
     "bind_seat",

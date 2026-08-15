@@ -137,6 +137,18 @@ class TestCommandNoEscalation(unittest.TestCase):
         self.assertNotIn("foundry_commander", ctx.principal_roles)
         self.assertNotIn("policy_admin", ctx.principal_roles)
 
+    def test_command_distinct_idempotency_keys_per_command(self) -> None:
+        # A seat issuing multiple distinct commands must scope idempotency per
+        # command; the default run key is stable, but an explicit key overrides.
+        captain = bind_seat(_captain(CaseType.SCIENTIFIC), seed=0)
+        runtime = SeatRuntime(captain, DeterministicSeatModel({}))
+        a = runtime.command(expected_version=1, idempotency_key="wc-claim-seat-scientific")
+        b = runtime.command(expected_version=2, idempotency_key="wc-final-seat-scientific")
+        self.assertNotEqual(a.idempotency_key, b.idempotency_key)
+        # Same override -> same key (idempotent replay within the same command).
+        c = runtime.command(expected_version=3, idempotency_key="wc-claim-seat-scientific")
+        self.assertEqual(a.idempotency_key, c.idempotency_key)
+
 
 if __name__ == "__main__":
     unittest.main()
