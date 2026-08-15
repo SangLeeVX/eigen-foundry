@@ -11,9 +11,10 @@ from .governed_advance import GovernedAdvance
 from .prad_crc_dryrun import DryRunPacket, PradCrcDryRun
 from .route_policy import (
     COMBINATION_ROUTES, DE_NOVO_ROUTES, RESCUE_ROUTES, PreclinicalGatePolicy,
-    f6_stage_for, full_stage_sequence,
+    f6_stage_for, full_lifecycle_sequence, full_stage_sequence,
 )
 from .stage_runner import StageRunResult, StageRunner, StagePacket
+from .termination_workflow import F12Outcome, TerminationWorkflow
 from .prad_crc_dryrun import DryRunPacket, PradCrcDryRun
 from .ledger import SQLiteLedger
 from .ledger_protocol import Ledger, build_ledger, migrate_sqlite_to_postgres
@@ -76,6 +77,9 @@ __all__ = [
     "StagePacket",
     "f6_stage_for",
     "full_stage_sequence",
+    "full_lifecycle_sequence",
+    "TerminationWorkflow",
+    "F12Outcome",
     "RESCUE_ROUTES",
     "DE_NOVO_ROUTES",
     "COMBINATION_ROUTES",

@@ -104,6 +104,11 @@ class StageRunner:
         }
     )
 
+    # Full development lifecycle adds F9-F12.
+    LIFECYCLE_STAGES = frozenset(
+        {ProgramStage.F9, ProgramStage.F10, ProgramStage.F11, ProgramStage.F12}
+    )
+
     def __init__(
         self,
         sqlite_path: str = "m7.db",
@@ -112,22 +117,26 @@ class StageRunner:
         seed: int = 7,
         tpp: FrozenTPP | None = None,
         evidence_hook=None,
+        lifecycle: bool = False,
     ) -> None:
         from .policy import GatePolicy
+        from .route_policy import full_lifecycle_sequence
 
         self.sqlite_path = sqlite_path
         self.route = route
         self.seed = seed
+        self.lifecycle = lifecycle
         self.tpp = tpp or make_frozen_tpp(seed=seed)
         self.evidence_hook = evidence_hook or (lambda stage: [ClaimState.OBSERVED])
+        enabled = self.M7_STAGES if not lifecycle else (self.M7_STAGES | self.LIFECYCLE_STAGES)
         self.gate_policy = GatePolicy(
-            policy_id="policy-foundry-council-m7-dryrun",
+            policy_id="policy-foundry-council-m8-dryrun" if lifecycle else "policy-foundry-council-m7-dryrun",
             version=1,
-            enabled_gates=self.M7_STAGES,
+            enabled_gates=enabled,
         )
         self.ledger = SQLiteLedger(sqlite_path)
         self.service = CouncilService(self.ledger, gate_policy=self.gate_policy)
-        self.sequence = full_stage_sequence(route)
+        self.sequence = full_lifecycle_sequence(route) if lifecycle else full_stage_sequence(route)
         self.gate = PreclinicalGatePolicy(route=route, tpp_digest=self.tpp.digest)
         self.program = self._create_program(route)
         self._governed = GovernedAdvance(self.service, seed=seed)
@@ -189,7 +198,8 @@ class StageRunner:
                     program_revision=program.state_version,
                 )
             )
-        result.sequence_complete = program.stage == ProgramStage.F8
+        terminal = ProgramStage.F12 if self.lifecycle else ProgramStage.F8
+        result.sequence_complete = program.stage == terminal
         # Emit the transferable package digest (third-party-readable anchor).
         package = {
             "route": self.route.value,
