@@ -64,7 +64,21 @@ class TestBackupRestore(unittest.TestCase):
                     os.remove(p)
 
 
+_GSE = "/home/ubuntu/.openclaw/workspace/GSE162256/GSE162256_DE_summary.csv"
+_EF_DB = "/home/ubuntu/.openclaw/workspace/snapshots/eigenfield_v58.0.0.duckdb"
+
+
+def _real_data_available() -> bool:
+    """True only when the real datasources + duckdb are present (not offline CI)."""
+    try:
+        import duckdb  # noqa: F401
+    except Exception:  # noqa: BLE001
+        return False
+    return os.path.exists(_GSE) and os.path.exists(_EF_DB)
+
+
 class TestRealConnectors(unittest.TestCase):
+    @unittest.skipUnless(_real_data_available(), "real GSE162256 + EigenField datasets not available")
     def test_gse162256_crc_evidence_ingestion(self) -> None:
         sent = Sentinel(_MemStore())
         conn = DatasourceConnector(sent, program_id="CRC-DRY", seed=7)
@@ -75,6 +89,7 @@ class TestRealConnectors(unittest.TestCase):
         r2 = conn.ingest_crc_evidence()
         self.assertEqual(r2.events_ingested - r.events_ingested, 0)
 
+    @unittest.skipUnless(_real_data_available(), "real EigenField dataset not available")
     def test_eigenfield_grounding_real_data(self) -> None:
         sent = Sentinel(_MemStore())
         conn = DatasourceConnector(sent, program_id="CRC-DRY", seed=7)
@@ -82,6 +97,7 @@ class TestRealConnectors(unittest.TestCase):
         self.assertGreaterEqual(g["evidence_count"], 1)
         self.assertEqual(g["grounding_source"], "patient_expression")
 
+    @unittest.skipUnless(_real_data_available(), "real GSE162256 + EigenField datasets not available")
     def test_connector_health(self) -> None:
         h = ConnectorHealth().check()
         self.assertTrue(h["healthy"])

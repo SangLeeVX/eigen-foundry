@@ -145,8 +145,9 @@ class ConnectorHealth:
             n = ef.top_expressed_genes(gene="TP53", limit=1)
             checks["eigenfield_patient_expression"] = {"ok": len(n) > 0, "rows": len(n)}
         except Exception as exc:  # noqa: BLE001
-            checks["error"] = str(exc)
-        all_ok = all(v.get("ok", False) for v in checks.values())
+            checks["error"] = {"ok": False, "error": str(exc)}
+        vals = [v for k, v in checks.items() if k != "error"]
+        all_ok = bool(vals) and all(v.get("ok", False) for v in vals)
         return {"healthy": all_ok, "checks": checks, "checked_at": _utcnow()}
 
 
