@@ -20,12 +20,12 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Check out without persisted credentials
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: "3.12"
           cache: pip
@@ -36,24 +36,11 @@ jobs:
 
       - name: Install locked CI dependencies and package
         run: |
-          python3 -m pip install --disable-pip-version-check -r requirements-ci.lock
-          python3 -m pip install --disable-pip-version-check --no-deps -e .
+          python3 -m pip install --disable-pip-version-check --require-hashes -r requirements-ci.lock
+          PIP_NO_INDEX=1 python3 -m pip install --disable-pip-version-check --no-deps --no-build-isolation -e .
           python3 -m pip check
 
-      - name: Validate Forge contracts
-        run: python3 forge/validate_contracts.py
-
-      - name: Run unit tests
-        env:
-          PYTHONPATH: src
-        run: python3 -m unittest discover -s tests -t . -v
-
-      - name: Verify exported schemas are current
-        run: |
-          python3 scripts/export_schemas.py
-          git diff --exit-code -- schemas/
-
-      - name: Build wheel without dependency resolution
+      - name: Run governed validation without network access
         env:
           PIP_NO_INDEX: "1"
-        run: python3 -m pip wheel --no-deps --no-build-isolation . --wheel-dir dist
+        run: make check
