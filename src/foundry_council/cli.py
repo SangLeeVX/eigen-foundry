@@ -38,7 +38,47 @@ def _parser() -> argparse.ArgumentParser:
     audit.add_argument("--dsn", type=str, required=False, help="Postgres connection string")
     audit.add_argument("aggregate_type", choices=("PROGRAM", "COUNCIL_SESSION", "APPROVAL"))
     audit.add_argument("aggregate_id")
+
+    status = subcommands.add_parser("status", help="operator summary of durable ledger state")
+    status.add_argument("--db", type=Path, required=False)
+    status.add_argument("--dsn", type=str, required=False, help="Postgres connection string")
     return parser
+
+
+def _status_report(ledger) -> dict:
+    program_ids = ledger.list_program_ids()
+    session_ids = ledger.list_session_ids()
+    programs = []
+    for pid in program_ids:
+        program = ledger.get_program(pid)
+        programs.append({
+            "program_id": pid,
+            "stage": program.stage.value,
+            "status": program.status.value,
+            "state_version": program.state_version,
+            "title": program.title,
+        })
+    sessions = []
+    for sid in session_ids:
+        session = ledger.get_session(sid)
+        sessions.append({
+            "session_id": sid,
+            "program_id": session.program_id,
+            "phase": session.phase.value,
+            "state_version": session.state_version,
+        })
+    # Verify the audit hash chain across every aggregate so the operator sees
+    # durable, untampered state (M2 exit criterion: operator sees durable state).
+    program_chain_ok = all(ledger.verify_audit_chain("PROGRAM", pid) for pid in program_ids)
+    session_chain_ok = all(ledger.verify_audit_chain("COUNCIL_SESSION", sid) for sid in session_ids)
+    return {
+        "backend": type(ledger).__name__,
+        "program_count": len(program_ids),
+        "session_count": len(session_ids),
+        "programs": programs,
+        "sessions": sessions,
+        "audit_chains_valid": {"program": program_chain_ok, "session": session_chain_ok},
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -48,6 +88,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "init-db":
             target = args.dsn if getattr(args, "dsn", None) else str(args.db.resolve())
             result = {"status": "initialized", "database": target}
+        elif args.command == "status":
+            result = _status_report(ledger)
         elif args.command == "show-program":
             result = ledger.get_program(args.program_id).model_dump(mode="json")
         elif args.command == "show-session":

@@ -414,6 +414,22 @@ class PostgresLedger:
             raise NotFound("program not found", program_id=program_id)
         return ProgramRecord.model_validate_json(row["payload_json"])
 
+    def list_program_ids(self) -> tuple[str, ...]:
+        """Report the durable set of Program aggregate IDs (operator-visible state)."""
+        with self._connection() as connection:
+            rows = connection.execute(
+                "SELECT program_id FROM programs ORDER BY program_id"
+            ).fetchall()
+        return tuple(r["program_id"] for r in rows)
+
+    def list_session_ids(self) -> tuple[str, ...]:
+        """Report the durable set of Council session aggregate IDs."""
+        with self._connection() as connection:
+            rows = connection.execute(
+                "SELECT session_id FROM council_sessions ORDER BY session_id"
+            ).fetchall()
+        return tuple(r["session_id"] for r in rows)
+
     def save_program(
         self, program: ProgramRecord, expected_version: int, event: AuditEvent
     ) -> ProgramRecord:
