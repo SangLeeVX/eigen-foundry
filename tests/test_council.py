@@ -631,13 +631,13 @@ class CouncilRuntimeTests(unittest.TestCase):
             )
 
     def test_idempotency_key_reuse_with_changed_body_is_rejected(self) -> None:
-        _, _ = create_program_and_session(self.service)
+        program, _ = create_program_and_session(self.service)
         with self.assertRaises(IdempotencyKeyReused):
             self.service.create_program_draft(
                 program_id="EB-TEST-001",
                 title="A materially different Program body",
-                entry_point=EntryPoint.ASSET_FIRST,
-                route=Route.EXISTING_ASSET,
+                entry_point=EntryPoint.UNSPECIFIED,
+                route=Route.UNSELECTED,
                 owner="different-owner",
                 pointers=self.ledger.get_program("EB-TEST-001").current_versions,
                 context=command(
@@ -731,6 +731,97 @@ class CouncilRuntimeTests(unittest.TestCase):
                     roles=frozenset({"ledger_committer"}),
                 ),
             )
+
+
+class F0RouteInvariantTests(unittest.TestCase):
+    """FWI-P0-005: enforce the F0 route invariant at every boundary."""
+
+    def setUp(self) -> None:
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.db_path = Path(self.temp_dir.name) / "foundry.sqlite3"
+        self.ledger = SQLiteLedger(self.db_path)
+        self.service = CouncilService(self.ledger)
+
+    def tearDown(self) -> None:
+        self.temp_dir.cleanup()
+
+    def _program_record(self, route: Route = Route.UNSELECTED, stage: ProgramStage = ProgramStage.F0):
+        from foundry_council.models import ProgramPointers, ProgramRecord
+
+        pointers = ProgramPointers(portfolio_mandate=snapshot("program-route-invariant"))
+        return ProgramRecord(
+            program_id="program-route-invariant",
+            title="F0 route invariant test program",
+            entry_point=EntryPoint.UNSPECIFIED,
+            route=route,
+            owner="owner-human",
+            conversation_key="eigen-foundry:program-route-invariant",
+            current_versions=pointers,
+        )
+
+    def test_f0_with_preselected_route_fails_model_construction(self) -> None:
+        with self.assertRaises(ValidationError):
+            self._program_record(route=Route.EXISTING_ASSET)
+
+    def test_f0_with_unselected_route_constructs(self) -> None:
+        program = self._program_record(route=Route.UNSELECTED)
+        self.assertEqual(program.route, Route.UNSELECTED)
+        self.assertEqual(program.stage, ProgramStage.F0)
+
+    def test_f0_with_preselected_route_fails_schema_validation(self) -> None:
+        from foundry_council.models import ProgramRecord
+        from pydantic import ValidationError
+
+        payload = self._program_record().model_dump(mode="json")
+        payload["route"] = Route.KNOWN_TARGET_NEW_CANDIDATE.value
+        with self.assertRaises(ValidationError):
+            ProgramRecord.model_validate(payload)
+
+    def test_later_stage_route_selection_remains_representable(self) -> None:
+        program = self._program_record().model_copy(
+            update={"stage": ProgramStage.F6A, "route": Route.EXISTING_ASSET}
+        )
+        self.assertEqual(program.stage, ProgramStage.F6A)
+        self.assertEqual(program.route, Route.EXISTING_ASSET)
+
+    def test_ledger_rejects_f0_preselected_route_direct_insert(self) -> None:
+        from foundry_council.models import ProgramPointers, ProgramRecord
+
+        pointers = ProgramPointers(portfolio_mandate=snapshot("program-route-ledger-guard"))
+        with self.assertRaises(ValueError):
+            ProgramRecord(
+                program_id="program-route-ledger-guard",
+                title="F0 route ledger guard test program",
+                entry_point=EntryPoint.UNSPECIFIED,
+                route=Route.REPOSITIONING,
+                owner="owner-human",
+                conversation_key="eigen-foundry:program-route-ledger-guard",
+                current_versions=pointers,
+            )
+        # Even with a manually bypassed model bound, the ledger guard rejects.
+        base = self._program_record().model_copy(update={"program_id": "program-route-ledger-guard-2"})
+        raw = base.model_copy(update={"route": Route.REPOSITIONING, "stage": ProgramStage.F0})
+        with self.assertRaises(ValueError):
+            self.ledger.save_program(
+                raw,
+                raw.state_version - 1,
+                self._event_for(base, "program-route-ledger-guard-2"),
+            )
+
+    def _event_for(self, program, program_id: str):
+        from foundry_council.models import AuditEvent
+
+        return AuditEvent(
+            event_id="evt-route-guard",
+            idempotency_key="cmd-route-guard",
+            aggregate_type="PROGRAM",
+            aggregate_id=program_id,
+            aggregate_version=program.state_version,
+            actor_id="ledger-guard-test",
+            actor_kind=ActorKind.HUMAN,
+            action="PROGRAM.DRAFT_CREATED",
+            reason="test",
+        )
 
 
 if __name__ == "__main__":

@@ -620,6 +620,18 @@ class ProgramRecord(FrozenModel):
     created_at: AwareDatetime = Field(default_factory=utc_now)
     updated_at: AwareDatetime = Field(default_factory=utc_now)
 
+    @model_validator(mode="after")
+    def _f0_route_invariant(self) -> "ProgramRecord":
+        """Enforce the F0 route invariant at model construction and schema
+        validation boundaries: an F0 Program must never carry a preselected
+        route. The formal route is decided only by a governed later-stage
+        (F5) advancement charter."""
+        if self.stage is ProgramStage.F0 and self.route is not Route.UNSELECTED:
+            raise ValueError(
+                "F0 Program route must remain UNSELECTED; route selection is a governed F5 action"
+            )
+        return self
+
 
 class CouncilSession(FrozenModel):
     schema_version: Literal["1.0.0"] = "1.0.0"

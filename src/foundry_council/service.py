@@ -195,6 +195,8 @@ class CouncilService:
     ) -> ProgramRecord:
         if "program_drafter" not in context.principal_roles:
             raise Forbidden("program drafts require an authorized drafter")
+        if route is not Route.UNSELECTED:
+            raise ValidationFailure("new F0 Program drafts must keep the formal route UNSELECTED")
         active_artifact = self._active_policy_artifact()
         if pointers.gate_policy != active_artifact.snapshot:
             raise ValidationFailure("Program draft must bind the active gate-policy snapshot")
@@ -223,8 +225,6 @@ class CouncilService:
         )
         if self.ledger.is_idempotent_replay(event):
             return self.ledger.get_program(program_id)
-        if route is not Route.UNSELECTED:
-            raise ValidationFailure("new F0 Program drafts must keep the formal route UNSELECTED")
         return self.ledger.create_program(program, event)
 
     def migrate_program_policy_binding(
