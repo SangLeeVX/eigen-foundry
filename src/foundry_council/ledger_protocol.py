@@ -76,16 +76,25 @@ class Ledger(Protocol):
     def verify_audit_chain(self, aggregate_type: str, aggregate_id: str) -> bool: ...
 
 
-def build_ledger(database: str | Path) -> Ledger:
+def build_ledger(database: str | Path | None = None) -> Ledger:
     """Construct a ledger backend from a connection target.
 
     - ``database`` ending in ``.db``/``.sqlite``/``.sqlite3`` (or a bare path)
       is treated as a SQLite file.
     - A Postgres DSN (URI ``postgres://``/``postgresql://`` or key-value
       ``host=... user=...``) returns a ``PostgresLedger``.
+    - If ``database`` is None, the ``FOUNDRY_LEDGER_DSN`` env var is used when
+      set (the promotion switch), falling back to the M2 default SQLite file
+      ``eigen-foundry.db`` in the current directory.
     """
+    import os
+
     from .ledger import SQLiteLedger
 
+    if database is None:
+        database = os.environ.get(
+            "FOUNDRY_LEDGER_DSN", "eigen-foundry.db"
+        )
     text = str(database)
 
     if _looks_like_postgres_dsn(text):
