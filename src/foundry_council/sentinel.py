@@ -14,7 +14,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass, field
-from typing import Any, Protocol
+from typing import Any, Protocol, runtime_checkable
 
 from .m5_models import EventStatus, SentinelEvent, SentinelEventKind
 
@@ -33,6 +33,7 @@ def _snap_sha(payload_digest: str) -> str:
     return "sha256:" + hashlib.sha256(payload_digest.encode()).hexdigest()
 
 
+@runtime_checkable
 class SentinelStore(Protocol):
     """Minimal persistence surface the Sentinel needs (satisfied by the ledger)."""
 

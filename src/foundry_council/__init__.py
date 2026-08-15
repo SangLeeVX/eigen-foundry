@@ -18,6 +18,7 @@ from .m5_models import (
 )
 from .operator_overview import OperatorOverview
 from .outbox_dispatcher import OutboxDispatcher
+from .replay_audit import ReplayAudit, ReplayAuditResult
 from .seat_runtime import (
     MalformedSeatOutput,
     SeatRuntime,
@@ -47,6 +48,8 @@ __all__ = [
     "CrashRecovery",
     "RecoveryPlan",
     "OperatorOverview",
+    "ReplayAudit",
+    "ReplayAuditResult",
     "SeatRuntime",
     "SeatOutput",
     "bind_seat",
