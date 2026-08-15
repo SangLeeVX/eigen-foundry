@@ -7,7 +7,7 @@ from uuid import uuid4
 
 from .agents import participant_for_case, validate_council_roster
 from .errors import ApprovalRequired, Forbidden, StateConflict, ValidationFailure
-from .ledger import SQLiteLedger
+from .ledger_protocol import Ledger
 from .models import (
     ActorKind,
     Approval,
@@ -74,7 +74,7 @@ class CommandContext:
 class CouncilService:
     """The sole command path for the governed council aggregate."""
 
-    def __init__(self, ledger: SQLiteLedger, gate_policy: GatePolicy = DEFAULT_GATE_POLICY) -> None:
+    def __init__(self, ledger: Ledger, gate_policy: GatePolicy = DEFAULT_GATE_POLICY) -> None:
         self.ledger = ledger
         self.gate_policy = gate_policy
 
