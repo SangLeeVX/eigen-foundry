@@ -1,9 +1,24 @@
 """Eigen Drug Foundry council runtime."""
 
 from .approval_console import ApprovalConsole
+from .crash_recovery import CrashRecovery, RecoveryPlan
 from .ledger import SQLiteLedger
 from .ledger_protocol import Ledger, build_ledger, migrate_sqlite_to_postgres
+from .m5_models import (
+    AttributionKind,
+    EventStatus,
+    FailureAttribution,
+    LearnBack,
+    QCStatus,
+    ResultRecord,
+    SentinelEvent,
+    SentinelEventKind,
+    WorkOrder,
+    WorkOrderStatus,
+)
+from .operator_overview import OperatorOverview
 from .outbox_dispatcher import OutboxDispatcher
+from .replay_audit import ReplayAudit, ReplayAuditResult
 from .seat_runtime import (
     MalformedSeatOutput,
     SeatRuntime,
@@ -11,8 +26,10 @@ from .seat_runtime import (
     ToolOutsideEnvelope,
     bind_seat,
 )
+from .sentinel import Sentinel
 from .service import CouncilService
 from .synthetic_conclave import SyntheticConclave
+from .work_order_service import MemoryWorkOrderStore, WorkOrderService
 from .working_conclave import WorkingConclave
 
 __all__ = [
@@ -25,10 +42,32 @@ __all__ = [
     "ApprovalConsole",
     "SyntheticConclave",
     "WorkingConclave",
+    "Sentinel",
+    "WorkOrderService",
+    "MemoryWorkOrderStore",
+    "CrashRecovery",
+    "RecoveryPlan",
+    "OperatorOverview",
+    "ReplayAudit",
+    "ReplayAuditResult",
     "SeatRuntime",
     "SeatOutput",
     "bind_seat",
     "ToolOutsideEnvelope",
     "MalformedSeatOutput",
+]
+
+# M5 domain models surfaced for import convenience.
+__all__ += [
+    "SentinelEvent",
+    "SentinelEventKind",
+    "EventStatus",
+    "WorkOrder",
+    "WorkOrderStatus",
+    "ResultRecord",
+    "QCStatus",
+    "FailureAttribution",
+    "AttributionKind",
+    "LearnBack",
 ]
 
