@@ -1,5 +1,6 @@
 """Eigen Drug Foundry council runtime."""
 
+from .approval_console import ApprovalConsole
 from .ledger import SQLiteLedger
 from .ledger_protocol import Ledger, build_ledger, migrate_sqlite_to_postgres
 from .outbox_dispatcher import OutboxDispatcher
@@ -21,6 +22,7 @@ __all__ = [
     "build_ledger",
     "migrate_sqlite_to_postgres",
     "OutboxDispatcher",
+    "ApprovalConsole",
     "SyntheticConclave",
     "WorkingConclave",
     "SeatRuntime",
