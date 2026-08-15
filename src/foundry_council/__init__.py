@@ -1,6 +1,7 @@
 """Eigen Drug Foundry council runtime."""
 
 from .approval_console import ApprovalConsole
+from .crash_recovery import CrashRecovery, RecoveryPlan
 from .ledger import SQLiteLedger
 from .ledger_protocol import Ledger, build_ledger, migrate_sqlite_to_postgres
 from .m5_models import (
@@ -15,6 +16,7 @@ from .m5_models import (
     WorkOrder,
     WorkOrderStatus,
 )
+from .operator_overview import OperatorOverview
 from .outbox_dispatcher import OutboxDispatcher
 from .seat_runtime import (
     MalformedSeatOutput,
@@ -42,6 +44,9 @@ __all__ = [
     "Sentinel",
     "WorkOrderService",
     "MemoryWorkOrderStore",
+    "CrashRecovery",
+    "RecoveryPlan",
+    "OperatorOverview",
     "SeatRuntime",
     "SeatOutput",
     "bind_seat",
