@@ -193,9 +193,15 @@ class ForgeCheckpointMigrationTests(unittest.TestCase):
         self.assert_invalid(malformed, "const constraint|cannot change Program state")
 
     def test_migration_pull_request_cannot_complete_any_milestone(self) -> None:
+        # Post-activation: migration and mandate are ACTIVE and M0 is COMPLETED.
+        # The validator requires ACTIVE migration to keep M0 COMPLETED with bound
+        # merge evidence, so regressing M0 fails closed.
         malformed = copy.deepcopy(self.document)
-        verify_milestone(malformed, "M0")
-        self.assert_invalid(malformed, "migration PR cannot complete a milestone")
+        malformed["milestones"][0]["status"] = "IN_PROGRESS"
+        self.assert_invalid(malformed, "activation requires completed M0")
+        malformed = copy.deepcopy(self.document)
+        malformed["milestones"][0]["exit_criteria"][2]["evidence"] = []
+        self.assert_invalid(malformed, "M0-C3: VERIFIED requires durable evidence")
 
     def test_verified_criterion_requires_bound_durable_evidence(self) -> None:
         malformed = copy.deepcopy(self.document)
@@ -249,21 +255,18 @@ class ForgeCheckpointMigrationTests(unittest.TestCase):
                     validate_evidence(evidence, "M2-C1")
 
     def test_completed_milestone_requires_verified_criteria(self) -> None:
+        # Baseline is post-activation: M0 COMPLETED, migration ACTIVE.
+        # A COMPLETED milestone must have every exit criterion VERIFIED.
         malformed = copy.deepcopy(self.document)
-        activate(malformed)
-        malformed["milestones"][0]["status"] = "COMPLETED"
+        malformed["milestones"][1]["status"] = "COMPLETED"  # M1
+        for criterion in malformed["milestones"][1]["exit_criteria"]:
+            criterion["status"] = "PENDING"
         self.assert_invalid(malformed, "every criterion VERIFIED")
 
     def test_completed_milestone_requires_completed_dependencies(self) -> None:
+        # M2 depends on M1; M1 must be COMPLETED before M2 can complete.
         malformed = copy.deepcopy(self.document)
-        activate(malformed)
-        verify_milestone(malformed, "M1")
-        for blocker in malformed["blockers"]:
-            blocker["status"] = "RESOLVED"
-            blocker["evidence"] = [
-                durable_evidence(criterion_id, f"{blocker['blocker_id']}-{criterion_id}")
-                for criterion_id in blocker["criterion_ids"]
-            ]
+        verify_milestone(malformed, "M2")
         self.assert_invalid(malformed, "requires completed dependencies")
 
     def test_open_blocker_prevents_completion(self) -> None:
@@ -431,31 +434,30 @@ class ForgeCheckpointMigrationTests(unittest.TestCase):
         malformed = copy.deepcopy(self.document)
         blocker = malformed["blockers"][0]
         blocker["status"] = "RESOLVED"
-        blocker["evidence"] = [
-            durable_evidence(blocker["criterion_ids"][0], "invented-resolution")
-        ]
-        self.assert_invalid(malformed, "pending migration falsely resolved")
+        blocker["evidence"] = []
+        self.assert_invalid(malformed, "resolved blocker requires durable evidence")
 
     def test_pending_and_active_statuses_require_merge_evidence(self) -> None:
+        # Post-activation baseline: migration ACTIVE, M0 COMPLETED. A downstream
+        # milestone cannot be started before its dependency is complete.
         malformed = copy.deepcopy(self.document)
-        malformed["milestones"][9]["status"] = "IN_PROGRESS"
-        self.assert_invalid(malformed, "pending migration milestone statuses changed")
+        malformed["milestones"][1]["status"] = "IN_PROGRESS"
+        malformed["milestones"][1]["exit_criteria"][0]["status"] = "VERIFIED"
+        self.assert_invalid(malformed, "criterion PENDING|VERIFIED")
+        # The mandate evidence binding must be preserved even in ACTIVE state.
         malformed = copy.deepcopy(self.document)
-        malformed["milestones"][0]["exit_criteria"][0]["status"] = "PENDING"
+        malformed["milestones"][0]["exit_criteria"][0]["status"] = "VERIFIED"
         malformed["milestones"][0]["exit_criteria"][0]["evidence"] = []
-        self.assert_invalid(malformed, "mandate evidence binding changed|pending migration criterion status changed")
+        self.assert_invalid(malformed, "M0-C1: VERIFIED requires durable evidence")
+        # ACTIVE migration requires M0 to remain COMPLETED with bound merge evidence.
         malformed = copy.deepcopy(self.document)
-        activate(malformed)
-        self.assert_invalid(malformed, "activation requires completed M0 merge evidence")
+        malformed["milestones"][0]["status"] = "IN_PROGRESS"
+        self.assert_invalid(malformed, "activation requires completed M0")
         malformed = copy.deepcopy(self.document)
-        activate(malformed)
-        milestone = malformed["milestones"][0]
-        for criterion in milestone["exit_criteria"]:
-            criterion["status"] = "VERIFIED"
-            if not criterion["evidence"]:
-                criterion["evidence"] = [durable_evidence(criterion["criterion_id"])]
-        milestone["status"] = "COMPLETED"
-        self.assert_invalid(malformed, "M0-C3 requires the approved plan merge commit")
+        malformed["milestones"][0]["exit_criteria"][3]["evidence"] = malformed[
+            "milestones"
+        ][0]["exit_criteria"][3]["evidence"][:1]
+        self.assert_invalid(malformed, "M0-C4 requires migration merge and exact-head CI")
 
     def test_work_item_schema_and_authority_laundering_fail_closed(self) -> None:
         item = load("forge/work-items/FWI-M0-011.json")
