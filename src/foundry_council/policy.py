@@ -65,6 +65,7 @@ NEXT_PHASE: dict[SessionPhase, SessionPhase] = {
 # approval configuration instead of silently inheriting invented policy.
 APPROVER_ROLES_BY_GATE: dict[ProgramStage, tuple[str, ...]] = {
     ProgramStage.F0: ("portfolio_lead", "scientific_lead", "product_commercial_lead", "finance"),
+    ProgramStage.F1: ("scientific_lead", "product_commercial_lead"),
     ProgramStage.F2: ("scientific_lead", "data_evidence_qa"),
     ProgramStage.F3: ("experimental_lead", "statistics_qa"),
     ProgramStage.F4: ("scientific_lead", "translational_safety_reviewer", "independent_red_team"),
@@ -72,11 +73,15 @@ APPROVER_ROLES_BY_GATE: dict[ProgramStage, tuple[str, ...]] = {
         "scientific_lead",
         "product_lead",
         "ip_legal",
-        "bd",
-        "cmc",
+        "bd_lead",
+        "cmc_lead",
         "regulatory",
         "finance",
     ),
+    ProgramStage.F6A: ("scientific_lead", "cmc", "regulatory", "finance"),
+    ProgramStage.F6B: ("scientific_lead", "product_lead", "regulatory"),
+    ProgramStage.F6C: ("scientific_lead", "product_lead", "regulatory", "ip_legal"),
+    ProgramStage.F7: ("scientific_lead", "translational_lead", "regulatory"),
     ProgramStage.F8: (
         "independent_program_committee",
         "scientific_lead",
@@ -91,7 +96,7 @@ APPROVER_ROLES_BY_GATE: dict[ProgramStage, tuple[str, ...]] = {
 }
 
 
-TRANSACTION_APPROVERS = ("executive_approver", "legal", "finance", "bd")
+TRANSACTION_APPROVERS = ("executive_approver", "legal", "finance", "bd_lead")
 
 
 @dataclass(frozen=True)
