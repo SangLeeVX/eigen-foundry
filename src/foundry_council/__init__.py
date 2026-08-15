@@ -2,6 +2,7 @@
 
 from .approval_console import ApprovalConsole
 from .crash_recovery import CrashRecovery, RecoveryPlan
+from .datasource_connector import ConnectorReport, DatasourceConnector, EigenFieldReader, GSEEvidenceSource
 from .crucible import CrucibleDriver
 from .eigen1_gateway import Eigen1Gateway, PredictionArtifact
 from .eigenfield_steward import EigenFieldSteward, EvidenceGrounding, GroundingSign
@@ -9,6 +10,7 @@ from .f0f2_policies import F0F2GatePolicy
 from .frozen_tpp import FrozenTPP, make_frozen_tpp
 from .governed_advance import GovernedAdvance
 from .prad_crc_dryrun import DryRunPacket, PradCrcDryRun
+from .production_ops import BackupRestore, ConnectorHealth, Observability, ReleaseManifest, SoakHarness
 from .route_policy import (
     COMBINATION_ROUTES, DE_NOVO_ROUTES, RESCUE_ROUTES, PreclinicalGatePolicy,
     f6_stage_for, full_lifecycle_sequence, full_stage_sequence,
@@ -16,6 +18,7 @@ from .route_policy import (
 from .stage_runner import StageRunResult, StageRunner, StagePacket
 from .termination_workflow import F12Outcome, TerminationWorkflow
 from .prad_crc_dryrun import DryRunPacket, PradCrcDryRun
+from .production_ops import BackupRestore, ConnectorHealth, Observability, ReleaseManifest, SoakHarness
 from .ledger import SQLiteLedger
 from .ledger_protocol import Ledger, build_ledger, migrate_sqlite_to_postgres
 from .m5_acceptance import M5AcceptanceRunner, run_m5_acceptance
@@ -68,6 +71,15 @@ __all__ = [
     "EigenFieldSteward",
     "EvidenceGrounding",
     "GroundingSign",
+    "DatasourceConnector",
+    "ConnectorReport",
+    "EigenFieldReader",
+    "GSEEvidenceSource",
+    "BackupRestore",
+    "ConnectorHealth",
+    "Observability",
+    "ReleaseManifest",
+    "SoakHarness",
     "FrozenTPP",
     "make_frozen_tpp",
     "GovernedAdvance",
