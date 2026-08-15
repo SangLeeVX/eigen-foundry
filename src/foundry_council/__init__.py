@@ -26,6 +26,7 @@ from .seat_runtime import (
 from .sentinel import Sentinel
 from .service import CouncilService
 from .synthetic_conclave import SyntheticConclave
+from .work_order_service import MemoryWorkOrderStore, WorkOrderService
 from .working_conclave import WorkingConclave
 
 __all__ = [
@@ -39,6 +40,8 @@ __all__ = [
     "SyntheticConclave",
     "WorkingConclave",
     "Sentinel",
+    "WorkOrderService",
+    "MemoryWorkOrderStore",
     "SeatRuntime",
     "SeatOutput",
     "bind_seat",
