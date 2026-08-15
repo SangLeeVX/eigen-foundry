@@ -66,6 +66,16 @@ def full_stage_sequence(route: Route) -> tuple[ProgramStage, ...]:
     )
 
 
+def full_lifecycle_sequence(route: Route) -> tuple[ProgramStage, ...]:
+    """The governed F0→F12 development-lifecycle sequence for a route."""
+    return full_stage_sequence(route) + (
+        ProgramStage.F9,
+        ProgramStage.F10,
+        ProgramStage.F11,
+        ProgramStage.F12,
+    )
+
+
 # Evidence states admissible to satisfy a preclinical (F3-F8) experimental gate.
 # MODEL_PREDICTION is deliberately excluded.
 _PRECLINICAL_ADMISSIBLE = frozenset(
@@ -111,4 +121,6 @@ class PreclinicalGatePolicy:
             blockers.append(f"route {self.route.value} does not advance through F6B")
         if stage == ProgramStage.F6C and self.route not in COMBINATION_ROUTES:
             blockers.append(f"route {self.route.value} does not advance through F6C")
+        # F9-F12 are development-lifecycle gates (regulatory/clinical); they are
+        # route-agnostic and always model-output-excluding.
         return PreclinicalGateVerdict(not blockers, tuple(blockers))
