@@ -119,10 +119,20 @@ class CrucibleState:
 class CrucibleDriver:
     """Drives a deterministic F0 council session to the human-approval boundary."""
 
-    def __init__(self, service: CouncilService, *, seed: int = 7, program_id: str = "CRUC-001") -> None:
+    def __init__(
+        self,
+        service: CouncilService,
+        *,
+        seed: int = 7,
+        program_id: str = "CRUC-001",
+        current_stage: ProgramStage = ProgramStage.F0,
+        proposed_stage: ProgramStage = ProgramStage.F1,
+    ) -> None:
         self.service = service
         self.seed = seed
         self.program_id = program_id
+        self.current_stage = current_stage
+        self.proposed_stage = proposed_stage
 
     def create(self) -> CrucibleState:
         session_id = f"session-{self.program_id}"
@@ -154,8 +164,8 @@ class CrucibleDriver:
             proposed_action="Advance the synthetic Program from F0 to F1.",
             exact_scope="Authorize F1 mapping only in an acceptance dry run; no real spend.",
             requested_disposition=Disposition.ADVANCE,
-            current_stage=ProgramStage.F0,
-            proposed_stage=ProgramStage.F1,
+            current_stage=self.current_stage,
+            proposed_stage=self.proposed_stage,
             expected_program_state_version=program.state_version,
             program_snapshot=program_ref,
             portfolio_mandate=pointers.portfolio_mandate,
