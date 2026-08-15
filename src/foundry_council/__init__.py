@@ -3,6 +3,8 @@
 from .approval_console import ApprovalConsole
 from .crash_recovery import CrashRecovery, RecoveryPlan
 from .crucible import CrucibleDriver
+from .eigen1_gateway import Eigen1Gateway, PredictionArtifact
+from .eigenfield_steward import EigenFieldSteward, EvidenceGrounding, GroundingSign
 from .ledger import SQLiteLedger
 from .ledger_protocol import Ledger, build_ledger, migrate_sqlite_to_postgres
 from .m5_acceptance import M5AcceptanceRunner, run_m5_acceptance
@@ -50,6 +52,11 @@ __all__ = [
     "CrashRecovery",
     "RecoveryPlan",
     "CrucibleDriver",
+    "Eigen1Gateway",
+    "PredictionArtifact",
+    "EigenFieldSteward",
+    "EvidenceGrounding",
+    "GroundingSign",
     "OperatorOverview",
     "ReplayAudit",
     "ReplayAuditResult",
