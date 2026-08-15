@@ -3,7 +3,7 @@
   "project": "Eigen Foundry",
   "canonical_repository": "SangLeeVX/eigen-foundry",
   "classification": "NONCANONICAL_ENGINEERING_STATE",
-  "updated_at": "2026-08-15T03:18:14.098835Z",
+  "updated_at": "2026-08-15T03:23:26.048845Z",
   "active_build_mandate": {
     "mandate_id": "BUILD-EIGEN-FOUNDRY-003",
     "version": "1.0",
@@ -634,14 +634,32 @@
         {
           "criterion_id": "M1-C11",
           "description": "Forced crash, lease expiry, checkpoint resume, and replay protection create no duplicate commit or event.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M1-M1-C11-RUNTIME-GUARDS",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/4798bc36ef1e3d61f8a1a586ccb4c0f370c1b02d",
+              "immutable_revision": "4798bc36ef1e3d61f8a1a586ccb4c0f370c1b02d",
+              "bound_criterion_id": "M1-C11",
+              "result": "VERIFIED"
+            }
+          ]
         },
         {
           "criterion_id": "M1-C12",
           "description": "Protected-path refusal, kill switch, budget ceilings, secret isolation, and audit evidence pass.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M1-M1-C12-RUNTIME-GUARDS",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/4798bc36ef1e3d61f8a1a586ccb4c0f370c1b02d",
+              "immutable_revision": "4798bc36ef1e3d61f8a1a586ccb4c0f370c1b02d",
+              "bound_criterion_id": "M1-C12",
+              "result": "VERIFIED"
+            }
+          ]
         }
       ]
     },
