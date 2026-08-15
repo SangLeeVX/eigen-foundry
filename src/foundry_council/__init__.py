@@ -11,6 +11,7 @@ from .frozen_tpp import FrozenTPP, make_frozen_tpp
 from .governed_advance import GovernedAdvance
 from .prad_crc_dryrun import DryRunPacket, PradCrcDryRun
 from .production_ops import BackupRestore, ConnectorHealth, Observability, ReleaseManifest, SoakHarness
+from .realistic_dry_run import RealisticDryRun, RealisticDryRunResult
 from .route_policy import (
     COMBINATION_ROUTES, DE_NOVO_ROUTES, RESCUE_ROUTES, PreclinicalGatePolicy,
     f6_stage_for, full_lifecycle_sequence, full_stage_sequence,
@@ -19,6 +20,7 @@ from .stage_runner import StageRunResult, StageRunner, StagePacket
 from .termination_workflow import F12Outcome, TerminationWorkflow
 from .prad_crc_dryrun import DryRunPacket, PradCrcDryRun
 from .production_ops import BackupRestore, ConnectorHealth, Observability, ReleaseManifest, SoakHarness
+from .realistic_dry_run import RealisticDryRun, RealisticDryRunResult
 from .ledger import SQLiteLedger
 from .ledger_protocol import Ledger, build_ledger, migrate_sqlite_to_postgres
 from .m5_acceptance import M5AcceptanceRunner, run_m5_acceptance
@@ -80,6 +82,8 @@ __all__ = [
     "Observability",
     "ReleaseManifest",
     "SoakHarness",
+    "RealisticDryRun",
+    "RealisticDryRunResult",
     "FrozenTPP",
     "make_frozen_tpp",
     "GovernedAdvance",
