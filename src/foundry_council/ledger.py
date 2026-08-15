@@ -52,6 +52,28 @@ def _dissent_digest(dissent: Dissent) -> str:
     return f"sha256:{hashlib.sha256(_dissent_canonical(dissent).encode()).hexdigest()}"
 
 
+# Formal Program state (stage/status/route) may ONLY be changed by the governed
+# commit path (commit_gate_decision -> ledger.commit_program_and_session). This
+# is the M2-C4 "single restricted commit path" invariant: every other persistence
+# entry point (draft create, policy-binding migration) must keep formal state
+# unchanged.
+FORMAL_PROGRAM_STATE_FIELDS = ("stage", "status", "route")
+
+
+def _assert_single_commit_path(stored: ProgramRecord, proposed: ProgramRecord) -> None:
+    """Reject any save that would mutate a Program's formal state outside the
+    restricted commit path."""
+    for field in FORMAL_PROGRAM_STATE_FIELDS:
+        before = getattr(stored, field)
+        after = getattr(proposed, field)
+        if before != after:
+            raise ValueError(
+                f"formal Program state field '{field}' may only change through the "
+                "governed commit path (commit_gate_decision); save_program is not "
+                "authorized to change it"
+            )
+
+
 class SQLiteLedger:
     """Transactional MVP ledger with immutable approvals and a hash-chained audit log."""
 
@@ -311,11 +333,15 @@ class SQLiteLedger:
                 connection.rollback()
                 return self.get_program(program.program_id)
             row = connection.execute(
-                "SELECT state_version FROM programs WHERE program_id = ?", (program.program_id,)
+                "SELECT state_version, payload_json FROM programs WHERE program_id = ?", (program.program_id,)
             ).fetchone()
             if row is None:
                 connection.rollback()
                 raise NotFound("program not found", program_id=program.program_id)
+            _assert_single_commit_path(
+                ProgramRecord.model_validate_json(row["payload_json"]),
+                program,
+            )
             if row["state_version"] != expected_version or program.state_version != expected_version + 1:
                 connection.rollback()
                 raise StateConflict(

@@ -124,11 +124,11 @@ class TestConcurrency(_PostgresSchemaCase):
             _mk_event("PROGRAM", program.program_id, program.state_version, action="PROGRAM_CREATE"),
         )
 
-        v2 = program.model_copy(update={"state_version": 2, "title": "v2"})
+        v2 = program.model_copy(update={"state_version": 2, "title": "V2 Title"})
         self.ledger.save_program(v2, expected_version=1, event=_mk_event("PROGRAM", v2.program_id, 2))
 
         # reader saw version 1 -> stale expected_version now conflicts
-        stale = program.model_copy(update={"state_version": 2, "title": "stale"})
+        stale = program.model_copy(update={"state_version": 2, "title": "Stale T"})
         with self.assertRaises(StateConflict):
             self.ledger.save_program(
                 stale, expected_version=1, event=_mk_event("PROGRAM", stale.program_id, 2)
@@ -160,7 +160,7 @@ class TestAuditChain(_PostgresSchemaCase):
         e1 = _mk_event("PROGRAM", program.program_id, 1, action="PROGRAM_CREATE")
         self.ledger.create_program(program, e1)
 
-        v2 = program.model_copy(update={"state_version": 2, "title": "v2"})
+        v2 = program.model_copy(update={"state_version": 2, "title": "V2 Title"})
         e2 = _mk_event("PROGRAM", v2.program_id, 2, action="PROGRAM_UPDATE")
         self.ledger.save_program(v2, expected_version=1, event=e2)
 
