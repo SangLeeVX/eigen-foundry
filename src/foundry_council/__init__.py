@@ -2,8 +2,10 @@
 
 from .approval_console import ApprovalConsole
 from .crash_recovery import CrashRecovery, RecoveryPlan
+from .crucible import CrucibleDriver
 from .ledger import SQLiteLedger
 from .ledger_protocol import Ledger, build_ledger, migrate_sqlite_to_postgres
+from .m5_acceptance import M5AcceptanceRunner, run_m5_acceptance
 from .m5_models import (
     AttributionKind,
     EventStatus,
@@ -47,9 +49,12 @@ __all__ = [
     "MemoryWorkOrderStore",
     "CrashRecovery",
     "RecoveryPlan",
+    "CrucibleDriver",
     "OperatorOverview",
     "ReplayAudit",
     "ReplayAuditResult",
+    "M5AcceptanceRunner",
+    "run_m5_acceptance",
     "SeatRuntime",
     "SeatOutput",
     "bind_seat",
