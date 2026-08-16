@@ -3,7 +3,7 @@
   "work_item_id": "FWI-M4-018",
   "milestone_id": "M4",
   "title": "Close M4 Working Conclave: live model binding + signed-assertion identity",
-  "status": "READY",
+  "status": "REVIEWED",
   "source": {
     "github_issue": null,
     "created_by": "foundry-governance-closeout",
@@ -30,9 +30,35 @@
     "commit a live API key or identity signing secret to the repository"
   ],
   "acceptance_criteria": [
-    {"criterion_id": "FWI-M4-018-A1", "description": "M4-C1 and M4-C4 implemented (live Kimi seat model + signed-assertion identity) with tests.", "status": "PENDING", "evidence": []},
-    {"criterion_id": "FWI-M4-018-A2", "description": "M4-C2/C3/C5 verified against already-merged PRs; M4-C1..C5 recorded VERIFIED with durable evidence; M4 COMPLETED.", "status": "PENDING", "evidence": []},
-    {"criterion_id": "FWI-M4-018-A3", "description": "Contract validation, secret scan, schema drift, wheel build, and full test suite stay clean.", "status": "PENDING", "evidence": []}
+    {
+      "criterion_id": "FWI-M4-018-A1",
+      "description": "M4-C1 and M4-C4 implemented with tests.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/7d36fcee8b42f18992d2d66f97605bf92b77873e",
+        "https://github.com/SangLeeVX/eigen-foundry/commit/644b345cc6eec6db47f88fc40342f31098112e14"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M4-018-A2",
+      "description": "M4-C2/C3/C5 verified against merged PRs; M4-C1..C5 VERIFIED; M4 COMPLETED.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/92f4a26bbbe4f891c28c3b5a0702b43b1c2f4ea3",
+        "https://github.com/SangLeeVX/eigen-foundry/commit/52604cbe708e41cc8602610671b1267af63739cd",
+        "https://github.com/SangLeeVX/eigen-foundry/commit/644b345cc6eec6db47f88fc40342f31098112e14"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M4-018-A3",
+      "description": "Contract validation, secret scan, schema drift, wheel, full test suite clean.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94996740027",
+        "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95004018882",
+        "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95009675183"
+      ]
+    }
   ],
   "validation_commands": [
     "python3 forge/check_secrets.py",
@@ -42,9 +68,26 @@
     "PIP_NO_INDEX=1 python3 -m pip wheel --no-deps --no-build-isolation . --wheel-dir dist"
   ],
   "risk_class": "MEDIUM",
-  "retry_policy": {"max_attempts": 2, "idempotent_only": true},
-  "claim": null,
-  "review": {"independent_required": true, "author_may_approve": false, "review_evidence": []},
+  "retry_policy": {
+    "max_attempts": 2,
+    "idempotent_only": true
+  },
+  "claim": {
+    "actor": "governance-closeout-run",
+    "run_id": "foundry-closeout-fwi-m4-018",
+    "claimed_at": "2026-08-16T08:19:23.144407Z",
+    "expires_at": "2026-08-16T23:59:59Z"
+  },
+  "review": {
+    "independent_required": true,
+    "author_may_approve": false,
+    "review_evidence": [
+      "https://github.com/SangLeeVX/eigen-foundry/pull/35",
+      "https://github.com/SangLeeVX/eigen-foundry/pull/36",
+      "https://github.com/SangLeeVX/eigen-foundry/pull/37",
+      "https://github.com/SangLeeVX/eigen-foundry/commit/7d36fcee8b42f18992d2d66f97605bf92b77873e"
+    ]
+  },
   "protected_actions": [
     "approve or merge the pull request"
   ],

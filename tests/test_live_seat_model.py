@@ -57,7 +57,7 @@ class LiveSeatModelTests(unittest.TestCase):
 
     def _model(self, transport, config=None):
         return LiveSeatModel(
-            config or LiveSeatConfig(api_key="test-key", base_url="https://api.moonshot.ai/v1", model="kimi-k2.5"),
+            config or LiveSeatConfig(key="test-key", base_url="https://api.moonshot.ai/v1", model="kimi-k2.5"),
             transport=transport,
         )
 
@@ -159,7 +159,7 @@ class LiveSeatConfigTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             path = _env_file(tmp, KIMI_API_KEY="sk-test-123", KIMI_BASE_URL="https://api.moonshot.ai/v1", KIMI_MODEL="kimi-k2.5")
             config = load_live_seat_config(path)
-            self.assertEqual(config.api_key, "sk-test-123")
+            self.assertEqual(config.key, "sk-test-123")
             self.assertEqual(config.model, "kimi-k2.5")
 
     def test_missing_key_raises_without_echoing_values(self) -> None:

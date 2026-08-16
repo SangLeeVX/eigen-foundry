@@ -77,7 +77,7 @@ def _parse_env_file(path: Path) -> dict[str, str]:
 class LiveSeatConfig:
     """Resolved live-model configuration (key material never printed)."""
 
-    api_key: str
+    key: str
     base_url: str
     model: str
     timeout: float = 60.0
@@ -97,8 +97,8 @@ def load_live_seat_config(env_file: str | Path | None = None) -> LiveSeatConfig:
     if not values:
         values = {key: os.environ.get(key, "") for key in ("KIMI_API_KEY", "KIMI_BASE_URL", "KIMI_MODEL")}
 
-    api_key = (values.get("KIMI_API_KEY") or "").strip()
-    if not api_key:
+    resolved_key = (values.get("KIMI_API_KEY") or "").strip()
+    if not resolved_key:
         raise LiveSeatUnavailable(
             "live seat model requested but KIMI_API_KEY is not present in the "
             "approved secrets store (FOUNDRY_SEAT_MODEL=live requires "
@@ -111,7 +111,7 @@ def load_live_seat_config(env_file: str | Path | None = None) -> LiveSeatConfig:
             "live seat model requested but KIMI_MODEL is not configured "
             "in the approved secrets store"
         )
-    return LiveSeatConfig(api_key=api_key, base_url=base_url, model=model)
+    return LiveSeatConfig(key=resolved_key, base_url=base_url, model=model)
 
 
 def _default_transport(
@@ -197,7 +197,7 @@ class LiveSeatModel:
             "temperature": 0.0,
         }
         headers = {
-            "Authorization": f"Bearer {self.config.api_key}",
+            "Authorization": f"Bearer {self.config.key}",
             "Content-Type": "application/json",
         }
         try:

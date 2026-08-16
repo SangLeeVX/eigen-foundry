@@ -74,24 +74,24 @@ def load_signing_secret(env_file: str | Path | None = None) -> bytes:
     The secret value is never included in any error message.
     """
     requested = env_file or os.environ.get("FOUNDRY_IDENTITY_ENV") or DEFAULT_IDENTITY_ENV
-    secret: str | None = None
+    resolved_secret: str | None = None
     if requested:
         try:
             for line in Path(requested).read_text(encoding="utf-8").splitlines():
                 line = line.strip()
                 if line.startswith("FOUNDRY_IDENTITY_SIGNING_SECRET="):
-                    secret = line.partition("=")[2].strip().strip('"').strip("'")
+                    resolved_secret = line.partition("=")[2].strip().strip('"').strip("'")
                     break
         except OSError:
-            secret = None
-    if not secret:
-        secret = os.environ.get("FOUNDRY_IDENTITY_SIGNING_SECRET")
-    if not secret:
+            resolved_secret = None
+    if not resolved_secret:
+        resolved_secret = os.environ.get("FOUNDRY_IDENTITY_SIGNING_SECRET")
+    if not resolved_secret:
         raise IdentitySecretUnavailable(
             "identity signing secret is not present in the approved secrets "
             "store (foundry_identity.env)"
         )
-    return secret.encode("utf-8")
+    return resolved_secret.encode("utf-8")
 
 
 def _sign(secret: bytes, signing_input: str) -> str:
@@ -157,10 +157,12 @@ class SignedAssertionIdentityProvider:
         leeway: int = 30,
     ) -> None:
         if isinstance(secret, str):
-            secret = secret.encode("utf-8")
-        if not secret:
+            encoded = secret.encode("utf-8")
+        else:
+            encoded = secret
+        if not encoded:
             raise ValueError("signing secret must not be empty")
-        self._secret = secret
+        self._secret = encoded
         self._issuer = issuer
         self._leeway = leeway
 
