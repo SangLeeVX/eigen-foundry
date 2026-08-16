@@ -3,7 +3,7 @@
   "project": "Eigen Foundry",
   "canonical_repository": "SangLeeVX/eigen-foundry",
   "classification": "NONCANONICAL_ENGINEERING_STATE",
-  "updated_at": "2026-08-16T04:34:06.578075Z",
+  "updated_at": "2026-08-16T06:17:08.309425Z",
   "active_build_mandate": {
     "mandate_id": "BUILD-EIGEN-FOUNDRY-003",
     "version": "1.0",
@@ -685,7 +685,7 @@
       "milestone_id": "M2",
       "checkpoint_id": "CP-M2",
       "name": "Persistent Foundry core",
-      "status": "NOT_STARTED",
+      "status": "COMPLETED",
       "dependencies": [
         "M1"
       ],
@@ -694,38 +694,132 @@
         {
           "criterion_id": "M2-C1",
           "description": "Postgres persists immutable versions, events, and a transactional outbox.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M2-C1-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/6c01c5301af6b3f9f292b3718c42cfd2dcc63cef",
+              "immutable_revision": "6c01c5301af6b3f9f292b3718c42cfd2dcc63cef",
+              "bound_criterion_id": "M2-C1",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M2-C1-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94983399386",
+              "immutable_revision": "run-94983399386@6c01c5301af6b3f9f292b3718c42cfd2dcc63cef",
+              "bound_criterion_id": "M2-C1",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M2-C2",
           "description": "OIDC or service identity enforces program-scoped authorization and human approval roles.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M2-C2-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/5033c9e2ec7b79f578b7b1d5605be899ec231320",
+              "immutable_revision": "5033c9e2ec7b79f578b7b1d5605be899ec231320",
+              "bound_criterion_id": "M2-C2",
+              "result": "VERIFIED"
+            }
+          ]
         },
         {
           "criterion_id": "M2-C3",
           "description": "Idempotency, restart recovery, optimistic concurrency, and two-writer conflict tests pass.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M2-C3-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/6c01c5301af6b3f9f292b3718c42cfd2dcc63cef",
+              "immutable_revision": "6c01c5301af6b3f9f292b3718c42cfd2dcc63cef",
+              "bound_criterion_id": "M2-C3",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M2-C3-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94983399386",
+              "immutable_revision": "run-94983399386@6c01c5301af6b3f9f292b3718c42cfd2dcc63cef",
+              "bound_criterion_id": "M2-C3",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M2-C4",
           "description": "Exactly one restricted commit service path changes formal Program state.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M2-C4-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/69ec963a95696682bb184e686381ff5c18686b40",
+              "immutable_revision": "69ec963a95696682bb184e686381ff5c18686b40",
+              "bound_criterion_id": "M2-C4",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M2-C4-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94991000635",
+              "immutable_revision": "run-94991000635@69ec963a95696682bb184e686381ff5c18686b40",
+              "bound_criterion_id": "M2-C4",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M2-C5",
           "description": "Raw artifacts remain external and are represented by immutable authorized pointers.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M2-C5-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/250136f1e0e6e5ab9c0a0304124d85f204590ee1",
+              "immutable_revision": "250136f1e0e6e5ab9c0a0304124d85f204590ee1",
+              "bound_criterion_id": "M2-C5",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M2-C5-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94991000635",
+              "immutable_revision": "run-94991000635@250136f1e0e6e5ab9c0a0304124d85f204590ee1",
+              "bound_criterion_id": "M2-C5",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M2-C6",
           "description": "Authenticated operator UX retrieves and displays durable state without chat reconstruction.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M2-C6-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/248e7801afacc9240995eb947f4ec3b7cd9950fb",
+              "immutable_revision": "248e7801afacc9240995eb947f4ec3b7cd9950fb",
+              "bound_criterion_id": "M2-C6",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M2-C6-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94991000635",
+              "immutable_revision": "run-94991000635@248e7801afacc9240995eb947f4ec3b7cd9950fb",
+              "bound_criterion_id": "M2-C6",
+              "result": "PASS"
+            }
+          ]
         }
       ]
     },

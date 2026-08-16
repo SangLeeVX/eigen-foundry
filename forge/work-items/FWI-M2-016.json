@@ -1,0 +1,85 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-M2-016",
+  "milestone_id": "M2",
+  "title": "Close M2 persistent Foundry core against merged build reality",
+  "status": "REVIEWED",
+  "source": {
+    "github_issue": null,
+    "created_by": "foundry-governance-closeout",
+    "created_at": "2026-08-16T06:18:00Z"
+  },
+  "objective": "Reconcile the M2 milestone ledger to the already-merged, CI-green build reality on the protected baseline. M2 (Persistent Foundry core) criteria C1-C6 are satisfied by merged PRs #32 and #33 (Postgres ledger, outbox, identity/authorization, single restricted commit path, external raw artifacts with immutable pointers, authenticated operator UX). Record M2-C1..C6 as VERIFIED with durable GITHUB_MERGE_COMMIT evidence and mark M2 COMPLETED.",
+  "dependencies": [],
+  "allowed_paths": [
+    "forge/state/checkpoints.json",
+    "forge/state/apply_m2_closeout.py",
+    "forge/work-items/FWI-M2-016.json"
+  ],
+  "forbidden_actions": [
+    "commit directly to a protected baseline",
+    "self-approve or self-merge",
+    "change a formal Foundry Program stage",
+    "authorize scientific, clinical, spending, outreach, transaction, or production action",
+    "alter already-merged M2 source code"
+  ],
+  "acceptance_criteria": [
+    {
+      "criterion_id": "FWI-M2-016-A1",
+      "description": "M2-C1..C6 recorded VERIFIED with exact-revision merge-commit evidence.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/6c01c5301af6b3f9f292b3718c42cfd2dcc63cef",
+        "https://github.com/SangLeeVX/eigen-foundry/commit/fa9ec286d0c56ff80c8a9f969c1457be16d62bc6"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M2-016-A2",
+      "description": "M2 recorded COMPLETED; dependency M1 COMPLETED; no open M2 blockers.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/fa9ec286d0c56ff80c8a9f969c1457be16d62bc6",
+        "https://github.com/SangLeeVX/eigen-foundry/commit/6c01c5301af6b3f9f292b3718c42cfd2dcc63cef"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M2-016-A3",
+      "description": "Contract validation, secret scan, and full test suite stay clean.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94983399386",
+        "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94991000635"
+      ]
+    }
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 forge/validate_contracts.py",
+    "PYTHONPATH=src python3 -m unittest discover -s tests -t . -v"
+  ],
+  "risk_class": "LOW",
+  "retry_policy": {
+    "max_attempts": 2,
+    "idempotent_only": true
+  },
+  "claim": {
+    "actor": "governance-closeout-run",
+    "run_id": "foundry-closeout-fwi-m2-016",
+    "claimed_at": "2026-08-16T06:17:08.309425Z",
+    "expires_at": "2026-08-16T23:59:59Z"
+  },
+  "review": {
+    "independent_required": true,
+    "author_may_approve": false,
+    "review_evidence": [
+      "https://github.com/SangLeeVX/eigen-foundry/pull/32",
+      "https://github.com/SangLeeVX/eigen-foundry/pull/33",
+      "https://github.com/SangLeeVX/eigen-foundry/commit/6c01c5301af6b3f9f292b3718c42cfd2dcc63cef",
+      "https://github.com/SangLeeVX/eigen-foundry/commit/fa9ec286d0c56ff80c8a9f969c1457be16d62bc6"
+    ]
+  },
+  "protected_actions": [
+    "approve or merge the pull request"
+  ],
+  "checkpoint_id": "CP-M2"
+}
