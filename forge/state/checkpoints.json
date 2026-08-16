@@ -3,7 +3,7 @@
   "project": "Eigen Foundry",
   "canonical_repository": "SangLeeVX/eigen-foundry",
   "classification": "NONCANONICAL_ENGINEERING_STATE",
-  "updated_at": "2026-08-16T01:47:12.926966Z",
+  "updated_at": "2026-08-16T04:34:06.578075Z",
   "active_build_mandate": {
     "mandate_id": "BUILD-EIGEN-FOUNDRY-003",
     "version": "1.0",
@@ -493,7 +493,7 @@
       "milestone_id": "M1",
       "checkpoint_id": "CP-M1",
       "name": "Trustworthy foundation",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "dependencies": [
         "M0"
       ],
@@ -637,8 +637,17 @@
         {
           "criterion_id": "M1-C10",
           "description": "One authorized work item moves from READY to an independently reviewed pull request without another prompt.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M1-C10-INDEPENDENT-REVIEW",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/33e7adcbb618cda0f2f7ecf259a35613fa9fa3f0",
+              "immutable_revision": "33e7adcbb618cda0f2f7ecf259a35613fa9fa3f0",
+              "bound_criterion_id": "M1-C10",
+              "result": "APPROVED"
+            }
+          ]
         },
         {
           "criterion_id": "M1-C11",
