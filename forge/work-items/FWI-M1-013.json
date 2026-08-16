@@ -1,0 +1,43 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-M1-013",
+  "milestone_id": "M1",
+  "title": "Rotate exposed DeepSeek credential and record M1-C5 evidence",
+  "status": "READY",
+  "source": {
+    "github_issue": null,
+    "created_by": "foundry-live-readiness-audit",
+    "created_at": "2026-08-16T01:47:00Z"
+  },
+  "objective": "Resolve BLK-M1-KEY-ROTATION and M1-C5: rotate the previously exposed DeepSeek API key to a newly issued key stored only in the approved secret store, retain the single public-facing EigenField API key, and bind M1-C5 evidence to the governed CI secret-scan run on the protected baseline.",
+  "dependencies": [],
+  "allowed_paths": [
+    "forge/state/checkpoints.json",
+    "forge/state/apply_m1_c5_rotation.py"
+  ],
+  "forbidden_actions": [
+    "commit directly to a protected baseline",
+    "self-approve or self-merge",
+    "change a formal Foundry Program stage",
+    "authorize scientific, clinical, spending, outreach, transaction, or production action",
+    "copy secrets from chat, issues, logs, or fixtures"
+  ],
+  "acceptance_criteria": [
+    {"criterion_id": "FWI-M1-013-A1", "description": "M1-C5 recorded VERIFIED with exact-revision CI evidence.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M1-013-A2", "description": "BLK-M1-KEY-ROTATION recorded RESOLVED.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M1-013-A3", "description": "New DeepSeek key authenticates (HTTP 200 on /models); secret store chmod 600.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M1-013-A4", "description": "Secret scan and contract validation stay clean.", "status": "PENDING", "evidence": []}
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 forge/validate_contracts.py"
+  ],
+  "risk_class": "LOW",
+  "retry_policy": {"max_attempts": 2, "idempotent_only": true},
+  "claim": null,
+  "review": {"independent_required": true, "author_may_approve": false, "review_evidence": []},
+  "protected_actions": [
+    "approve or merge the pull request"
+  ],
+  "checkpoint_id": "CP-M1"
+}
