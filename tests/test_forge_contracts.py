@@ -270,10 +270,17 @@ class ForgeCheckpointMigrationTests(unittest.TestCase):
         self.assert_invalid(malformed, "requires completed dependencies")
 
     def test_open_blocker_prevents_completion(self) -> None:
+        # Live M1 blockers (KEY-ROTATION, REPO-POLICY) are now RESOLVED, so re-open
+        # an expected blocker in the fixture to exercise the open-blocker guard
+        # without violating the required blocker inventory.
         malformed = copy.deepcopy(self.document)
         activate(malformed)
         verify_milestone(malformed, "M0")
         verify_milestone(malformed, "M1")
+        for blocker in malformed["blockers"]:
+            if blocker["blocker_id"] == "BLK-M1-REPO-POLICY":
+                blocker["status"] = "OPEN"
+                blocker["evidence"] = []
         self.assert_invalid(malformed, "blocked by an open blocker")
 
     def test_wrong_plan_or_source_digest_fails_closed(self) -> None:

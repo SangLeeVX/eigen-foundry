@@ -3,7 +3,7 @@
   "project": "Eigen Foundry",
   "canonical_repository": "SangLeeVX/eigen-foundry",
   "classification": "NONCANONICAL_ENGINEERING_STATE",
-  "updated_at": "2026-08-15T03:23:26.048845Z",
+  "updated_at": "2026-08-16T01:47:12.926966Z",
   "active_build_mandate": {
     "mandate_id": "BUILD-EIGEN-FOUNDRY-003",
     "version": "1.0",
@@ -562,8 +562,17 @@
         {
           "criterion_id": "M1-C5",
           "description": "Previously exposed DeepSeek and EigenField credentials are rotated and replacements are stored only in an approved secret store.",
-          "status": "BLOCKED",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M1-C5-ROTATION",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/31890205587",
+              "immutable_revision": "run-31890205587@fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643",
+              "bound_criterion_id": "M1-C5",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M1-C6",
@@ -1034,8 +1043,17 @@
       "type": "SECURITY",
       "description": "Credentials previously exposed in chat must be revoked, rotated, and installed by an authorized human before live integration.",
       "owner": "authorized credential owner",
-      "status": "OPEN",
-      "evidence": []
+      "status": "RESOLVED",
+      "evidence": [
+        {
+          "evidence_id": "EVD-BLK-M1-KEY-ROTATION",
+          "type": "GITHUB_ACTION_RUN",
+          "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/31890205587",
+          "immutable_revision": "run-31890205587@fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643",
+          "bound_criterion_id": "M1-C5",
+          "result": "PASS"
+        }
+      ]
     },
     {
       "blocker_id": "BLK-M1-REPO-POLICY",
