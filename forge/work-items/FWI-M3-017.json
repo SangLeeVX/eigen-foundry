@@ -1,0 +1,82 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-M3-017",
+  "milestone_id": "M3",
+  "title": "Close M3 synthetic Conclave harness against merged build reality",
+  "status": "REVIEWED",
+  "source": {
+    "github_issue": null,
+    "created_by": "foundry-governance-closeout",
+    "created_at": "2026-08-16T07:20:00Z"
+  },
+  "objective": "Reconcile the M3 milestone ledger to the already-merged, CI-green build reality on the protected baseline. M3 (Synthetic Conclave harness) criteria C1-C6 are satisfied by merged PR #34 (deterministic synthetic F0 Crucible) plus the approved human commit console (PR #37) and the green synthetic-conclave test suite. Record M3-C1..C6 as VERIFIED with durable evidence and mark M3 COMPLETED.",
+  "dependencies": [],
+  "allowed_paths": [
+    "forge/state/checkpoints.json",
+    "forge/state/apply_m3_closeout.py",
+    "forge/work-items/FWI-M3-017.json"
+  ],
+  "forbidden_actions": [
+    "commit directly to a protected baseline",
+    "self-approve or self-merge",
+    "change a formal Foundry Program stage",
+    "authorize scientific, clinical, spending, outreach, transaction, or production action",
+    "alter already-merged M3 source code"
+  ],
+  "acceptance_criteria": [
+    {
+      "criterion_id": "FWI-M3-017-A1",
+      "description": "M3-C1..C6 recorded VERIFIED with exact-revision merge-commit + action-run evidence.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/72c421546b7040498acc657fa62d350d509612e2"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M3-017-A2",
+      "description": "M3 recorded COMPLETED; dependency M2 COMPLETED; no open M3 blockers.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/72c421546b7040498acc657fa62d350d509612e2",
+        "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94995158057"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M3-017-A3",
+      "description": "Contract validation, secret scan, and full test suite stay clean.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94995158057"
+      ]
+    }
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 forge/validate_contracts.py",
+    "PYTHONPATH=src python3 -m unittest discover -s tests -t . -v"
+  ],
+  "risk_class": "LOW",
+  "retry_policy": {
+    "max_attempts": 2,
+    "idempotent_only": true
+  },
+  "claim": {
+    "actor": "governance-closeout-run",
+    "run_id": "foundry-closeout-fwi-m3-017",
+    "claimed_at": "2026-08-16T07:15:27.641959Z",
+    "expires_at": "2026-08-16T23:59:59Z"
+  },
+  "review": {
+    "independent_required": true,
+    "author_may_approve": false,
+    "review_evidence": [
+      "https://github.com/SangLeeVX/eigen-foundry/pull/34",
+      "https://github.com/SangLeeVX/eigen-foundry/pull/37",
+      "https://github.com/SangLeeVX/eigen-foundry/commit/72c421546b7040498acc657fa62d350d509612e2"
+    ]
+  },
+  "protected_actions": [
+    "approve or merge the pull request"
+  ],
+  "checkpoint_id": "CP-M3"
+}
