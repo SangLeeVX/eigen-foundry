@@ -78,6 +78,60 @@ def _command(actor_id: str, key: str, version: int | None = None, *, roles=froze
     )
 
 
+# Realistic (synthetic but grounded) F0 program evidence that the live captain
+# seats reason over. Each case gets a concrete decision question plus the
+# frozen evidence bundle that should anchor the claim. This replaces the empty
+# context so a live model actually has substantive material to ground on
+# (the deterministic mock ignores this and returns its template).
+_CASE_CONTEXT: dict[str, dict] = {
+    "SCIENTIFIC": {
+        "question": "Does the KRAS(G12C) covalent inhibitor demonstrate target engagement in the frozen assay?",
+        "evidence": [
+            "Assay KRAS-ELISA-9: covalent occupancy KD = 0.4 nM; time-to-target ~ 30 min.",
+            "Assay MUT-BIND-14: bound fraction vs KRAS(G12C) 88% at 1 uM, 31% vs KRAS(G12D) same dose (on-target selectivity).",
+            "Assay CTG-WT-2: viability IC50 = 220 nM in NCI-H358 (mutant); no effect in A549-wt up to 10 uM.",
+        ],
+        "probe": "Synthesized from the frozen evidence manifest; candidate claims must cite these readouts and NOT assert unmeasured mechanism.",
+    },
+    "PRODUCT": {
+        "question": "Is the chemistry, manufacturing, and controls (CMC) batch acceptable to release this compound for F0 testing?",
+        "evidence": [
+            "CMC-Batch-07: purity 99.2% (HPLC), residual solvent below ICH Q3C limits, endotoxin < 0.5 EU/mL.",
+            "CMC-Stability-02: 4 weeks at 40C/75%RH, assay 98.9%, impurities within spec.",
+            "CMC-Formulation-1: 10 mg/mL in 5% DMSO / 95% vehicle, osmolality 295 mOsm, pH 7.4.",
+        ],
+        "probe": "Bound to the frozen CMC/QC manifest; a defensible claim must reference the actual batch data, not general safety statements.",
+    },
+    "CONTROL": {
+        "question": "Did the vehicle-only and no-treatment control arms stay within predefined toxicity/assay windows?",
+        "evidence": [
+            "Ctrl-Vehicle-3: 14-day vehicle, body weight within +/-5% of baseline, no treatment-related histopathology.",
+            "Ctrl-NoTreat-3: no-treatment arm, tumor growth within historical vehicle corridor (upper 95% CI bound).",
+            "Ctrl-Repro-1: replicate coefficient of variation < 15% across assay plates.",
+        ],
+        "probe": "Control-arm claim must cite the frozen control manifest; do not assert effects absent from the data.",
+    },
+    "EXECUTION": {
+        "question": "Did the F0 run execute every predefined protocol step and produce a complete, auditable packet?",
+        "evidence": [
+            "Run-Log-01: all 18 protocol steps executed in order; step 17 crash-resume point exercised and recovered.",
+            "Run-Log-02: no out-of-order commands; idempotency keys unique across the session.",
+            "Run-Log-03: packet digest matches a recomputed hash at close (no silent mutation).",
+        ],
+        "probe": "Execution claim must reference the frozen run/audit manifest; do not invent steps or outcomes.",
+    },
+    "INVESTMENT": {
+        "question": "Given the F0 evidence, is the expected program value sufficient to justify committing the modeled budget and timeline?",
+        "evidence": [
+            "Budget-Base: committed scope $150k, 9-week window, single integrator model.",
+            "Value-Model-c1: base-case NPV positive at 8% discount if P(tech success) >= 0.35; modeled P = 0.42.",
+            "Value-Model-c3: downside scenario (P=0.2) NPV negative; gate requires budget < $175k to stay solvent.",
+        ],
+        "probe": "Investment claim must anchor to the frozen budget/value model; report materiality against the $175k gate, not invented returns.",
+    },
+}
+
+
 def _roster(cases: tuple[CaseType, ...]) -> tuple[ParticipantAssignment, ...]:
     base = [
         ParticipantAssignment(
@@ -253,13 +307,15 @@ class WorkingConclave:
         )
         expected_version = session.state_version
         seat_outputs: list[dict[str, Any]] = []
+        claim_by_case: dict[CaseType, str] = {}
         for case in self.cases:
             assignment = _assignment_for(session, case)
             runtime = self._captain_run(assignment)
             # 1. Seat produces a validated claim via produce() (structured-output check).
+            case_ctx = _CASE_CONTEXT.get(case.value, {})
             out = runtime.produce(
                 f"produce a claim for {case.value}",
-                {},
+                case_ctx,
                 expected_kind="claim",
                 required_fields=("claim_id", "statement", "state", "materiality", "context", "gate_impact"),
                 seed=self.seed,
@@ -276,6 +332,7 @@ class WorkingConclave:
                 gate_impact=content["gate_impact"],
                 proposed_falsifier=content.get("proposed_falsifier"),
             )
+            claim_by_case[case] = claim.claim_id
             opinion = CaseOpinion(
                 opinion_id=f"wc-opinion-{case.value.lower()}",
                 case=case,
@@ -336,8 +393,19 @@ class WorkingConclave:
         for case in self.cases:
             assignment = _assignment_for(session, case)
             runtime = self._captain_run(assignment)
+            earlier_claim_id = claim_by_case.get(case)
+            final_prompt = (
+                f"finalize case [{case.value}] by returning ONLY the claim_id of the "
+                "claim your seat already submitted in the blind round for this case. "
+                "Reuse that exact claim_id string verbatim; do not invent a new one. "
+            )
+            if earlier_claim_id:
+                final_prompt += (
+                    f"Your seat's blind-round claim_id for {case.value} was: "
+                    f"{earlier_claim_id}. Return exactly that value as the claim_id. "
+                )
             out = runtime.produce(
-                f"produce a case determination for {case.value}",
+                final_prompt,
                 {},
                 expected_kind="final_case",
                 required_fields=("claim_id",),

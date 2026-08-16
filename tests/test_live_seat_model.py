@@ -158,7 +158,7 @@ class LiveSeatConfigTests(unittest.TestCase):
     def test_loads_key_from_secrets_file(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             path = _env_file(tmp, KIMI_API_KEY="sk-test-123", KIMI_BASE_URL="https://api.moonshot.ai/v1", KIMI_MODEL="kimi-k2.5")
-            config = load_live_seat_config(path)
+            config = load_live_seat_config(path, provider="kimi")
             self.assertEqual(config.key, "sk-test-123")
             self.assertEqual(config.model, "kimi-k2.5")
 
@@ -166,19 +166,19 @@ class LiveSeatConfigTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             path = _env_file(tmp, KIMI_MODEL="kimi-k2.5")
             with self.assertRaises(LiveSeatUnavailable) as ctx:
-                load_live_seat_config(path)
+                load_live_seat_config(path, provider="kimi")
             self.assertNotIn("sk-", str(ctx.exception))
 
     def test_default_base_url_and_required_model(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             path = _env_file(tmp, KIMI_API_KEY="sk-x", KIMI_MODEL="kimi-k2.5")
-            config = load_live_seat_config(path)
+            config = load_live_seat_config(path, provider="kimi")
             self.assertEqual(config.base_url, "https://api.moonshot.ai/v1")
             path2 = _env_file(tmp + "2") if False else None
         with tempfile.TemporaryDirectory() as tmp:
             path = _env_file(tmp, KIMI_API_KEY="sk-x")
             with self.assertRaises(LiveSeatUnavailable):
-                load_live_seat_config(path)
+                load_live_seat_config(path, provider="kimi")
 
 
 class SeatModelSelectionTests(unittest.TestCase):
@@ -209,20 +209,24 @@ class SeatModelSelectionTests(unittest.TestCase):
 
     def test_live_without_secret_fails_closed(self) -> None:
         os.environ["FOUNDRY_SEAT_MODEL"] = "live"
+        os.environ["FOUNDRY_SEAT_PROVIDER"] = "kimi"
         with tempfile.TemporaryDirectory() as tmp:
             os.environ["FOUNDRY_KIMI_ENV"] = str(_env_file(tmp))  # empty file
             with self.assertRaises(LiveSeatUnavailable):
                 default_seat_model_factory(self._assignment(), _template())
         os.environ.pop("FOUNDRY_KIMI_ENV", None)
+        os.environ.pop("FOUNDRY_SEAT_PROVIDER", None)
 
     def test_live_with_secret_binds_live_model(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             env = _env_file(tmp, KIMI_API_KEY="sk-live-1", KIMI_MODEL="kimi-k2.5")
             os.environ["FOUNDRY_SEAT_MODEL"] = "live"
+            os.environ["FOUNDRY_SEAT_PROVIDER"] = "kimi"
             os.environ["FOUNDRY_KIMI_ENV"] = str(env)
             model = default_seat_model_factory(self._assignment(), _template())
             self.assertIsInstance(model, LiveSeatModel)
             os.environ.pop("FOUNDRY_KIMI_ENV", None)
+            os.environ.pop("FOUNDRY_SEAT_PROVIDER", None)
 
     def test_working_conclave_accepts_injected_factory(self) -> None:
         # WorkingConclave's model selection is injectable; the default stays
