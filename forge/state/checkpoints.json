@@ -3,7 +3,7 @@
   "project": "Eigen Foundry",
   "canonical_repository": "SangLeeVX/eigen-foundry",
   "classification": "NONCANONICAL_ENGINEERING_STATE",
-  "updated_at": "2026-08-16T11:33:33.928364Z",
+  "updated_at": "2026-08-16T15:58:02.742733Z",
   "active_build_mandate": {
     "mandate_id": "BUILD-EIGEN-FOUNDRY-003",
     "version": "1.0",
@@ -1373,7 +1373,7 @@
       "milestone_id": "M7",
       "checkpoint_id": "CP-M7",
       "name": "Preclinical complete-program lifecycle",
-      "status": "NOT_STARTED",
+      "status": "COMPLETED",
       "dependencies": [
         "M6"
       ],
@@ -1382,38 +1382,132 @@
         {
           "criterion_id": "M7-C1",
           "description": "Approved public and private Sentinel connectors preserve quarantine, rights, lineage, deduplication, change detection, and replay.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M7-C1-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/392abb6fbedaf0bc348b026b16b96a66dff6d3bc",
+              "immutable_revision": "392abb6fbedaf0bc348b026b16b96a66dff6d3bc",
+              "bound_criterion_id": "M7-C1",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M7-C1-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95011818841",
+              "immutable_revision": "run-95011818841@392abb6fbedaf0bc348b026b16b96a66dff6d3bc",
+              "bound_criterion_id": "M7-C1",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M7-C2",
           "description": "F3-F8 model, assay, mechanism, target, route, modality, asset, rights, execution, investment, and nomination policies/workspaces are complete.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M7-C2-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/21eed018bbc6dbb2bf58886d29d0ff61d8d4c47c",
+              "immutable_revision": "21eed018bbc6dbb2bf58886d29d0ff61d8d4c47c",
+              "bound_criterion_id": "M7-C2",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M7-C2-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95018350722",
+              "immutable_revision": "run-95018350722@21eed018bbc6dbb2bf58886d29d0ff61d8d4c47c",
+              "bound_criterion_id": "M7-C2",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M7-C3",
           "description": "Six executable routes compare against one frozen TPP without averaging away a hard failure.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M7-C3-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/21eed018bbc6dbb2bf58886d29d0ff61d8d4c47c",
+              "immutable_revision": "21eed018bbc6dbb2bf58886d29d0ff61d8d4c47c",
+              "bound_criterion_id": "M7-C3",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M7-C3-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95018350722",
+              "immutable_revision": "run-95018350722@21eed018bbc6dbb2bf58886d29d0ff61d8d4c47c",
+              "bound_criterion_id": "M7-C3",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M7-C4",
           "description": "Existing-asset or rescue and de novo routes each complete governed F0-F8 dry runs with no gate skips.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M7-C4-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/21eed018bbc6dbb2bf58886d29d0ff61d8d4c47c",
+              "immutable_revision": "21eed018bbc6dbb2bf58886d29d0ff61d8d4c47c",
+              "bound_criterion_id": "M7-C4",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M7-C4-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95018350722",
+              "immutable_revision": "run-95018350722@21eed018bbc6dbb2bf58886d29d0ff61d8d4c47c",
+              "bound_criterion_id": "M7-C4",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M7-C5",
           "description": "A nominated package is third-party readable, reproducible, controllable, transferable, and financeable.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M7-C5-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/21eed018bbc6dbb2bf58886d29d0ff61d8d4c47c",
+              "immutable_revision": "21eed018bbc6dbb2bf58886d29d0ff61d8d4c47c",
+              "bound_criterion_id": "M7-C5",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M7-C5-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95018350722",
+              "immutable_revision": "run-95018350722@21eed018bbc6dbb2bf58886d29d0ff61d8d4c47c",
+              "bound_criterion_id": "M7-C5",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M7-C6",
           "description": "Portfolio and Opportunity Radar controls enforce capacity, correlated risk, reserves, catalysts, expiries, and upstream stability.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M7-C6-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/1ec3352af72a593bbd804f9ee04af80e25fe94a7",
+              "immutable_revision": "1ec3352af72a593bbd804f9ee04af80e25fe94a7",
+              "bound_criterion_id": "M7-C6",
+              "result": "VERIFIED"
+            }
+          ]
         }
       ]
     },
