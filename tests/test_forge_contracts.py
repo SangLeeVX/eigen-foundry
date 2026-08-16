@@ -266,10 +266,10 @@ class ForgeCheckpointMigrationTests(unittest.TestCase):
         self.assert_invalid(malformed, "every criterion VERIFIED")
 
     def test_completed_milestone_requires_completed_dependencies(self) -> None:
-        # M1 is COMPLETED, so M2 may now complete; M3 still depends on the not-yet-
-        # completed M2, so M3 completing must fail closed on its dependency.
+        # M1 and M2 are COMPLETED, so M3 may now complete; M4 still depends on the
+        # not-yet-completed M3, so M4 completing must fail closed on its dependency.
         malformed = copy.deepcopy(self.document)
-        verify_milestone(malformed, "M3")
+        verify_milestone(malformed, "M4")
         self.assert_invalid(malformed, "requires completed dependencies")
 
     def test_open_blocker_prevents_completion(self) -> None:
@@ -448,10 +448,10 @@ class ForgeCheckpointMigrationTests(unittest.TestCase):
         self.assert_invalid(malformed, "resolved blocker requires durable evidence")
 
     def test_pending_and_active_statuses_require_merge_evidence(self) -> None:
-        # Post-activation baseline: migration ACTIVE, M0 and M1 COMPLETED, M2 NOT_STARTED.
+        # Post-activation baseline: migration ACTIVE, M0-M2 COMPLETED, M3 NOT_STARTED.
         # A downstream milestone cannot be started before its dependency completes.
         malformed = copy.deepcopy(self.document)
-        malformed["milestones"][3]["status"] = "IN_PROGRESS"  # M3; dep M2 not completed
+        malformed["milestones"][4]["status"] = "IN_PROGRESS"  # M4; dep M3 not completed
         self.assert_invalid(malformed, "work cannot start before dependencies complete")
         # The mandate evidence binding must be preserved even in ACTIVE state.
         malformed = copy.deepcopy(self.document)
