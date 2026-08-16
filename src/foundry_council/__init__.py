@@ -44,6 +44,19 @@ from .m5_models import (
 )
 from .operator_overview import OperatorOverview
 from .outbox_dispatcher import OutboxDispatcher
+from .prioritization_council import PrioritizationCouncil, PrioritizationResult, PrioritizationBoundedError
+from .prioritization_models import (
+    Axis,
+    AxisScore,
+    Candidate,
+    CandidateRank,
+    DebateTurn,
+    Disagreement,
+    RankedShortlist,
+    SeatOpinion,
+    Tier,
+    PrioritizationPacket,
+)
 from .replay_audit import ReplayAudit, ReplayAuditResult
 from .seat_runtime import (
     MalformedSeatOutput,
@@ -72,6 +85,19 @@ __all__ = [
     "migrate_sqlite_to_postgres",
     "OutboxDispatcher",
     "ApprovalConsole",
+    "PrioritizationCouncil",
+    "PrioritizationResult",
+    "PrioritizationBoundedError",
+    "Candidate",
+    "Axis",
+    "AxisScore",
+    "CandidateRank",
+    "RankedShortlist",
+    "SeatOpinion",
+    "DebateTurn",
+    "Disagreement",
+    "Tier",
+    "PrioritizationPacket",
     "LiveSeatModel",
     "LiveSeatError",
     "LiveSeatUnavailable",

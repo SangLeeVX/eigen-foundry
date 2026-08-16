@@ -235,9 +235,11 @@ class LiveSeatModel:
         config: LiveSeatConfig | None = None,
         *,
         transport: Transport | None = None,
+        system_prompt: str | None = None,
     ) -> None:
         self.config = config or load_live_seat_config()
         self._transport = transport or _default_transport
+        self._system_prompt = system_prompt
         self._endpoint = f"{self.config.base_url}/chat/completions"
 
     @classmethod
@@ -245,13 +247,18 @@ class LiveSeatModel:
         cls,
         provider: str | None = None,
         env_file: str | Path | None = None,
+        *,
+        system_prompt: str | None = None,
     ) -> "LiveSeatModel":
         """Build a live model from the approved secrets store."""
-        return cls(load_live_seat_config(provider=provider, env_file=env_file))
+        return cls(
+            load_live_seat_config(provider=provider, env_file=env_file),
+            system_prompt=system_prompt,
+        )
 
     def run(self, prompt: str, context: dict[str, Any]) -> str:
         """Send prompt+context to the live model and return its raw text."""
-        schema_guide = (
+        schema_guide = self._system_prompt or (
             'Your entire reply must be EXACTLY ONE minified JSON object and nothing '
             'else (no markdown fences, no prose, no preamble). Use exactly these keys: '
             '{"claim_id": string, "statement": string, "state": string, '
