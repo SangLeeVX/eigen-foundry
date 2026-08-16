@@ -3,7 +3,7 @@
   "project": "Eigen Foundry",
   "canonical_repository": "SangLeeVX/eigen-foundry",
   "classification": "NONCANONICAL_ENGINEERING_STATE",
-  "updated_at": "2026-08-16T06:17:08.309425Z",
+  "updated_at": "2026-08-16T07:15:27.641959Z",
   "active_build_mandate": {
     "mandate_id": "BUILD-EIGEN-FOUNDRY-003",
     "version": "1.0",
@@ -827,7 +827,7 @@
       "milestone_id": "M3",
       "checkpoint_id": "CP-M3",
       "name": "Synthetic Conclave harness",
-      "status": "NOT_STARTED",
+      "status": "COMPLETED",
       "dependencies": [
         "M2"
       ],
@@ -836,38 +836,116 @@
         {
           "criterion_id": "M3-C1",
           "description": "Corrected evidence, result, measured-null, gap, dissent, challenge, and successor-session contracts are enforced.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M3-C1-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/72c421546b7040498acc657fa62d350d509612e2",
+              "immutable_revision": "72c421546b7040498acc657fa62d350d509612e2",
+              "bound_criterion_id": "M3-C1",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M3-C1-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94995158057",
+              "immutable_revision": "run-94995158057@72c421546b7040498acc657fa62d350d509612e2",
+              "bound_criterion_id": "M3-C1",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M3-C2",
           "description": "Axiom-first mock seats complete a frozen, blind, challenged, independently reviewed F0 Crucible.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M3-C2-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/72c421546b7040498acc657fa62d350d509612e2",
+              "immutable_revision": "72c421546b7040498acc657fa62d350d509612e2",
+              "bound_criterion_id": "M3-C2",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M3-C2-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94995158057",
+              "immutable_revision": "run-94995158057@72c421546b7040498acc657fa62d350d509612e2",
+              "bound_criterion_id": "M3-C2",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M3-C3",
           "description": "Exact human approval gates one atomic synthetic commit.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M3-C3-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/644b345cc6eec6db47f88fc40342f31098112e14",
+              "immutable_revision": "644b345cc6eec6db47f88fc40342f31098112e14",
+              "bound_criterion_id": "M3-C3",
+              "result": "VERIFIED"
+            }
+          ]
         },
         {
           "criterion_id": "M3-C4",
           "description": "Material UNKNOWN, FAIL, dissent, stale input, wrong role, expiry, and self-approval fail closed.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M3-C4-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94995158057",
+              "immutable_revision": "run-94995158057@72c421546b7040498acc657fa62d350d509612e2",
+              "bound_criterion_id": "M3-C4",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M3-C5",
           "description": "Duplicate and reordered synthetic commands do not duplicate or regress state.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M3-C5-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94995158057",
+              "immutable_revision": "run-94995158057@72c421546b7040498acc657fa62d350d509612e2",
+              "bound_criterion_id": "M3-C5",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M3-C6",
           "description": "All outputs and UX label the result only as a synthetic Conclave harness.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M3-C6-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/72c421546b7040498acc657fa62d350d509612e2",
+              "immutable_revision": "72c421546b7040498acc657fa62d350d509612e2",
+              "bound_criterion_id": "M3-C6",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M3-C6-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94995158057",
+              "immutable_revision": "run-94995158057@72c421546b7040498acc657fa62d350d509612e2",
+              "bound_criterion_id": "M3-C6",
+              "result": "PASS"
+            }
+          ]
         }
       ]
     },
