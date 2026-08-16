@@ -3,7 +3,7 @@
   "work_item_id": "FWI-M1-013",
   "milestone_id": "M1",
   "title": "Rotate exposed DeepSeek credential and record M1-C5 evidence",
-  "status": "READY",
+  "status": "REVIEWED",
   "source": {
     "github_issue": null,
     "created_by": "foundry-live-readiness-audit",
@@ -23,19 +23,63 @@
     "copy secrets from chat, issues, logs, or fixtures"
   ],
   "acceptance_criteria": [
-    {"criterion_id": "FWI-M1-013-A1", "description": "M1-C5 recorded VERIFIED with exact-revision CI evidence.", "status": "PENDING", "evidence": []},
-    {"criterion_id": "FWI-M1-013-A2", "description": "BLK-M1-KEY-ROTATION recorded RESOLVED.", "status": "PENDING", "evidence": []},
-    {"criterion_id": "FWI-M1-013-A3", "description": "New DeepSeek key authenticates (HTTP 200 on /models); secret store chmod 600.", "status": "PENDING", "evidence": []},
-    {"criterion_id": "FWI-M1-013-A4", "description": "Secret scan and contract validation stay clean.", "status": "PENDING", "evidence": []}
+    {
+      "criterion_id": "FWI-M1-013-A1",
+      "description": "M1-C5 recorded VERIFIED with exact-revision CI evidence.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95099732068",
+        "https://github.com/SangLeeVX/eigen-foundry/commit/33e7adcbb618cda0f2f7ecf259a35613fa9fa3f0"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M1-013-A2",
+      "description": "BLK-M1-KEY-ROTATION recorded RESOLVED.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/33e7adcbb618cda0f2f7ecf259a35613fa9fa3f0"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M1-013-A3",
+      "description": "New DeepSeek key authenticates (HTTP 200 on /models); secret store chmod 600.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/33e7adcbb618cda0f2f7ecf259a35613fa9fa3f0"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M1-013-A4",
+      "description": "Secret scan and contract validation stay clean.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95099732068"
+      ]
+    }
   ],
   "validation_commands": [
     "python3 forge/check_secrets.py",
     "python3 forge/validate_contracts.py"
   ],
   "risk_class": "LOW",
-  "retry_policy": {"max_attempts": 2, "idempotent_only": true},
-  "claim": null,
-  "review": {"independent_required": true, "author_may_approve": false, "review_evidence": []},
+  "retry_policy": {
+    "max_attempts": 2,
+    "idempotent_only": true
+  },
+  "claim": {
+    "actor": "human-owner",
+    "run_id": "sangleevx-pr48-merge",
+    "claimed_at": "2026-08-16T04:30:00Z",
+    "expires_at": "2026-08-16T23:59:59Z"
+  },
+  "review": {
+    "independent_required": true,
+    "author_may_approve": false,
+    "review_evidence": [
+      "https://github.com/SangLeeVX/eigen-foundry/pull/48",
+      "https://github.com/SangLeeVX/eigen-foundry/commit/33e7adcbb618cda0f2f7ecf259a35613fa9fa3f0"
+    ]
+  },
   "protected_actions": [
     "approve or merge the pull request"
   ],
