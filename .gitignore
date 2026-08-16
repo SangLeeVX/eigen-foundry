@@ -11,5 +11,6 @@ __pycache__/
 .ruff_cache/
 .forge-run/
 dist/
+live_runs/
 build/
 *.egg-info/

@@ -253,6 +253,7 @@ class WorkingConclave:
         )
         expected_version = session.state_version
         seat_outputs: list[dict[str, Any]] = []
+        claim_by_case: dict[CaseType, str] = {}
         for case in self.cases:
             assignment = _assignment_for(session, case)
             runtime = self._captain_run(assignment)
@@ -276,6 +277,7 @@ class WorkingConclave:
                 gate_impact=content["gate_impact"],
                 proposed_falsifier=content.get("proposed_falsifier"),
             )
+            claim_by_case[case] = claim.claim_id
             opinion = CaseOpinion(
                 opinion_id=f"wc-opinion-{case.value.lower()}",
                 case=case,
@@ -336,8 +338,19 @@ class WorkingConclave:
         for case in self.cases:
             assignment = _assignment_for(session, case)
             runtime = self._captain_run(assignment)
+            earlier_claim_id = claim_by_case.get(case)
+            final_prompt = (
+                f"finalize case [{case.value}] by returning ONLY the claim_id of the "
+                "claim your seat already submitted in the blind round for this case. "
+                "Reuse that exact claim_id string verbatim; do not invent a new one. "
+            )
+            if earlier_claim_id:
+                final_prompt += (
+                    f"Your seat's blind-round claim_id for {case.value} was: "
+                    f"{earlier_claim_id}. Return exactly that value as the claim_id. "
+                )
             out = runtime.produce(
-                f"produce a case determination for {case.value}",
+                final_prompt,
                 {},
                 expected_kind="final_case",
                 required_fields=("claim_id",),

@@ -1,20 +1,24 @@
-"""M4-C1 — live seat model binding (Kimi K2.5 via api.moonshot.ai).
+"""M4-C1 — live seat model binding (Kimi K2.5 or DeepSeek, OpenAI-compatible).
 
 M4 requires "live seats" to use real model inference while preserving every
 bounded-runtime invariant: distinct run identity, bounded tool envelope, and
 structured-output validation. This module provides a ``LiteralSeatModel``
-adapter that calls the Kimi K2.5 chat-completions API and returns the raw model
+adapter that calls an OpenAI-compatible chat-completions API (Kimi K2.5 via
+api.moonshot.ai, or DeepSeek via api.deepseek.com) and returns the raw model
 text. The *runtime* still performs structured-output validation (SeatRuntime /
 working_conclave), so a live model can never bypass the schema contract.
 
 Key properties:
 
   - The API key is loaded ONLY from the approved secrets store
-    (``~/.openclaw/workspace/secrets/kimi.env`` by default, overridable via
-    ``FOUNDRY_KIMI_ENV``) or from the ambient ``KIMI_*`` environment variables
-    when the secrets file is absent. The key is never accepted from prompts,
-    chat content, context dicts, or logs, and no exception message ever
-    contains key material.
+    (``~/.openclaw/workspace/secrets/{kimi,deepseek}.env`` by default,
+    overridable via ``FOUNDRY_*_ENV``) or from ambient ``KIMI_*`` / ``DEEPSEEK_*``
+    environment variables when the secrets file is absent. The key is never
+    accepted from prompts, chat content, context dicts, or logs, and no
+    exception message ever contains key material.
+  - Provider selection: ``FOUNDRY_SEAT_PROVIDER`` (kimi | deepseek); when unset,
+    the first approved secrets file present wins (DeepSeek preferred for
+    inference by operating policy). "live" mode requires an approved store.
   - Model selection is environment-driven: ``FOUNDRY_SEAT_MODEL=live`` binds
     live seats; the default ``deterministic`` keeps CI hermetic (no network).
   - The HTTP layer is injectable so unit tests exercise the adapter without
@@ -37,9 +41,12 @@ from typing import Any, Callable
 from .seat_runtime import DeterministicSeatModel, LiteralSeatModel
 from .models import ParticipantAssignment
 
-# Default approved secrets-store location (never committed to the repository).
+# Default approved secrets-store locations (never committed to the repository).
 DEFAULT_KIMI_ENV = Path.home() / ".openclaw" / "workspace" / "secrets" / "kimi.env"
-DEFAULT_BASE_URL = "https://api.moonshot.ai/v1"
+DEFAULT_DEEPSEEK_ENV = Path.home() / ".openclaw" / "workspace" / "secrets" / "deepseek.env"
+DEFAULT_KIMI_BASE_URL = "https://api.moonshot.ai/v1"
+DEFAULT_DEEPSEEK_BASE_URL = "https://api.deepseek.com"
+# DeepSeek's OpenAI-compatible endpoint is /chat/completions on this host.
 
 Transport = Callable[[str, dict[str, Any], dict[str, str], float], tuple[int, bytes]]
 
@@ -83,32 +90,97 @@ class LiveSeatConfig:
     timeout: float = 60.0
 
 
-def load_live_seat_config(env_file: str | Path | None = None) -> LiveSeatConfig:
+def _provider_from_env() -> str:
+    """Resolve the live-seat provider (kimi | deepseek) from the environment.
+
+    ``FOUNDRY_SEAT_PROVIDER`` wins when set. Otherwise pick the first approved
+    secrets store that exists (DeepSeek preferred by operating policy: it is
+    the configured default provider for inference). Raises nothing; returns
+    "deepseek" or "kimi" accordingly.
+    """
+    explicit = os.environ.get("FOUNDRY_SEAT_PROVIDER", "").strip().lower()
+    if explicit in ("deepseek", "kimi"):
+        return explicit
+    override = os.environ.get("FOUNDRY_SEAT_PROVIDER", "").strip().lower()
+    if override:
+        raise LiveSeatUnavailable(f"unknown FOUNDRY_SEAT_PROVIDER: {override}")
+    # Auto-detect from what is actually available.
+    if DEFAULT_DEEPSEEK_ENV.exists():
+        return "deepseek"
+    if DEFAULT_KIMI_ENV.exists():
+        return "kimi"
+    # Fall back to deepseek if ambient DEEPSEEK_API_KEY is present.
+    if os.environ.get("DEEPSEEK_API_KEY"):
+        return "deepseek"
+    if os.environ.get("KIMI_API_KEY"):
+        return "kimi"
+    raise LiveSeatUnavailable(
+        "live seat model requested but no approved live-model secrets store is present "
+        "(FOUNDRY_SEAT_MODEL=live requires secrets/kimi.env or secrets/deepseek.env)"
+    )
+
+
+PROVIDER_SPECS = {
+    "kimi": {
+        "env_file": DEFAULT_KIMI_ENV,
+        "env_key": "KIMI_API_KEY",
+        "env_base": "KIMI_BASE_URL",
+        "env_model": "KIMI_MODEL",
+        "override": "FOUNDRY_KIMI_ENV",
+        "default_base": DEFAULT_KIMI_BASE_URL,
+    },
+    "deepseek": {
+        "env_file": DEFAULT_DEEPSEEK_ENV,
+        "env_key": "DEEPSEEK_API_KEY",
+        "env_base": "DEEPSEEK_BASE_URL",
+        "env_model": "DEEPSEEK_MODEL",
+        "override": "FOUNDRY_DEEPSEEK_ENV",
+        "default_base": DEFAULT_DEEPSEEK_BASE_URL,
+    },
+}
+
+
+def load_live_seat_config(
+    env_file: str | Path | None = None,
+    provider: str | None = None,
+) -> LiveSeatConfig:
     """Load live-model config from the approved secrets store.
 
-    Resolution order: explicit ``env_file`` > ``FOUNDRY_KIMI_ENV`` >
-    the default secrets path. When the file is absent, falls back to ambient
-    ``KIMI_*`` environment variables (operator injection). Raises
-    :class:`LiveSeatUnavailable` without echoing any key material when the
-    key cannot be resolved.
+    ``provider`` is "kimi" or "deepseek" (resolved from the environment when
+    omitted; see :func:`_provider_from_env`). Resolution order per provider:
+    explicit ``env_file`` > ``FOUNDRY_*_ENV`` override > the default secrets
+    path. Falls back to ambient ``KIMI_*`` / ``DEEPSEEK_*`` environment
+    variables when the file is absent. Raises :class:`LiveSeatUnavailable`
+    without echoing any key material when the key cannot be resolved.
     """
-    requested = env_file or os.environ.get("FOUNDRY_KIMI_ENV") or DEFAULT_KIMI_ENV
+    provider = provider or _provider_from_env()
+    spec = PROVIDER_SPECS.get(provider)
+    if spec is None:
+        raise LiveSeatUnavailable(f"unknown live-seat provider: {provider}")
+    requested = env_file or os.environ.get(spec["override"]) or spec["env_file"]
     values = _parse_env_file(Path(requested)) if isinstance(requested, (str, Path)) else {}
     if not values:
-        values = {key: os.environ.get(key, "") for key in ("KIMI_API_KEY", "KIMI_BASE_URL", "KIMI_MODEL")}
+        values = {
+            key: os.environ.get(key, "")
+            for key in (spec["env_key"], spec["env_base"], spec["env_model"])
+        }
 
-    resolved_key = (values.get("KIMI_API_KEY") or "").strip()
+    resolved_key = (values.get(spec["env_key"]) or "").strip()
     if not resolved_key:
         raise LiveSeatUnavailable(
-            "live seat model requested but KIMI_API_KEY is not present in the "
-            "approved secrets store (FOUNDRY_SEAT_MODEL=live requires "
-            "secrets/kimi.env or ambient KIMI_API_KEY)"
+            f"live seat model requested but {spec['env_key']} is not present "
+            f"in the approved secrets store (FOUNDRY_SEAT_MODEL=live requires "
+            f"{spec['env_file'].name} or ambient {spec['env_key']})"
         )
-    base_url = (values.get("KIMI_BASE_URL") or DEFAULT_BASE_URL).strip().rstrip("/")
-    model = (values.get("KIMI_MODEL") or "").strip()
+    base_url = (values.get(spec["env_base"]) or spec["default_base"]).strip().rstrip("/")
+    model = (values.get(spec["env_model"]) or "").strip()
+    if not model:
+        # DeepSeek: default to the chat model when unset.
+        base_model = "deepseek-chat" if provider == "deepseek" else ""
+        model = base_model
     if not model:
         raise LiveSeatUnavailable(
-            "live seat model requested but KIMI_MODEL is not configured "
+            f"live seat model requested but {spec['env_model']} is not configured "
             "in the approved secrets store"
         )
     return LiveSeatConfig(key=resolved_key, base_url=base_url, model=model)
@@ -169,23 +241,34 @@ class LiveSeatModel:
         self._endpoint = f"{self.config.base_url}/chat/completions"
 
     @classmethod
-    def from_secrets_env(cls, env_file: str | Path | None = None) -> "LiveSeatModel":
+    def from_secrets_env(
+        cls,
+        provider: str | None = None,
+        env_file: str | Path | None = None,
+    ) -> "LiveSeatModel":
         """Build a live model from the approved secrets store."""
-        return cls(load_live_seat_config(env_file))
+        return cls(load_live_seat_config(provider=provider, env_file=env_file))
 
     def run(self, prompt: str, context: dict[str, Any]) -> str:
         """Send prompt+context to the live model and return its raw text."""
+        schema_guide = (
+            'Your entire reply must be EXACTLY ONE minified JSON object and nothing '
+            'else (no markdown fences, no prose, no preamble). Use exactly these keys: '
+            '{"claim_id": string, "statement": string, "state": string, '
+            '"materiality": string, "context": string, "gate_impact": string}. '
+            'The "state" value must be one of: OBSERVED, SUPPORTED_INFERENCE, '
+            'MODEL_PREDICTION, CONTRADICTED, UNKNOWN. '
+            'NEVER use EXPERIMENTALLY_VALIDATED or TRANSLATIONALLY_VALIDATED for '
+            '"state": a council agent seat may not promote evidence to a validated state. '
+            'The "materiality" value must be one of: NON_MATERIAL, MATERIAL, FATAL. '
+            'Output the single JSON object only.'
+        )
         payload = {
             "model": self.config.model,
             "messages": [
                 {
                     "role": "system",
-                    "content": (
-                        "You are a council seat in a governed drug-foundry "
-                        "working conclave. Respond with ONLY a single JSON "
-                        "object matching the requested schema. Never include "
-                        "anything outside the JSON object."
-                    ),
+                    "content": schema_guide,
                 },
                 {
                     "role": "user",
@@ -195,6 +278,7 @@ class LiveSeatModel:
                 },
             ],
             "temperature": 0.0,
+            "response_format": {"type": "json_object"},
         }
         headers = {
             "Authorization": f"Bearer {self.config.key}",
@@ -234,8 +318,9 @@ def default_seat_model_factory(
     """Environment-driven seat model selection.
 
     ``FOUNDRY_SEAT_MODEL=live`` binds a :class:`LiveSeatModel` (requires the
-    approved Kimi secrets store); anything else (default) returns the
-    deterministic mock so CI stays hermetic and network-free.
+    approved Kimi or DeepSeek secrets store; provider via
+    ``FOUNDRY_SEAT_PROVIDER`` or auto-detected); anything else (default)
+    returns the deterministic mock so CI stays hermetic and network-free.
     """
     mode = os.environ.get("FOUNDRY_SEAT_MODEL", "deterministic").strip().lower()
     if mode == "live":
