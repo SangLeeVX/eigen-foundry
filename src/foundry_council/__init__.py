@@ -44,6 +44,17 @@ from .m5_models import (
 )
 from .operator_overview import OperatorOverview
 from .outbox_dispatcher import OutboxDispatcher
+from .portfolio_radar import (
+    CapacityView,
+    Catalyst,
+    CorrelatedRiskView,
+    ExpiryItem,
+    PortfolioRadar,
+    PortfolioRadarReport,
+    RadarConfig,
+    ReservesView,
+    UpstreamStabilityItem,
+)
 from .prioritization_council import PrioritizationCouncil, PrioritizationResult, PrioritizationBoundedError
 from .prioritization_models import (
     Axis,
@@ -85,6 +96,15 @@ __all__ = [
     "migrate_sqlite_to_postgres",
     "OutboxDispatcher",
     "ApprovalConsole",
+    "PortfolioRadar",
+    "PortfolioRadarReport",
+    "RadarConfig",
+    "CapacityView",
+    "CorrelatedRiskView",
+    "ReservesView",
+    "Catalyst",
+    "ExpiryItem",
+    "UpstreamStabilityItem",
     "PrioritizationCouncil",
     "PrioritizationResult",
     "PrioritizationBoundedError",
