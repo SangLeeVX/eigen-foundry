@@ -23,7 +23,7 @@ import hashlib
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from .ledger import SQLiteLedger
 from .models import (
@@ -47,8 +47,9 @@ from .models import (
     Route,
     SnapshotRef,
 )
+from .live_seat_model import default_seat_model_factory
 from .policy import DEFAULT_GATE_POLICY, canonical_digest
-from .seat_runtime import DeterministicSeatModel, SeatRuntime, bind_seat
+from .seat_runtime import LiteralSeatModel, SeatRuntime, bind_seat
 from .service import CouncilService
 
 
@@ -180,7 +181,14 @@ class WorkingConclaveTrace:
 
 
 class WorkingConclave:
-    """Runs a deterministic F0 council session with seat-executed outputs."""
+    """Runs a deterministic F0 council session with seat-executed outputs.
+
+    Seat models are injectable: ``seat_model_factory(assignment, template)``
+    returns the ``LiteralSeatModel`` for a case-captain seat. By default the
+    factory is environment-driven (``FOUNDRY_SEAT_MODEL=live`` binds Kimi K2.5
+    via :class:`~.live_seat_model.LiveSeatModel`; the default is the
+    deterministic mock so CI stays hermetic and network-free).
+    """
 
     def __init__(
         self,
@@ -188,11 +196,13 @@ class WorkingConclave:
         *,
         seed: int = 7,
         cases: tuple[CaseType, ...] | None = None,
+        seat_model_factory: Callable[[ParticipantAssignment, dict[str, Any]], LiteralSeatModel] | None = None,
     ) -> None:
         self.ledger = SQLiteLedger(sqlite_path)
         self.service = CouncilService(self.ledger)
         self.cases = cases or tuple(CaseType)
         self.seed = seed
+        self.seat_model_factory = seat_model_factory or default_seat_model_factory
 
     def _captain_model_template(self, case: CaseType) -> dict[str, Any]:
         suffix = case.value.lower()
@@ -208,7 +218,8 @@ class WorkingConclave:
         }
 
     def _captain_run(self, assignment: ParticipantAssignment) -> SeatRuntime:
-        model = DeterministicSeatModel(self._captain_model_template(assignment.case))
+        template = self._captain_model_template(assignment.case)
+        model = self.seat_model_factory(assignment, template)
         return SeatRuntime(bind_seat(assignment, seed=self.seed), model)
 
     def run(self) -> WorkingConclaveTrace:

@@ -23,6 +23,12 @@ from .production_ops import BackupRestore, ConnectorHealth, Observability, Relea
 from .realistic_dry_run import RealisticDryRun, RealisticDryRunResult
 from .ledger import SQLiteLedger
 from .ledger_protocol import Ledger, build_ledger, migrate_sqlite_to_postgres
+from .live_seat_model import (
+    LiveSeatError,
+    LiveSeatModel,
+    LiveSeatUnavailable,
+    default_seat_model_factory,
+)
 from .m5_acceptance import M5AcceptanceRunner, run_m5_acceptance
 from .m5_models import (
     AttributionKind,
@@ -46,6 +52,12 @@ from .seat_runtime import (
     ToolOutsideEnvelope,
     bind_seat,
 )
+from .signed_identity import (
+    IdentitySecretUnavailable,
+    SignedAssertionIdentityProvider,
+    build_signed_authorizer,
+    mint_assertion,
+)
 from .sentinel import Sentinel
 from .service import CouncilService
 from .synthetic_conclave import SyntheticConclave
@@ -60,6 +72,13 @@ __all__ = [
     "migrate_sqlite_to_postgres",
     "OutboxDispatcher",
     "ApprovalConsole",
+    "LiveSeatModel",
+    "LiveSeatError",
+    "LiveSeatUnavailable",
+    "SignedAssertionIdentityProvider",
+    "IdentitySecretUnavailable",
+    "mint_assertion",
+    "build_signed_authorizer",
     "SyntheticConclave",
     "WorkingConclave",
     "Sentinel",

@@ -3,7 +3,7 @@
   "project": "Eigen Foundry",
   "canonical_repository": "SangLeeVX/eigen-foundry",
   "classification": "NONCANONICAL_ENGINEERING_STATE",
-  "updated_at": "2026-08-16T07:15:27.641959Z",
+  "updated_at": "2026-08-16T08:19:23.144407Z",
   "active_build_mandate": {
     "mandate_id": "BUILD-EIGEN-FOUNDRY-003",
     "version": "1.0",
@@ -953,7 +953,7 @@
       "milestone_id": "M4",
       "checkpoint_id": "CP-M4",
       "name": "Working Conclave",
-      "status": "NOT_STARTED",
+      "status": "COMPLETED",
       "dependencies": [
         "M3"
       ],
@@ -962,32 +962,117 @@
         {
           "criterion_id": "M4-C1",
           "description": "Live seats use versioned prompts/models, distinct run identities, and seat-specific tool envelopes.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M4-C1-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/7d36fcee8b42f18992d2d66f97605bf92b77873e",
+              "immutable_revision": "7d36fcee8b42f18992d2d66f97605bf92b77873e",
+              "bound_criterion_id": "M4-C1",
+              "result": "VERIFIED"
+            }
+          ]
         },
         {
           "criterion_id": "M4-C2",
           "description": "Structured outputs, traces, limits, reproducibility manifests, and bounded failures are enforced.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M4-C2-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/92f4a26bbbe4f891c28c3b5a0702b43b1c2f4ea3",
+              "immutable_revision": "92f4a26bbbe4f891c28c3b5a0702b43b1c2f4ea3",
+              "bound_criterion_id": "M4-C2",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M4-C2-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94996740027",
+              "immutable_revision": "run-94996740027@92f4a26bbbe4f891c28c3b5a0702b43b1c2f4ea3",
+              "bound_criterion_id": "M4-C2",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M4-C3",
           "description": "Live seats reproduce the synthetic F0 flow without gaining approval, commit, policy, or evidence-promotion authority.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M4-C3-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/52604cbe708e41cc8602610671b1267af63739cd",
+              "immutable_revision": "52604cbe708e41cc8602610671b1267af63739cd",
+              "bound_criterion_id": "M4-C3",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M4-C3-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95004018882",
+              "immutable_revision": "run-95004018882@52604cbe708e41cc8602610671b1267af63739cd",
+              "bound_criterion_id": "M4-C3",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M4-C4",
           "description": "Authenticated humans approve exact immutable packets and atomic commit rechecks Axiom.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M4-C4-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/644b345cc6eec6db47f88fc40342f31098112e14",
+              "immutable_revision": "644b345cc6eec6db47f88fc40342f31098112e14",
+              "bound_criterion_id": "M4-C4",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M4-C4-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95009675183",
+              "immutable_revision": "run-95009675183@644b345cc6eec6db47f88fc40342f31098112e14",
+              "bound_criterion_id": "M4-C4",
+              "result": "PASS"
+            },
+            {
+              "evidence_id": "EVD-M4-C4-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/7d36fcee8b42f18992d2d66f97605bf92b77873e",
+              "immutable_revision": "7d36fcee8b42f18992d2d66f97605bf92b77873e",
+              "bound_criterion_id": "M4-C4",
+              "result": "VERIFIED"
+            }
+          ]
         },
         {
           "criterion_id": "M4-C5",
           "description": "Live-seat outage, malformed output, timeout, and partial-session recovery remain visible and safe.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M4-C5-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/92f4a26bbbe4f891c28c3b5a0702b43b1c2f4ea3",
+              "immutable_revision": "92f4a26bbbe4f891c28c3b5a0702b43b1c2f4ea3",
+              "bound_criterion_id": "M4-C5",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M4-C5-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/94996740027",
+              "immutable_revision": "run-94996740027@92f4a26bbbe4f891c28c3b5a0702b43b1c2f4ea3",
+              "bound_criterion_id": "M4-C5",
+              "result": "PASS"
+            }
+          ]
         }
       ]
     },
