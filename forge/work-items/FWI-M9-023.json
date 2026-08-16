@@ -1,0 +1,89 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-M9-023",
+  "milestone_id": "M9",
+  "title": "Partially close M9 Production qualification: reconcile offline criteria, flag production-infra criteria",
+  "status": "REVIEWED",
+  "source": {
+    "github_issue": null,
+    "created_by": "foundry-governance-closeout",
+    "created_at": "2026-08-16T16:25:00Z"
+  },
+  "objective": "Honestly mark M9 as PARTIAL. Three criteria (C1, C4, C5) are satisfied by merged, CI-green code and are VERIFIED with durable evidence. Three criteria (C2, C3, C6) require REAL production infrastructure (live Postgres, an actual deployed release, and a recorded release/CI/deployment pipeline) that does not exist yet — mark these BLOCKED, NOT verified (no fabricated production-qualification evidence). This is the governed-consistent way to record 'engineering-complete, production-pending'.",
+  "dependencies": [],
+  "allowed_paths": [
+    "forge/state/checkpoints.json",
+    "forge/state/apply_m9_partial_closeout.py",
+    "forge/work-items/FWI-M9-023.json"
+  ],
+  "forbidden_actions": [
+    "commit directly to a protected baseline",
+    "self-approve or self-merge",
+    "mark C2/C3/C6 as VERIFIED (they require live production infra not present)",
+    "change a formal Foundry Program stage",
+    "authorize scientific, clinical, spending, outreach, transaction, or production action",
+    "alter already-merged M9 source code"
+  ],
+  "acceptance_criteria": [
+    {
+      "criterion_id": "FWI-M9-023-A1",
+      "description": "C1/C4/C5 recorded VERIFIED with durable evidence.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/733b0aeed9b8714e79947f0e317ef7a827365bbf",
+        "https://github.com/SangLeeVX/eigen-foundry/commit/fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M9-023-A2",
+      "description": "C2/C3/C6 recorded BLOCKED; M9 marked PARTIAL.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/pull/45",
+        "https://github.com/SangLeeVX/eigen-foundry/pull/46"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M9-023-A3",
+      "description": "Contracts, secret scan, history-secret scan, schema drift, wheel, full test suite clean.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95024704629",
+        "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95025241267"
+      ]
+    }
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 scripts/check_git_history.py",
+    "python3 forge/validate_contracts.py",
+    "PYTHONPATH=src python3 -m unittest discover -s tests -t . -v",
+    "PYTHONPATH=src python3 scripts/export_schemas.py && git diff --exit-code -- schemas/",
+    "PIP_NO_INDEX=1 python3 -m pip wheel --no-deps --no-build-isolation . --wheel-dir dist"
+  ],
+  "risk_class": "LOW",
+  "retry_policy": {
+    "max_attempts": 2,
+    "idempotent_only": true
+  },
+  "claim": {
+    "actor": "governance-closeout-run",
+    "run_id": "foundry-closeout-fwi-m9-023",
+    "claimed_at": "2026-08-16T16:24:45.895766Z",
+    "expires_at": "2026-08-17T23:59:59Z"
+  },
+  "review": {
+    "independent_required": true,
+    "author_may_approve": false,
+    "review_evidence": [
+      "https://github.com/SangLeeVX/eigen-foundry/pull/45",
+      "https://github.com/SangLeeVX/eigen-foundry/pull/46",
+      "https://github.com/SangLeeVX/eigen-foundry/commit/733b0aeed9b8714e79947f0e317ef7a827365bbf",
+      "https://github.com/SangLeeVX/eigen-foundry/commit/fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643"
+    ]
+  },
+  "protected_actions": [
+    "approve or merge the pull request"
+  ],
+  "checkpoint_id": "CP-M9"
+}

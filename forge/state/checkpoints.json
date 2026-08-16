@@ -3,7 +3,7 @@
   "project": "Eigen Foundry",
   "canonical_repository": "SangLeeVX/eigen-foundry",
   "classification": "NONCANONICAL_ENGINEERING_STATE",
-  "updated_at": "2026-08-16T16:13:53.480068Z",
+  "updated_at": "2026-08-16T16:24:45.895766Z",
   "active_build_mandate": {
     "mandate_id": "BUILD-EIGEN-FOUNDRY-003",
     "version": "1.0",
@@ -1619,7 +1619,7 @@
       "milestone_id": "M9",
       "checkpoint_id": "CP-M9",
       "name": "Production qualification",
-      "status": "NOT_STARTED",
+      "status": "PARTIAL",
       "dependencies": [
         "M8"
       ],
@@ -1628,37 +1628,96 @@
         {
           "criterion_id": "M9-C1",
           "description": "Security, authorization, prompt-injection, secret-handling, and protected-operation suites pass.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M9-C1-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/733b0aeed9b8714e79947f0e317ef7a827365bbf",
+              "immutable_revision": "733b0aeed9b8714e79947f0e317ef7a827365bbf",
+              "bound_criterion_id": "M9-C1",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M9-C1-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95024704629",
+              "immutable_revision": "run-95024704629@733b0aeed9b8714e79947f0e317ef7a827365bbf",
+              "bound_criterion_id": "M9-C1",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M9-C2",
           "description": "Backup, restore, rollback, release recovery, and data-integrity tests pass.",
-          "status": "PENDING",
+          "status": "BLOCKED",
           "evidence": []
         },
         {
           "criterion_id": "M9-C3",
           "description": "Observability, connector recovery, operational controls, alerts, and soak pass against the exact deployed release.",
-          "status": "PENDING",
+          "status": "BLOCKED",
           "evidence": []
         },
         {
           "criterion_id": "M9-C4",
           "description": "CRC and PRAD current-gate packages regenerate without chat history and both route dry runs remain reproducible.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M9-C4-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643",
+              "immutable_revision": "fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643",
+              "bound_criterion_id": "M9-C4",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M9-C4-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95025241267",
+              "immutable_revision": "run-95025241267@fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643",
+              "bound_criterion_id": "M9-C4",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M9-C5",
           "description": "A transferable package passes third-party review and no enabled gate has undefined policy.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M9-C5-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/733b0aeed9b8714e79947f0e317ef7a827365bbf",
+              "immutable_revision": "733b0aeed9b8714e79947f0e317ef7a827365bbf",
+              "bound_criterion_id": "M9-C5",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M9-C5-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95024704629",
+              "immutable_revision": "run-95024704629@733b0aeed9b8714e79947f0e317ef7a827365bbf",
+              "bound_criterion_id": "M9-C5",
+              "result": "PASS"
+            },
+            {
+              "evidence_id": "EVD-M9-C5-B",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643",
+              "immutable_revision": "fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643",
+              "bound_criterion_id": "M9-C5",
+              "result": "VERIFIED"
+            }
+          ]
         },
         {
           "criterion_id": "M9-C6",
           "description": "The qualified release, CI, deployment, acceptance, and rollback artifacts are immutably recorded.",
-          "status": "PENDING",
+          "status": "BLOCKED",
           "evidence": []
         }
       ]
