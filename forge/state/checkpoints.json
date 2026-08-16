@@ -3,7 +3,7 @@
   "project": "Eigen Foundry",
   "canonical_repository": "SangLeeVX/eigen-foundry",
   "classification": "NONCANONICAL_ENGINEERING_STATE",
-  "updated_at": "2026-08-16T15:58:02.742733Z",
+  "updated_at": "2026-08-16T16:13:53.480068Z",
   "active_build_mandate": {
     "mandate_id": "BUILD-EIGEN-FOUNDRY-003",
     "version": "1.0",
@@ -1515,7 +1515,7 @@
       "milestone_id": "M8",
       "checkpoint_id": "CP-M8",
       "name": "Development lifecycle support",
-      "status": "NOT_STARTED",
+      "status": "COMPLETED",
       "dependencies": [
         "M7"
       ],
@@ -1524,26 +1524,94 @@
         {
           "criterion_id": "M8-C1",
           "description": "F9-F12 policies and artifact contracts cover IND-enabling, human proof, clinical proof, registration, externalization, lifecycle, and termination.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M8-C1-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/3cc2ce1402209b9f9f825ddb77650b67cfcfb53c",
+              "immutable_revision": "3cc2ce1402209b9f9f825ddb77650b67cfcfb53c",
+              "bound_criterion_id": "M8-C1",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M8-C1-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95022735597",
+              "immutable_revision": "run-95022735597@3cc2ce1402209b9f9f825ddb77650b67cfcfb53c",
+              "bound_criterion_id": "M8-C1",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M8-C2",
           "description": "Required clinical, regulatory, safety, quality, legal, finance, and executive approval paths are explicit and enforced.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M8-C2-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/3cc2ce1402209b9f9f825ddb77650b67cfcfb53c",
+              "immutable_revision": "3cc2ce1402209b9f9f825ddb77650b67cfcfb53c",
+              "bound_criterion_id": "M8-C2",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M8-C2-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95022735597",
+              "immutable_revision": "run-95022735597@3cc2ce1402209b9f9f825ddb77650b67cfcfb53c",
+              "bound_criterion_id": "M8-C2",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M8-C3",
           "description": "Every enabled integration boundary, failure route, hold, expiry, and transition path passes a synthetic or approved retrospective dry run.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M8-C3-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/3cc2ce1402209b9f9f825ddb77650b67cfcfb53c",
+              "immutable_revision": "3cc2ce1402209b9f9f825ddb77650b67cfcfb53c",
+              "bound_criterion_id": "M8-C3",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M8-C3-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95022735597",
+              "immutable_revision": "run-95022735597@3cc2ce1402209b9f9f825ddb77650b67cfcfb53c",
+              "bound_criterion_id": "M8-C3",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M8-C4",
           "description": "No software dry run changes or is reported as real therapeutic Program advancement.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M8-C4-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/3cc2ce1402209b9f9f825ddb77650b67cfcfb53c",
+              "immutable_revision": "3cc2ce1402209b9f9f825ddb77650b67cfcfb53c",
+              "bound_criterion_id": "M8-C4",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M8-C4-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95022735597",
+              "immutable_revision": "run-95022735597@3cc2ce1402209b9f9f825ddb77650b67cfcfb53c",
+              "bound_criterion_id": "M8-C4",
+              "result": "PASS"
+            }
+          ]
         }
       ]
     },
