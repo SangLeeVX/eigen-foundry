@@ -39,7 +39,7 @@ from typing import Any
 from .approval_console import ApprovalConsole
 from .crash_recovery import CrashRecovery
 from .crucible import CrucibleDriver
-from .identity import Authorizer, Principal, StaticIdentityProvider
+from .identity import Authorizer
 from .ledger import SQLiteLedger
 from .m5_models import QCStatus
 from .models import ActorKind
@@ -47,7 +47,16 @@ from .operator_overview import OperatorOverview
 from .replay_audit import ReplayAudit
 from .sentinel import Sentinel
 from .service import CouncilService
+from .signed_identity import SignedAssertionIdentityProvider, mint_assertion
 from .work_order_service import MemoryWorkOrderStore, WorkOrderService
+
+
+# Deterministic non-credential test secret for the hermetically-runnable
+# M5 acceptance suite. This exercises the real signed-assertion verification
+# path (signature, expiry, audience, kind, no-self-approval) without needing a
+# production signing secret or network. It is NOT a real credential and is safe
+# to commit: it only unlocks a test-suite Authorizer.
+M5_ACCEPTANCE_TEST_SECRET = b"m5-acceptance-test-signing-secret-not-a-real-credential"
 
 
 def _sha(label: str) -> str:
@@ -111,11 +120,12 @@ class M5AcceptanceRunner:
         console = ApprovalConsole(self.service, authorizer, ledger=self.ledger)
         assert session.approval_request is not None
         for i, role in enumerate(session.approval_request.required_roles):
+            subject = f"human-approver-{i}"
             r = console.approve(
                 session_id=session.session_id,
-                approver_actor=f"human-approver-{i}",
+                approver_actor=subject,
                 role=role,
-                raw_assertion=f"human-approver-{i}".encode(),
+                raw_assertion=self._mint_human(subject, role, session.program_id),
             )
             assert r.ok, r.message
             self._ok(9)
@@ -129,7 +139,7 @@ class M5AcceptanceRunner:
         commit = console.commit(
             session_id=session.session_id,
             approver_actor="committer-svc",
-            raw_assertion="committer-svc".encode(),
+            raw_assertion=self._mint_committer("committer-svc"),
             decision_id=f"decision-{session.session_id}",
         )
         assert commit.ok, commit.message
@@ -211,21 +221,39 @@ class M5AcceptanceRunner:
         return self.result
 
     def _authorizer_for(self, session):
-        assert session.approval_request is not None
-        required = session.approval_request.required_roles
-        scoped = frozenset({session.program_id})
-        principals = {}
-        for i, role in enumerate(required):
-            pid = f"human-approver-{i}"
-            principals[pid] = Principal(
-                principal_id=pid, kind=ActorKind.HUMAN,
-                roles=frozenset({role}), allows_origin=scoped, mfa_verified=True,
-            )
-        principals["committer-svc"] = Principal(
-            principal_id="committer-svc", kind=ActorKind.SERVICE,
-            roles=frozenset({"ledger_committer"}), allows_origin=None,
+        """Build an Authorizer backed by signed-JWT assertions (real auth path).
+
+        The M5 acceptance suite drives the authenticated staging UX/API through
+        the signed-assertion identity provider (M4-C4) rather than the static
+        provider, so M5-C5's "authenticated" requirement is exercised genuinely.
+        Uses a deterministic non-credential test secret so the suite stays
+        hermetic and network-free while still verifying signature, expiry,
+        audience, kind, and the no-self-approval guard on every approver/commit.
+        """
+        return Authorizer(
+            SignedAssertionIdentityProvider(M5_ACCEPTANCE_TEST_SECRET),
+            expected_audience="eigen-foundry-control-plane",
         )
-        return Authorizer(StaticIdentityProvider(principals))
+
+    def _mint_human(self, subject: str, role: str, program_id: str) -> bytes:
+        return mint_assertion(
+            M5_ACCEPTANCE_TEST_SECRET,
+            subject=subject,
+            roles=frozenset({role}),
+            kind=ActorKind.HUMAN,
+            programs=frozenset({program_id}),
+            mfa_verified=True,
+            expires_in=900,
+        )
+
+    def _mint_committer(self, subject: str) -> bytes:
+        return mint_assertion(
+            M5_ACCEPTANCE_TEST_SECRET,
+            subject=subject,
+            roles=frozenset({"ledger_committer"}),
+            kind=ActorKind.SERVICE,
+            expires_in=900,
+        )
 
     def _ok(self, step: int, note: str = "ok") -> None:
         self.result.steps[step] = note

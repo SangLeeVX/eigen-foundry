@@ -1,0 +1,90 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-M5-019",
+  "milestone_id": "M5",
+  "title": "Close M5 Working Foundry MVP: reconcile + wire signed-identity authenticated path",
+  "status": "REVIEWED",
+  "source": {
+    "github_issue": null,
+    "created_by": "foundry-governance-closeout",
+    "created_at": "2026-08-16T11:15:00Z"
+  },
+  "objective": "Complete and close M5 (Working Foundry MVP). C1/C2/C3/C4/C6 were already satisfied by merged PRs #38/#39 (Sentinel, decisive-work order, result/QC ingestion, failure attribution + learn-back successor, crash/replay recovery). M5-C5's 'authenticated staging UX and API' required real wiring: the acceptance runner and adversarial suite previously used StaticIdentityProvider; wire them through the signed-assertion identity provider (M4-C4) so the authenticated requirement is genuinely exercised. Record M5-C1..C6 as VERIFIED with durable evidence and mark M5 COMPLETED.",
+  "dependencies": [],
+  "allowed_paths": [
+    "forge/state/checkpoints.json",
+    "forge/state/apply_m5_closeout.py",
+    "forge/work-items/FWI-M5-019.json",
+    "src/foundry_council/m5_acceptance.py",
+    "tests/test_m5_adversarial.py"
+  ],
+  "forbidden_actions": [
+    "commit directly to a protected baseline",
+    "self-approve or self-merge",
+    "change a formal Foundry Program stage",
+    "authorize scientific, clinical, spending, outreach, transaction, or production action",
+    "commit a real API key or identity signing secret to the repository"
+  ],
+  "acceptance_criteria": [
+    {
+      "criterion_id": "FWI-M5-019-A1",
+      "description": "M5-C5 authenticated staging path wired through signed-assertion identity.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/7a66b0d19d7c3a11aa3c37e4ce0ac425fe217fd9",
+        "https://github.com/SangLeeVX/eigen-foundry/commit/10eccd552a6b7d68fe6543bd2e422ab989ab2c3b"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M5-019-A2",
+      "description": "M5-C1/C2/C3/C4/C6 verified against merged PRs; M5-C1..C6 VERIFIED; M5 COMPLETED.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/392abb6fbedaf0bc348b026b16b96a66dff6d3bc",
+        "https://github.com/SangLeeVX/eigen-foundry/commit/10eccd552a6b7d68fe6543bd2e422ab989ab2c3b"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M5-019-A3",
+      "description": "Contracts, secret scan, history-secret scan, schema drift, wheel, full test suite clean.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95011818841",
+        "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95014678282"
+      ]
+    }
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 scripts/check_git_history.py",
+    "python3 forge/validate_contracts.py",
+    "PYTHONPATH=src python3 -m unittest discover -s tests -t . -v",
+    "PYTHONPATH=src python3 scripts/export_schemas.py && git diff --exit-code -- schemas/",
+    "PIP_NO_INDEX=1 python3 -m pip wheel --no-deps --no-build-isolation . --wheel-dir dist"
+  ],
+  "risk_class": "MEDIUM",
+  "retry_policy": {
+    "max_attempts": 2,
+    "idempotent_only": true
+  },
+  "claim": {
+    "actor": "governance-closeout-run",
+    "run_id": "foundry-closeout-fwi-m5-019",
+    "claimed_at": "2026-08-16T11:05:41.855302Z",
+    "expires_at": "2026-08-16T23:59:59Z"
+  },
+  "review": {
+    "independent_required": true,
+    "author_may_approve": false,
+    "review_evidence": [
+      "https://github.com/SangLeeVX/eigen-foundry/pull/38",
+      "https://github.com/SangLeeVX/eigen-foundry/pull/39",
+      "https://github.com/SangLeeVX/eigen-foundry/commit/392abb6fbedaf0bc348b026b16b96a66dff6d3bc",
+      "https://github.com/SangLeeVX/eigen-foundry/commit/10eccd552a6b7d68fe6543bd2e422ab989ab2c3b"
+    ]
+  },
+  "protected_actions": [
+    "approve or merge the pull request"
+  ],
+  "checkpoint_id": "CP-M5"
+}
