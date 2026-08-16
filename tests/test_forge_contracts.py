@@ -95,23 +95,22 @@ class ForgeCheckpointMigrationTests(unittest.TestCase):
             validate_checkpoints(document, ROOT)
 
     def _blocked_pair(self):
-        """Return (blocked_id, start_id): the first NOT_STARTED milestone (the one
-        whose dependency is complete and therefore may complete) and the successor
-        that is still gated on an incomplete dependency."""
+        """Return (blocked_id, dep_id): the first NOT_STARTED milestone (the one
+        whose direct dependency is complete, so it may complete) and that direct
+        dependency. Tests regress `dep_id` to make `blocked_id`'s dependency
+        genuinely incomplete, so the fail-closed guards hold even at the terminal
+        milestone (no successor exists)."""
         ids = [m["milestone_id"] for m in self.document["milestones"]]
-        completed = {
-            m["milestone_id"]
-            for m in self.document["milestones"]
-            if m["status"] == "COMPLETED"
-        }
+        # The first NOT_STARTED milestone is the next one that may complete.
         first_not_started = next(
             (m["milestone_id"] for m in self.document["milestones"]
              if m["status"] == "NOT_STARTED"),
             ids[-1],
         )
+        # Its direct dependency (ids are ordered M0..M9 -> dependency is previous).
         idx = ids.index(first_not_started)
-        successor = ids[idx + 1] if idx + 1 < len(ids) else first_not_started
-        return first_not_started, successor
+        dep_id = ids[idx - 1] if idx > 0 else first_not_started
+        return first_not_started, dep_id
 
     def test_committed_checkpoint_document_validates(self) -> None:
         self.assertEqual(
@@ -285,12 +284,15 @@ class ForgeCheckpointMigrationTests(unittest.TestCase):
         self.assert_invalid(malformed, "every criterion VERIFIED")
 
     def test_completed_milestone_requires_completed_dependencies(self) -> None:
-        # The first NOT_STARTED milestone may complete; the one after it depends on
-        # that not-yet-completed milestone, so completing IT must fail closed on its
-        # incomplete dependency.
-        _, successor = self._blocked_pair()
+        # The first NOT_STARTED milestone may complete only once its direct
+        # dependency is COMPLETED. Regress the dependency so the dependent cannot
+        # complete — fail-closed on the incomplete dependency.
+        blocked, dep_id = self._blocked_pair()
         malformed = copy.deepcopy(self.document)
-        verify_milestone(malformed, successor)
+        verify_milestone(malformed, blocked)
+        for m in malformed["milestones"]:
+            if m["milestone_id"] == dep_id:
+                m["status"] = "IN_PROGRESS"  # break the dependency
         self.assert_invalid(malformed, "requires completed dependencies")
 
     def test_open_blocker_prevents_completion(self) -> None:
@@ -469,13 +471,15 @@ class ForgeCheckpointMigrationTests(unittest.TestCase):
         self.assert_invalid(malformed, "resolved blocker requires durable evidence")
 
     def test_pending_and_active_statuses_require_merge_evidence(self) -> None:
-        # The first NOT_STARTED milestone's successor depends on it, so starting the
-        # successor before it completes must fail closed.
-        _, successor = self._blocked_pair()
+        # The first NOT_STARTED milestone cannot start before its direct dependency
+        # has completed; regress the dependency so starting it fails closed.
+        blocked, dep_id = self._blocked_pair()
         malformed = copy.deepcopy(self.document)
         for m in malformed["milestones"]:
-            if m["milestone_id"] == successor:
-                m["status"] = "IN_PROGRESS"  # dep NOT_STARTED
+            if m["milestone_id"] == blocked:
+                m["status"] = "IN_PROGRESS"  # trying to start before dep completes
+            if m["milestone_id"] == dep_id:
+                m["status"] = "NOT_STARTED"  # dependency not yet complete
         self.assert_invalid(malformed, "work cannot start before dependencies complete")
         # The mandate evidence binding must be preserved even in ACTIVE state.
         malformed = copy.deepcopy(self.document)
