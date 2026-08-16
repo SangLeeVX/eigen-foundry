@@ -3,7 +3,7 @@
   "project": "Eigen Foundry",
   "canonical_repository": "SangLeeVX/eigen-foundry",
   "classification": "NONCANONICAL_ENGINEERING_STATE",
-  "updated_at": "2026-08-16T08:19:23.144407Z",
+  "updated_at": "2026-08-16T11:05:41.855302Z",
   "active_build_mandate": {
     "mandate_id": "BUILD-EIGEN-FOUNDRY-003",
     "version": "1.0",
@@ -1080,7 +1080,7 @@
       "milestone_id": "M5",
       "checkpoint_id": "CP-M5",
       "name": "Working Foundry MVP",
-      "status": "NOT_STARTED",
+      "status": "COMPLETED",
       "dependencies": [
         "M4"
       ],
@@ -1089,38 +1089,148 @@
         {
           "criterion_id": "M5-C1",
           "description": "One synthetic Sentinel evidence event maps to one Program exactly once.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M5-C1-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/392abb6fbedaf0bc348b026b16b96a66dff6d3bc",
+              "immutable_revision": "392abb6fbedaf0bc348b026b16b96a66dff6d3bc",
+              "bound_criterion_id": "M5-C1",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M5-C1-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95011818841",
+              "immutable_revision": "run-95011818841@392abb6fbedaf0bc348b026b16b96a66dff6d3bc",
+              "bound_criterion_id": "M5-C1",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M5-C2",
           "description": "A governed decisive-work order binds prediction, alternatives, falsifier, kill criterion, protocol, rights, budget, owner, deadline, and QC.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M5-C2-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/392abb6fbedaf0bc348b026b16b96a66dff6d3bc",
+              "immutable_revision": "392abb6fbedaf0bc348b026b16b96a66dff6d3bc",
+              "bound_criterion_id": "M5-C2",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M5-C2-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95011818841",
+              "immutable_revision": "run-95011818841@392abb6fbedaf0bc348b026b16b96a66dff6d3bc",
+              "bound_criterion_id": "M5-C2",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M5-C3",
           "description": "Result/QC ingestion preserves positive, negative, null, contradictory, failed-QC, and failed-replication outcomes.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M5-C3-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/392abb6fbedaf0bc348b026b16b96a66dff6d3bc",
+              "immutable_revision": "392abb6fbedaf0bc348b026b16b96a66dff6d3bc",
+              "bound_criterion_id": "M5-C3",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M5-C3-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95011818841",
+              "immutable_revision": "run-95011818841@392abb6fbedaf0bc348b026b16b96a66dff6d3bc",
+              "bound_criterion_id": "M5-C3",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M5-C4",
           "description": "Failure attribution and learn-back create a successor snapshot and Crucible without overwriting history.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M5-C4-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/10eccd552a6b7d68fe6543bd2e422ab989ab2c3b",
+              "immutable_revision": "10eccd552a6b7d68fe6543bd2e422ab989ab2c3b",
+              "bound_criterion_id": "M5-C4",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M5-C4-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95014678282",
+              "immutable_revision": "run-95014678282@10eccd552a6b7d68fe6543bd2e422ab989ab2c3b",
+              "bound_criterion_id": "M5-C4",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M5-C5",
           "description": "The full 18-step closed-loop and adversarial suite passes through authenticated staging UX and API.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M5-C5-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/10eccd552a6b7d68fe6543bd2e422ab989ab2c3b",
+              "immutable_revision": "10eccd552a6b7d68fe6543bd2e422ab989ab2c3b",
+              "bound_criterion_id": "M5-C5",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M5-C5-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95014678282",
+              "immutable_revision": "run-95014678282@10eccd552a6b7d68fe6543bd2e422ab989ab2c3b",
+              "bound_criterion_id": "M5-C5",
+              "result": "PASS"
+            },
+            {
+              "evidence_id": "EVD-M5-C5-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/7a66b0d19d7c3a11aa3c37e4ce0ac425fe217fd9",
+              "immutable_revision": "7a66b0d19d7c3a11aa3c37e4ce0ac425fe217fd9",
+              "bound_criterion_id": "M5-C5",
+              "result": "VERIFIED"
+            }
+          ]
         },
         {
           "criterion_id": "M5-C6",
           "description": "Crash, replay, state-conflict, connector failure, and operator recovery paths pass visibly.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M5-C6-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/10eccd552a6b7d68fe6543bd2e422ab989ab2c3b",
+              "immutable_revision": "10eccd552a6b7d68fe6543bd2e422ab989ab2c3b",
+              "bound_criterion_id": "M5-C6",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M5-C6-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95014678282",
+              "immutable_revision": "run-95014678282@10eccd552a6b7d68fe6543bd2e422ab989ab2c3b",
+              "bound_criterion_id": "M5-C6",
+              "result": "PASS"
+            }
+          ]
         }
       ]
     },
