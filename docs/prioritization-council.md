@@ -1,6 +1,7 @@
 # Prioritization Council — Design
 
-**Status:** Proposed (design only — not yet implemented)
+**Status:** Design approved — locked for implementation (full debate loop, 0–10 scale,
+hypothesis+modality candidate unit; see §9). Not yet built.
 **Owner:** Eigen Bio Foundry
 **Date:** 2026-08-16
 **Branch:** `agent/fwi-m6-live-deepseek-hookup`
@@ -63,16 +64,22 @@ list). **Evidence dependency:** prioritization is only as good as the per-candid
 evidence. If candidates carry real Eigenfield data, the ranking is meaningful; if
 evidence is a placeholder, output is a process demo only.
 
+The unit we prioritize is a **therapeutic hypothesis coupled to a modality** — i.e. a
+candidate is a `(hypothesis, modality)` pair (e.g. *anti-IBSP*, hypothesis="IBSP drives
+bone-metastasis in mCRPC", modality=ADC), NOT a bare asset or bare indication. A single
+asset may spawn several candidate `(hypothesis, modality)` pairs (different modality
+options), and we rank those pairs, not the asset alone.
+
 ### Evaluation Axes (the definition of "prioritize")
-Each candidate is scored on a fixed set of axes. Proposed defaults (configurable):
+Each candidate is scored on a fixed set of axes. **Confirmed axes:**
 1. `scientific_validity`  — strength/credibility of the underlying evidence.
-2. `indication_fit`       — how well the asset matches the target indication (or indication fits the asset).
+2. `indication_fit`       — how well the hypothesis/modality matches the target indication.
 3. `feasibility_risk`     — technical/CMC/execution risk (higher score = lower risk).
 4. `strategic_value`      — market/portfolio/BD value.
 
-Each axis scored on a bounded integer scale, e.g. **1–5**, with every score bound to
-specific evidence (no unsupported scores). A candidate with missing evidence on an
-axis must score `UNKNOWN` on that axis (fail-closed, mirrors existing rules).
+**Confirmed scale: 0–10 integer** on every axis, with `UNKNOWN` when evidence is absent
+(an axis with no supporting evidence must score `UNKNOWN`, not a guess — fail-closed,
+mirrors existing rules). Every non-`UNKNOWN` score must be bound to specific evidence.
 
 ### Role Seats
 A small fixed set of role seats, each with a distinct lens and tool envelope:
@@ -168,31 +175,39 @@ scripts/prioritization_dryrun.py                # live/deterministic dry-run har
 Reuses: `live_seat_model.py` (LiveSeatModel + factory), `seat_runtime.py`, `models.py`,
 `F0F2GatePolicy`, audit/ledger primitives. No changes required to `WorkingConclave`.
 
-## 9. Open decisions to lock before implementation
+## 9. Decisions locked before implementation
 
-1. **Axes** — confirm the four defaults (scientific_validity, indication_fit,
-   feasibility_risk, strategic_value) or replace.
-2. **Scale** — confirm 1–5 integer with `UNKNOWN`.
-3. **Weights** — equal weights by default, or configured per-call?
-4. **Consensus method** — weighted composite (default) vs. a debate-final-ranking. If
-   debate, define convergence threshold + max rounds.
-5. **Pool source** — will candidates come from real Eigenfield assets/indications, or a
-   defined list for the first implementation? (Determines whether output is meaningful
-   vs. process-demo.)
-6. **"Material unknown" tiering** — candidates with unresolved `UNKNOWN` on a material
-   axis: rank below evidence-complete, or exclude from RECOMMENDED? (Proposed: below /
-   EVIDENCE_GAP.)
-7. **Scope of first build** — full multi-round debate, or a lean "score-and-rank" v1
-   with the debate loop added after? (Recommended: lean v1 first.)
+**Locked:**
+1. **Candidate unit** — a `(therapeutic hypothesis, modality)` pair; we rank
+   hypothesis+modality pairs over a candidate pool, not bare assets/indications.
+2. **Axes** — `scientific_validity`, `indication_fit`, `feasibility_risk`, `strategic_value`
+   (confirmed).
+3. **Scale** — 0–10 integer per axis, with `UNKNOWN` when evidence is absent (fail-closed).
+4. **Consensus method** — **FULL debate loop** (not a single-pass weighted composite): seats
+   score in blind rounds, disagreements are surfaced, challenged, and revised until
+   convergence, then the ranking is aggregated from the converged scores. Bounded max
+   rounds; no unbounded debate.
+
+**Still open (decide before coding):**
+1. **Pool source** — real Eigenfield assets/indications, or a defined candidate list for the
+   first build? (Decides whether output is meaningful vs. process-demo.)
+2. **Weights / tiering** — how converged axis scores aggregate to a composite; how an
+   unresolved `UNKNOWN` on a material axis is tiered (proposed: below evidence-complete /
+   EVIDENCE_GAP).
+3. **Debate bounds** — exact max rounds and the convergence threshold that stops debate.
 
 ## 10. Recommendation
 
-Implement as **a lean v1** on top of the proven live-seat machinery:
+Implement with the **full debate loop** as the consensus method (per locked decision 9.4),
+on top of the proven live-seat machinery:
 - deterministic mode first (hermetic, testable), then live DeepSeek.
-- pool = a small defined candidate list (e.g. 4–6) with real-ish evidence bundles.
-- emit a `RankedShortlist` + audit packet; prove the loop with tests.
+- pool = a small defined candidate list (hypothesis+modality pairs, e.g. 4–6) with
+  real-ish evidence bundles.
+- emit a `RankedShortlist` + audit packet; prove the loop (including debate convergence
+  and conflict resolution) with deterministic tests.
 Then wire real Eigenfield candidate/evidence sourcing as a follow-up.
 
 This keeps the two constructs cleanly separated: **WorkingConclave = governance gate;**
 **PrioritizationCouncil = filter-and-rank engine.** Both share the same auditable,
-live-model foundation.
+live-model foundation — and both produce `MODEL_PREDICTION`-class output that never
+satisfies a gate on its own.
