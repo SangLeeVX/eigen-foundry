@@ -3,7 +3,7 @@
   "project": "Eigen Foundry",
   "canonical_repository": "SangLeeVX/eigen-foundry",
   "classification": "NONCANONICAL_ENGINEERING_STATE",
-  "updated_at": "2026-08-15T03:23:26.048845Z",
+  "updated_at": "2026-08-16T01:25:47.435094Z",
   "active_build_mandate": {
     "mandate_id": "BUILD-EIGEN-FOUNDRY-003",
     "version": "1.0",
@@ -715,7 +715,7 @@
       "milestone_id": "M3",
       "checkpoint_id": "CP-M3",
       "name": "Synthetic Conclave harness",
-      "status": "NOT_STARTED",
+      "status": "COMPLETED",
       "dependencies": [
         "M2"
       ],
@@ -724,38 +724,94 @@
         {
           "criterion_id": "M3-C1",
           "description": "Corrected evidence, result, measured-null, gap, dissent, challenge, and successor-session contracts are enforced.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M3-C1-corrected",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/fea8e16",
+              "immutable_revision": "fea8e16",
+              "bound_criterion_id": "M3-C1",
+              "result": "VERIFIED"
+            }
+          ]
         },
         {
           "criterion_id": "M3-C2",
           "description": "Axiom-first mock seats complete a frozen, blind, challenged, independently reviewed F0 Crucible.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M3-C2-f0crucible",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/fea8e16",
+              "immutable_revision": "fea8e16",
+              "bound_criterion_id": "M3-C2",
+              "result": "VERIFIED"
+            }
+          ]
         },
         {
           "criterion_id": "M3-C3",
           "description": "Exact human approval gates one atomic synthetic commit.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M3-C3-atomic",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/644b345",
+              "immutable_revision": "644b345",
+              "bound_criterion_id": "M3-C3",
+              "result": "VERIFIED"
+            }
+          ]
         },
         {
           "criterion_id": "M3-C4",
           "description": "Material UNKNOWN, FAIL, dissent, stale input, wrong role, expiry, and self-approval fail closed.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M3-C4-failclosed",
+              "type": "TEST_SUITE",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/blob/fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643/tests",
+              "immutable_revision": "fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643",
+              "bound_criterion_id": "M3-C4",
+              "result": "PASS",
+              "detail": "pytest: 173 passed / 20 skipped / 8 subtests (PYTHONPATH=src)"
+            }
+          ]
         },
         {
           "criterion_id": "M3-C5",
           "description": "Duplicate and reordered synthetic commands do not duplicate or regress state.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M3-C5-replay",
+              "type": "TEST_SUITE",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/blob/fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643/tests",
+              "immutable_revision": "fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643",
+              "bound_criterion_id": "M3-C5",
+              "result": "PASS",
+              "detail": "pytest: 173 passed / 20 skipped / 8 subtests (PYTHONPATH=src)"
+            }
+          ]
         },
         {
           "criterion_id": "M3-C6",
           "description": "All outputs and UX label the result only as a synthetic Conclave harness.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M3-C6-harnesslabel",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/fea8e16",
+              "immutable_revision": "fea8e16",
+              "bound_criterion_id": "M3-C6",
+              "result": "VERIFIED"
+            }
+          ]
         }
       ]
     },
@@ -763,7 +819,7 @@
       "milestone_id": "M4",
       "checkpoint_id": "CP-M4",
       "name": "Working Conclave",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "dependencies": [
         "M3"
       ],
@@ -772,32 +828,86 @@
         {
           "criterion_id": "M4-C1",
           "description": "Live seats use versioned prompts/models, distinct run identities, and seat-specific tool envelopes.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "PARTIAL",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M4-C1-runid",
+              "type": "TEST_SUITE",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/blob/fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643/tests",
+              "immutable_revision": "fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643",
+              "bound_criterion_id": "M4-C1",
+              "result": "PASS",
+              "detail": "pytest: 173 passed / 20 skipped / 8 subtests (PYTHONPATH=src)"
+            }
+          ],
+          "note": "distinct run identity verified; live model binding pending (seats run deterministic mocks)"
         },
         {
           "criterion_id": "M4-C2",
           "description": "Structured outputs, traces, limits, reproducibility manifests, and bounded failures are enforced.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M4-C2-structured",
+              "type": "TEST_SUITE",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/blob/fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643/tests",
+              "immutable_revision": "fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643",
+              "bound_criterion_id": "M4-C2",
+              "result": "PASS",
+              "detail": "pytest: 173 passed / 20 skipped / 8 subtests (PYTHONPATH=src)"
+            }
+          ],
+          "note": "structured-output + bounded-failure fail-closed verified"
         },
         {
           "criterion_id": "M4-C3",
           "description": "Live seats reproduce the synthetic F0 flow without gaining approval, commit, policy, or evidence-promotion authority.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "PARTIAL",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M4-C3-noauth",
+              "type": "TEST_SUITE",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/blob/fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643/tests",
+              "immutable_revision": "fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643",
+              "bound_criterion_id": "M4-C3",
+              "result": "PASS",
+              "detail": "pytest: 173 passed / 20 skipped / 8 subtests (PYTHONPATH=src)"
+            }
+          ],
+          "note": "seat reproduction verified on mocks; live-model authority boundary pending"
         },
         {
           "criterion_id": "M4-C4",
           "description": "Authenticated humans approve exact immutable packets and atomic commit rechecks Axiom.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "PARTIAL",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M4-C4-approvalconsole",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/644b345",
+              "immutable_revision": "644b345",
+              "bound_criterion_id": "M4-C4",
+              "result": "VERIFIED"
+            }
+          ],
+          "note": "approval console + atomic commit verified; OIDC/service identity not wired"
         },
         {
           "criterion_id": "M4-C5",
           "description": "Live-seat outage, malformed output, timeout, and partial-session recovery remain visible and safe.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M4-C5-recovery",
+              "type": "TEST_SUITE",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/blob/fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643/tests",
+              "immutable_revision": "fdfa6526c0f5e5d912bf69efaf6bbe7ba8b25643",
+              "bound_criterion_id": "M4-C5",
+              "result": "PASS",
+              "detail": "pytest: 173 passed / 20 skipped / 8 subtests (PYTHONPATH=src)"
+            }
+          ],
+          "note": "malformed/timeout/partial-session fail-closed verified via crash recovery suite"
         }
       ]
     },

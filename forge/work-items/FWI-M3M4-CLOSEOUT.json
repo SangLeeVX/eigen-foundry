@@ -1,0 +1,46 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-M3M4-CLOSEOUT",
+  "milestone_id": "M3",
+  "title": "Reconcile M3/M4 milestone ledger to merged build reality",
+  "status": "READY",
+  "source": {
+    "github_issue": null,
+    "created_by": "foundry-live-readiness-audit",
+    "created_at": "2026-08-16T01:30:00Z"
+  },
+  "objective": "Bind the M3 (Synthetic Conclave harness) and M4 (Working Conclave) milestones in forge/state/checkpoints.json and FOUNDRY_MASTER_BUILD_PLAN.md to the merged code the M3/M4 PRs already delivered, so the authoritative ledger reflects build reality: M3 COMPLETED, M4 IN_PROGRESS with honest PARTIAL criteria.",
+  "dependencies": [],
+  "allowed_paths": [
+    "forge/state/checkpoints.json",
+    "forge/state/apply_m3_m4_closeout.py",
+    "FOUNDRY_MASTER_BUILD_PLAN.md"
+  ],
+  "forbidden_actions": [
+    "promote evidence or change a formal Foundry Program stage",
+    "self-approve or self-merge",
+    "authorize scientific, clinical, spending, outreach, transaction, or production action",
+    "read or reuse credentials from chat"
+  ],
+  "acceptance_criteria": [
+    {"criterion_id": "FWI-M3M4-A1", "description": "M3 exit criteria 6/6 recorded VERIFIED bound to merged commit SHAs + test evidence.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M3M4-A2", "description": "M4 marks orchestration/seat/approval-console verified and live-M4-C1/C4 honestly PARTIAL.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M3M4-A3", "description": "FOUNDRY_MASTER_BUILD_PLAN.md M3/M4 table rows updated to match.", "status": "PENDING", "evidence": []},
+    {"criterion_id": "FWI-M3M4-A4", "description": "Validation suite stays green (secrets, contracts, unit, schema, wheel).", "status": "PENDING", "evidence": []}
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 forge/validate_contracts.py",
+    "PYTHONPATH=src python3 -m unittest discover -s tests -t . -v",
+    "python3 scripts/export_schemas.py && git diff --exit-code -- schemas/",
+    "PIP_NO_INDEX=1 python3 -m pip wheel --no-deps --no-build-isolation . --wheel-dir dist"
+  ],
+  "risk_class": "LOW",
+  "retry_policy": {"max_attempts": 2, "idempotent_only": true},
+  "claim": null,
+  "review": {"independent_required": true, "author_may_approve": false, "review_evidence": []},
+  "protected_actions": [
+    "approve or merge the pull request"
+  ],
+  "checkpoint_id": "CP-M3"
+}
