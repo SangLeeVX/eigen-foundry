@@ -3,7 +3,7 @@
   "project": "Eigen Foundry",
   "canonical_repository": "SangLeeVX/eigen-foundry",
   "classification": "NONCANONICAL_ENGINEERING_STATE",
-  "updated_at": "2026-08-16T11:05:41.855302Z",
+  "updated_at": "2026-08-16T11:33:33.928364Z",
   "active_build_mandate": {
     "mandate_id": "BUILD-EIGEN-FOUNDRY-003",
     "version": "1.0",
@@ -1238,7 +1238,7 @@
       "milestone_id": "M6",
       "checkpoint_id": "CP-M6",
       "name": "Eigen-grounded F0-F2",
-      "status": "NOT_STARTED",
+      "status": "COMPLETED",
       "dependencies": [
         "M5"
       ],
@@ -1247,32 +1247,125 @@
         {
           "criterion_id": "M6-C1",
           "description": "Only the Evidence Steward has purpose-bound read-only EigenField access inside a Crucible.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M6-C1-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/306c9eaf3f241172d9b2eb62a032ea10751fa2be",
+              "immutable_revision": "306c9eaf3f241172d9b2eb62a032ea10751fa2be",
+              "bound_criterion_id": "M6-C1",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M6-C1-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95015053433",
+              "immutable_revision": "run-95015053433@306c9eaf3f241172d9b2eb62a032ea10751fa2be",
+              "bound_criterion_id": "M6-C1",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M6-C2",
           "description": "Immutable EvidencePackets preserve provenance, rights, contradictions, nulls, dependency, staleness, and one snapshot root.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M6-C2-A",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/306c9eaf3f241172d9b2eb62a032ea10751fa2be",
+              "immutable_revision": "306c9eaf3f241172d9b2eb62a032ea10751fa2be",
+              "bound_criterion_id": "M6-C2",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M6-C2-B",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/7669296c31130b65b23ce0f8415c787323f89c3c",
+              "immutable_revision": "7669296c31130b65b23ce0f8415c787323f89c3c",
+              "bound_criterion_id": "M6-C2",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M6-C2-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95015851348",
+              "immutable_revision": "run-95015851348@7669296c31130b65b23ce0f8415c787323f89c3c",
+              "bound_criterion_id": "M6-C2",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M6-C3",
           "description": "The Eigen-1 gateway produces versioned MODEL_PREDICTION/L3 records with calibration, OOD, leakage, and frozen inputs.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M6-C3-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/306c9eaf3f241172d9b2eb62a032ea10751fa2be",
+              "immutable_revision": "306c9eaf3f241172d9b2eb62a032ea10751fa2be",
+              "bound_criterion_id": "M6-C3",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M6-C3-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95015053433",
+              "immutable_revision": "run-95015053433@306c9eaf3f241172d9b2eb62a032ea10751fa2be",
+              "bound_criterion_id": "M6-C3",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M6-C4",
           "description": "F0-F2 TPP, disease-map, evidence-audit, and causal-question policies fail closed.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M6-C4-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/7669296c31130b65b23ce0f8415c787323f89c3c",
+              "immutable_revision": "7669296c31130b65b23ce0f8415c787323f89c3c",
+              "bound_criterion_id": "M6-C4",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M6-C4-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95015851348",
+              "immutable_revision": "run-95015851348@7669296c31130b65b23ce0f8415c787323f89c3c",
+              "bound_criterion_id": "M6-C4",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M6-C5",
           "description": "One authorized CRC or PRAD dry run produces traceable F0-F2 packets; model output never satisfies an experimental gate.",
-          "status": "PENDING",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M6-C5-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/7669296c31130b65b23ce0f8415c787323f89c3c",
+              "immutable_revision": "7669296c31130b65b23ce0f8415c787323f89c3c",
+              "bound_criterion_id": "M6-C5",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M6-C5-CI",
+              "type": "GITHUB_ACTION_RUN",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/actions/runs/95015851348",
+              "immutable_revision": "run-95015851348@7669296c31130b65b23ce0f8415c787323f89c3c",
+              "bound_criterion_id": "M6-C5",
+              "result": "PASS"
+            }
+          ]
         }
       ]
     },
