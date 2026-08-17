@@ -1,0 +1,89 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-M4-024",
+  "milestone_id": "M4",
+  "title": "Wire governed persona instruction sets for 11 council seats (live-reasoning enrichment)",
+  "status": "REVIEWED",
+  "source": {
+    "github_issue": null,
+    "created_by": "foundry-governance-closeout",
+    "created_at": "2026-08-17T04:45:00Z"
+  },
+  "objective": "Enrich the Working Conclave (M4) so live seats reason like their office, not as an undifferentiated structured-output sink. Author 11 versioned persona instruction sets (6 standing roles + 5 case captains), a registry + deterministic renderer composed from the immutable AgentContext and RoleContract (forbidden actions, allowed capabilities, frozen snapshot refs, governance preamble that never authorizes), and bind the per-seat system prompt into the live seat-model factory. The deterministic path stays persona-free so CI remains hermetic. Every persona participates in the seat run identity (prompt_version + digest already digested by seat_runtime._canonical).",
+  "dependencies": [],
+  "allowed_paths": [
+    "forge/state/checkpoints.json",
+    "forge/work-items/FWI-M4-024.json",
+    "src/foundry_council/personas.py",
+    "src/foundry_council/live_seat_model.py",
+    "src/foundry_council/seat_runtime.py",
+    "tests/test_personas.py"
+  ],
+  "forbidden_actions": [
+    "commit directly to a protected baseline",
+    "self-approve or self-merge",
+    "change a formal Foundry Program stage",
+    "authorize scientific, clinical, spending, outreach, transaction, or production action",
+    "commit a real API key or identity signing secret to the repository"
+  ],
+  "acceptance_criteria": [
+    {
+      "criterion_id": "FWI-M4-024-A1",
+      "description": "All 6 standing roles and all 5 case captains have a resolvable, versioned persona; unknown roles fail closed.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/5baa39b89497d6b198ef6e6626030b9f42172068"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M4-024-A2",
+      "description": "Persona rendering embeds the role's office brief, forbidden actions, allowed capabilities, and frozen snapshot refs; persona never authorizes approval/commit/gate.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/5baa39b89497d6b198ef6e6626030b9f42172068"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M4-024-A3",
+      "description": "Live seat-model factory binds the per-seat persona system prompt; deterministic path remains persona-free (hermetic CI).",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/5baa39b89497d6b198ef6e6626030b9f42172068"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M4-024-A4",
+      "description": "Contracts, secret scan, history-secret scan, schema drift, wheel, full test suite clean (incl. Postgres-backed tests with env sourced).",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/5baa39b89497d6b198ef6e6626030b9f42172068"
+      ]
+    }
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 scripts/check_git_history.py",
+    "python3 forge/validate_contracts.py",
+    "PYTHONPATH=src python3 -m unittest discover -s tests -t ."
+  ],
+  "risk_class": "LOW",
+  "retry_policy": {
+    "max_attempts": 3,
+    "idempotent_only": true
+  },
+  "claim": {
+    "run_id": "foundry-persona-fwi-m4-024",
+    "actor": "governance-closeout-run",
+    "claimed_at": "2026-08-17T04:45:00Z",
+    "expires_at": "2026-08-18T23:59:59Z"
+  },
+  "review": {
+    "independent_required": true,
+    "author_may_approve": false,
+    "review_evidence": [
+      "https://github.com/SangLeeVX/eigen-foundry/pull/58"
+    ]
+  },
+  "protected_actions": [],
+  "checkpoint_id": "CP-M4"
+}

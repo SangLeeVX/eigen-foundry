@@ -31,6 +31,7 @@ Live inference failures raise :class:`LiveSeatError` (or
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import urllib.request
@@ -39,7 +40,9 @@ from pathlib import Path
 from typing import Any, Callable
 
 from .seat_runtime import DeterministicSeatModel, LiteralSeatModel
-from .models import ParticipantAssignment
+from .models import ParticipantAssignment, SnapshotRef
+from .agents import AgentContext, ROLE_CONTRACTS
+from .personas import persona_for_role_and_case, render_persona
 
 # Default approved secrets-store locations (never committed to the repository).
 DEFAULT_KIMI_ENV = Path.home() / ".openclaw" / "workspace" / "secrets" / "kimi.env"
@@ -318,18 +321,71 @@ class LiveSeatModel:
         return content
 
 
+def _persona_for_assignment(
+    assignment: ParticipantAssignment,
+) -> "object":
+    """Resolve the versioned persona for a seat's role + case."""
+    return persona_for_role_and_case(
+        assignment.role, assignment.case.value if assignment.case is not None else None
+    )
+
+
+def _agent_context_from_assignment(
+    assignment: ParticipantAssignment,
+) -> AgentContext:
+    """Build a minimal immutable AgentContext from a seat assignment.
+
+    Snapshot refs are derived deterministically from the seat's own identity so
+    the rendered persona always references *some* frozen snapshot IDs without
+    carrying mutable data into the model. The persona layer only consumes these
+    IDs for governance framing; the real evidence the seat reads is supplied by
+    the underlying prompt/context from the working conclave.
+    """
+    suffix = assignment.case.value if assignment.case is not None else assignment.role
+    _seed = f"{assignment.assignment_id}:{assignment.run_id or suffix}"
+    _digest = "sha256:" + hashlib.sha256(_seed.encode()).hexdigest()
+    snap = lambda tag: SnapshotRef(
+        object_id=f"{tag}:{assignment.assignment_id}",
+        version=1,
+        digest=_digest,
+    )
+    return AgentContext(
+        session_id=assignment.run_id or assignment.assignment_id,
+        program_id=assignment.assignment_id,
+        assignment=assignment,
+        program_snapshot=snap("program"),
+        evidence_snapshot=snap("evidence"),
+        tpp=snap("tpp"),
+        rights=snap("rights"),
+        budget=snap("budget"),
+        risk_register=snap("risk"),
+        gate_policy=snap("gate_policy"),
+        allowed_capabilities=frozenset(),
+    )
+
+
 def default_seat_model_factory(
     assignment: ParticipantAssignment,
     response_template: dict[str, Any],
 ) -> LiteralSeatModel:
-    """Environment-driven seat model selection.
+    """Environment-driven seat model selection with per-seat persona binding.
 
     ``FOUNDRY_SEAT_MODEL=live`` binds a :class:`LiveSeatModel` (requires the
     approved Kimi or DeepSeek secrets store; provider via
     ``FOUNDRY_SEAT_PROVIDER`` or auto-detected); anything else (default)
     returns the deterministic mock so CI stays hermetic and network-free.
+
+    In live mode each seat is bound to its versioned persona (role + case):
+    the rendered governing system prompt is injected at construction, so a
+    live seat both reasons like its office and still emits validated JSON
+    (structured-output validation remains downstream in the seat runtime).
     """
     mode = os.environ.get("FOUNDRY_SEAT_MODEL", "deterministic").strip().lower()
-    if mode == "live":
-        return LiveSeatModel.from_secrets_env()
-    return DeterministicSeatModel(response_template)
+    if mode != "live":
+        return DeterministicSeatModel(response_template)
+    persona = _persona_for_assignment(assignment)
+    agent_ctx = _agent_context_from_assignment(assignment)
+    system_prompt = render_persona(
+        persona, agent_ctx, ROLE_CONTRACTS[assignment.role]
+    )
+    return LiveSeatModel.from_secrets_env(system_prompt=system_prompt)
