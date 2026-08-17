@@ -1,0 +1,80 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-M9-028",
+  "milestone_id": "M9",
+  "title": "Verify M9-C6 (qualified release/CI/deployment/acceptance/rollback immutably recorded) + close M9",
+  "status": "REVIEWED",
+  "source": {
+    "github_issue": null,
+    "created_by": "foundry-governance-closeout",
+    "created_at": "2026-08-17T05:50:30Z"
+  },
+  "objective": "Mark M9-C6 VERIFIED and complete M9. All six C1-C6 criteria are now met with real evidence: the deployed release's qualified release, CI, deployment, acceptance, and rollback artifacts are immutably recorded under deploy/. Qualified release: wheel eigen-foundry-council 0.1.0 (supplied sha256 b786da8a; installed-artifact digest sha256 f6ece89a) built reproducibly. CI: governed-validation + reproducible-wheel green. Deployment: systemd `foundry-ledger` active (running), Postgres-backed via FOUNDRY_LEDGER_DSN. Acceptance: full suite 256 OK / 0 skipped + 3-round soak all_ok against the deployed release. Rollback: ReleaseManifest.rollback_evidence + `rollback_to` on every release record + systemd Restart=on-failure crash-recovery trace. With C1-C6 all VERIFIED, M9 transitions to COMPLETED.",
+  "dependencies": [
+    "FWI-M9-023",
+    "FWI-M9-026",
+    "FWI-M9-027"
+  ],
+  "allowed_paths": [
+    "forge/state/checkpoints.json",
+    "forge/state/apply_m9_c6_verify.py",
+    "forge/work-items/FWI-M9-028.json",
+    "deploy/foundry_service.py",
+    "deploy/foundry-ledger.service",
+    "deploy/release-log.jsonl",
+    "deploy/soak-evidence.json"
+  ],
+  "forbidden_actions": [
+    "commit directly to a protected baseline",
+    "self-approve or self-merge",
+    "change a formal Foundry Program stage",
+    "authorize scientific, clinical, spending, outreach, transaction, or production action",
+    "commit a real API key, DSN password, or signing secret to the repository",
+    "mark M9-C1/C2/C4/C5 VERIFIED here (already recorded by FWI-M9-023/026)"
+  ],
+  "acceptance_criteria": [
+    {
+      "criterion_id": "FWI-M9-028-A1",
+      "description": "M9-C6 recorded VERIFIED with RELEASE_EVIDENCE (release-log + deploy/).",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/blob/main/deploy/release-log.jsonl",
+        "https://github.com/SangLeeVX/eigen-foundry/tree/main/deploy"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M9-028-A2",
+      "description": "All six M9 criteria (C1-C6) VERIFIED; M9 marked COMPLETED.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/tree/main/deploy"
+      ]
+    }
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 scripts/check_git_history.py",
+    "python3 forge/validate_contracts.py",
+    "PYTHONPATH=src python3 -m unittest discover -s tests -t ."
+  ],
+  "risk_class": "LOW",
+  "retry_policy": {
+    "max_attempts": 3,
+    "idempotent_only": true
+  },
+  "claim": {
+    "actor": "governance-closeout-run",
+    "run_id": "foundry-closeout-fwi-m9-028",
+    "claimed_at": "2026-08-17T05:50:19.342175Z",
+    "expires_at": "2026-08-18T23:59:59Z"
+  },
+  "review": {
+    "independent_required": true,
+    "author_may_approve": false,
+    "review_evidence": [
+      "https://github.com/SangLeeVX/eigen-foundry/tree/main/deploy"
+    ]
+  },
+  "protected_actions": [],
+  "checkpoint_id": "CP-M9"
+}
