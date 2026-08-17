@@ -129,9 +129,16 @@ class BoundSeat:
 
 
 class LiteralSeatModel(Protocol):
-    """A callable that turns a prompt+context into a raw model response string."""
+    """A callable that turns a prompt+context into a raw model response string.
 
-    def run(self, prompt: str, context: dict[str, Any]) -> str: ...
+    ``system_prompt`` is an optional governing system layer supplied per call by
+    the seat runtime (e.g. the seat's rendered persona). When omitted, a model
+    may fall back to its constructed/system default.
+    """
+
+    def run(
+        self, prompt: str, context: dict[str, Any], *, system_prompt: str | None = None
+    ) -> str: ...
 
 
 class DeterministicSeatModel:
@@ -145,7 +152,9 @@ class DeterministicSeatModel:
     def __init__(self, response_template: dict[str, Any]) -> None:
         self._template = response_template
 
-    def run(self, prompt: str, context: dict[str, Any]) -> str:
+    def run(
+        self, prompt: str, context: dict[str, Any], *, system_prompt: str | None = None
+    ) -> str:
         import json
 
         return json.dumps(self._template, sort_keys=True)
