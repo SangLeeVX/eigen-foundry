@@ -1,0 +1,28 @@
+[Unit]
+Description=Eigen Foundry ledger deployment service (Postgres-backed, supervised)
+Documentation=https://github.com/SangLeeVX/eigen-foundry
+After=network-online.target postgresql.service
+Wants=network-online.target
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/foundry
+EnvironmentFile=-/home/ubuntu/.openclaw/workspace/secrets/foundry_pg.env
+Environment=FOUNDRY_SOURCE_SHA=e61a85176b79e151689b6f5903c16bfb72b5ed8f
+Environment=FOUNDRY_SOAK_ROUNDS=3
+Environment=FOUNDRY_RELEASE_LOG=/opt/foundry/release-log.jsonl
+Environment=FOUNDRY_SOAK_EVIDENCE=/opt/foundry/soak-evidence.json
+ExecStart=/opt/foundry/venv/bin/python /opt/foundry/foundry_service.py
+Restart=on-failure
+RestartSec=3
+TimeoutStartSec=60
+
+# Crash/recovery observability via journald (journalctl -u foundry-ledger).
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

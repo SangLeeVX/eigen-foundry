@@ -1,0 +1,76 @@
+{
+  "all_ok": true,
+  "release_id": "rel-00540dd1495d",
+  "results": [
+    {
+      "approval_count": 0,
+      "connector": {
+        "checked_at": "2026-08-17T05:48:51.192266+00:00",
+        "checks": {
+          "error": {
+            "error": "No module named 'duckdb'",
+            "ok": false
+          },
+          "gse162256": {
+            "ok": true,
+            "rows": 5
+          }
+        },
+        "healthy": true
+      },
+      "connector_healthy": null,
+      "cycle": 1,
+      "observed_at": "2026-08-17T05:48:51.191706+00:00",
+      "program_count": 2,
+      "session_count": 0
+    },
+    {
+      "approval_count": 0,
+      "connector": {
+        "checked_at": "2026-08-17T05:48:51.729742+00:00",
+        "checks": {
+          "error": {
+            "error": "No module named 'duckdb'",
+            "ok": false
+          },
+          "gse162256": {
+            "ok": true,
+            "rows": 5
+          }
+        },
+        "healthy": true
+      },
+      "connector_healthy": null,
+      "cycle": 2,
+      "observed_at": "2026-08-17T05:48:51.729261+00:00",
+      "program_count": 2,
+      "session_count": 0
+    },
+    {
+      "approval_count": 0,
+      "connector": {
+        "checked_at": "2026-08-17T05:48:52.267039+00:00",
+        "checks": {
+          "error": {
+            "error": "No module named 'duckdb'",
+            "ok": false
+          },
+          "gse162256": {
+            "ok": true,
+            "rows": 5
+          }
+        },
+        "healthy": true
+      },
+      "connector_healthy": null,
+      "cycle": 3,
+      "observed_at": "2026-08-17T05:48:52.266556+00:00",
+      "program_count": 2,
+      "session_count": 0
+    }
+  ],
+  "rounds": 3,
+  "soaked_at": "2026-08-17T05:48:52Z",
+  "source_sha": "e61a85176b79e151689b6f5903c16bfb72b5ed8f",
+  "wheel_digest": "sha256:f6ece89a88f1182b67fec8621587b4cf3e4d78ce5499074e6075d252d6f50bf1"
+}

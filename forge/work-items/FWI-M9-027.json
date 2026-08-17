@@ -1,0 +1,76 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-M9-027",
+  "milestone_id": "M9",
+  "title": "Verify M9-C3 (observability/connector-recovery/ops-controls/soak) against the deployed release",
+  "status": "REVIEWED",
+  "source": {
+    "github_issue": null,
+    "created_by": "foundry-governance-closeout",
+    "created_at": "2026-08-17T05:50:00Z"
+  },
+  "objective": "Mark M9-C3 VERIFIED with real deployment evidence. A genuine, supervised deployment now exists: systemd unit `foundry-ledger.service` runs the installed qualified wheel (eigen-foundry-council 0.1.0, sha256 b786da8a; installed digest sha256 f6ece89a) from /opt/foundry/venv, wired to live Postgres (foundry db via FOUNDRY_LEDGER_DSN), and runs a ReleaseManifest record -> 3-round soak -> persistent supervised heartbeat loop emitting observability to journald. Crash-recovery proven (SIGKILL -> systemd restart in <4s -> new release record; service returns to active). C3's observability (journald + Observability.snapshot), connector recovery (ConnectorHealth gse162256 rows=5 healthy), operational controls (systemd supervision + restart), alerts/soak (3 rounds all_ok) all pass against the exact deployed release. C6 is recorded separately by FWI-M9-028; M9 stays PARTIAL here.",
+  "dependencies": [],
+  "allowed_paths": [
+    "forge/state/checkpoints.json",
+    "forge/state/apply_m9_c3_verify.py",
+    "forge/work-items/FWI-M9-027.json",
+    "deploy/foundry_service.py",
+    "deploy/foundry-ledger.service",
+    "deploy/release-log.jsonl",
+    "deploy/soak-evidence.json"
+  ],
+  "forbidden_actions": [
+    "commit directly to a protected baseline",
+    "self-approve or self-merge",
+    "change a formal Foundry Program stage",
+    "authorize scientific, clinical, spending, outreach, transaction, or production action",
+    "commit a real API key, DSN password, or signing secret to the repository",
+    "mark C6 VERIFIED in this work item (recorded separately by FWI-M9-028)"
+  ],
+  "acceptance_criteria": [
+    {
+      "criterion_id": "FWI-M9-027-A1",
+      "description": "M9-C3 recorded VERIFIED with RELEASE_EVIDENCE pointing at the deployed release (deploy/ + soak evidence).",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/tree/main/deploy",
+        "https://github.com/SangLeeVX/eigen-foundry/blob/main/deploy/soak-evidence.json"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M9-027-A2",
+      "description": "M9-C6 left for FWI-M9-028; M9 stays PARTIAL.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/tree/main/deploy"
+      ]
+    }
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 scripts/check_git_history.py",
+    "python3 forge/validate_contracts.py",
+    "PYTHONPATH=src python3 -m unittest discover -s tests -t ."
+  ],
+  "risk_class": "LOW",
+  "retry_policy": {
+    "max_attempts": 3,
+    "idempotent_only": true
+  },
+  "claim": {
+    "actor": "governance-closeout-run",
+    "run_id": "foundry-closeout-fwi-m9-027",
+    "claimed_at": "2026-08-17T05:50:19.280655Z",
+    "expires_at": "2026-08-18T23:59:59Z"
+  },
+  "review": {
+    "independent_required": true,
+    "author_may_approve": false,
+    "review_evidence": [
+      "https://github.com/SangLeeVX/eigen-foundry/tree/main/deploy"
+    ]
+  },
+  "protected_actions": [],
+  "checkpoint_id": "CP-M9"
+}

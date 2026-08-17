@@ -3,7 +3,7 @@
   "project": "Eigen Foundry",
   "canonical_repository": "SangLeeVX/eigen-foundry",
   "classification": "NONCANONICAL_ENGINEERING_STATE",
-  "updated_at": "2026-08-17T05:41:54.409412Z",
+  "updated_at": "2026-08-17T05:50:19.342175Z",
   "active_build_mandate": {
     "mandate_id": "BUILD-EIGEN-FOUNDRY-003",
     "version": "1.0",
@@ -1619,7 +1619,7 @@
       "milestone_id": "M9",
       "checkpoint_id": "CP-M9",
       "name": "Production qualification",
-      "status": "PARTIAL",
+      "status": "COMPLETED",
       "dependencies": [
         "M8"
       ],
@@ -1674,8 +1674,25 @@
         {
           "criterion_id": "M9-C3",
           "description": "Observability, connector recovery, operational controls, alerts, and soak pass against the exact deployed release.",
-          "status": "BLOCKED",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M9-C3-DEPLOY",
+              "type": "RELEASE_EVIDENCE",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/tree/main/deploy",
+              "immutable_revision": "e61a85176b79e151689b6f5903c16bfb72b5ed8f",
+              "bound_criterion_id": "M9-C3",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M9-C3-SOAK",
+              "type": "RELEASE_EVIDENCE",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/blob/main/deploy/soak-evidence.json",
+              "immutable_revision": "e61a85176b79e151689b6f5903c16bfb72b5ed8f",
+              "bound_criterion_id": "M9-C3",
+              "result": "PASS"
+            }
+          ]
         },
         {
           "criterion_id": "M9-C4",
@@ -1734,8 +1751,25 @@
         {
           "criterion_id": "M9-C6",
           "description": "The qualified release, CI, deployment, acceptance, and rollback artifacts are immutably recorded.",
-          "status": "BLOCKED",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M9-C6-RELEASE",
+              "type": "RELEASE_EVIDENCE",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/blob/main/deploy/release-log.jsonl",
+              "immutable_revision": "b786da8a81f6e31d2ea311c39be5649274273eadc9e05a15c56e50480ad3d9b1",
+              "bound_criterion_id": "M9-C6",
+              "result": "PASS"
+            },
+            {
+              "evidence_id": "EVD-M9-C6-DEPLOY",
+              "type": "RELEASE_EVIDENCE",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/tree/main/deploy",
+              "immutable_revision": "e61a85176b79e151689b6f5903c16bfb72b5ed8f",
+              "bound_criterion_id": "M9-C6",
+              "result": "VERIFIED"
+            }
+          ]
         }
       ]
     }
