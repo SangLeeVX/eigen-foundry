@@ -32,7 +32,7 @@
       "description": "All 6 standing roles and all 5 case captains have a resolvable, versioned persona; unknown roles fail closed.",
       "status": "VERIFIED",
       "evidence": [
-        "https://github.com/SangLeeVX/eigen-foundry/commit/5baa39b89497d6b198ef6e6626030b9f42172068"
+        "https://github.com/SangLeeVX/eigen-foundry/pull/59"
       ]
     },
     {
@@ -40,7 +40,7 @@
       "description": "Persona rendering embeds the role's office brief, forbidden actions, allowed capabilities, and frozen snapshot refs; persona never authorizes approval/commit/gate.",
       "status": "VERIFIED",
       "evidence": [
-        "https://github.com/SangLeeVX/eigen-foundry/commit/5baa39b89497d6b198ef6e6626030b9f42172068"
+        "https://github.com/SangLeeVX/eigen-foundry/pull/59"
       ]
     },
     {
@@ -48,7 +48,7 @@
       "description": "Live seat-model factory binds the per-seat persona system prompt; deterministic path remains persona-free (hermetic CI).",
       "status": "VERIFIED",
       "evidence": [
-        "https://github.com/SangLeeVX/eigen-foundry/commit/5baa39b89497d6b198ef6e6626030b9f42172068"
+        "https://github.com/SangLeeVX/eigen-foundry/pull/59"
       ]
     },
     {
@@ -56,7 +56,7 @@
       "description": "Contracts, secret scan, history-secret scan, schema drift, wheel, full test suite clean (incl. Postgres-backed tests with env sourced).",
       "status": "VERIFIED",
       "evidence": [
-        "https://github.com/SangLeeVX/eigen-foundry/commit/5baa39b89497d6b198ef6e6626030b9f42172068"
+        "https://github.com/SangLeeVX/eigen-foundry/pull/59"
       ]
     }
   ],
