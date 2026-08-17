@@ -3,7 +3,7 @@
   "project": "Eigen Foundry",
   "canonical_repository": "SangLeeVX/eigen-foundry",
   "classification": "NONCANONICAL_ENGINEERING_STATE",
-  "updated_at": "2026-08-16T16:24:45.895766Z",
+  "updated_at": "2026-08-17T05:41:54.409412Z",
   "active_build_mandate": {
     "mandate_id": "BUILD-EIGEN-FOUNDRY-003",
     "version": "1.0",
@@ -1651,8 +1651,25 @@
         {
           "criterion_id": "M9-C2",
           "description": "Backup, restore, rollback, release recovery, and data-integrity tests pass.",
-          "status": "BLOCKED",
-          "evidence": []
+          "status": "VERIFIED",
+          "evidence": [
+            {
+              "evidence_id": "EVD-M9-C2-MERGE",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/723f36ed4a2d7443482905a914fecc342e30e813",
+              "immutable_revision": "723f36ed4a2d7443482905a914fecc342e30e813",
+              "bound_criterion_id": "M9-C2",
+              "result": "VERIFIED"
+            },
+            {
+              "evidence_id": "EVD-M9-C2-PG",
+              "type": "GITHUB_MERGE_COMMIT",
+              "locator": "https://github.com/SangLeeVX/eigen-foundry/commit/99a7b58cf588c70d6f25fc4726b5e8e7bfcb577b",
+              "immutable_revision": "99a7b58cf588c70d6f25fc4726b5e8e7bfcb577b",
+              "bound_criterion_id": "M9-C2",
+              "result": "VERIFIED"
+            }
+          ]
         },
         {
           "criterion_id": "M9-C3",

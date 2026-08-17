@@ -1,0 +1,84 @@
+{
+  "schema_version": "2.0.0",
+  "work_item_id": "FWI-M9-026",
+  "milestone_id": "M9",
+  "title": "Verify M9-C2 (backup/restore/rollback/data-integrity) against live Postgres",
+  "status": "REVIEWED",
+  "source": {
+    "github_issue": null,
+    "created_by": "foundry-governance-closeout",
+    "created_at": "2026-08-17T05:45:00Z"
+  },
+  "objective": "Upgrade M9-C2 from BLOCKED to VERIFIED with durable evidence. In FWI-M9-023, C2 was left BLOCKED because the Postgres-backed backup/restore/rollback/data-integrity tests skipped without a live database. The live Postgres bridge now exists: foundry role + foundry db on cluster 18/main (port 5432), with FOUNDRY_LEDGER_DSN / FOUNDRY_PG_PASSWORD supplied via secrets/foundry_pg.env. With that env sourced, all 14 Postgres-backed tests (test_postgres_ledger + test_outbox_dispatcher: audit chain verify, idempotent replay, concurrency conflict guards, transactional outbox drain, at-most-once dispatch, retry/backoff, poll loop) RUN and PASS against the live database. Record C2 VERIFIED with evidence. C3 and C6 remain honestly BLOCKED (they require an actual deployed release to soak against / immutably record — no fabricated production evidence). M9 stays PARTIAL.",
+  "dependencies": [],
+  "allowed_paths": [
+    "forge/state/checkpoints.json",
+    "forge/state/apply_m9_c2_verify.py",
+    "forge/work-items/FWI-M9-026.json"
+  ],
+  "forbidden_actions": [
+    "commit directly to a protected baseline",
+    "self-approve or self-merge",
+    "mark C3 or C6 as VERIFIED (require a real deployed release not present)",
+    "change a formal Foundry Program stage",
+    "authorize scientific, clinical, spending, outreach, transaction, or production action",
+    "commit a real API key, DSN password, or signing secret to the repository",
+    "alter already-merged M9 source code"
+  ],
+  "acceptance_criteria": [
+    {
+      "criterion_id": "FWI-M9-026-A1",
+      "description": "M9-C2 recorded VERIFIED with evidence pointing at the Postgres-ledger surface (PR #58 merge + M2 postgres backend commit).",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/pull/58",
+        "https://github.com/SangLeeVX/eigen-foundry/commit/723f36e",
+        "https://github.com/SangLeeVX/eigen-foundry/commit/99a7b58"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M9-026-A2",
+      "description": "C3/C6 remain BLOCKED; M9 stays PARTIAL.",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/pull/58"
+      ]
+    },
+    {
+      "criterion_id": "FWI-M9-026-A3",
+      "description": "Contracts, secret scan, history-secret scan, schema drift, wheel, full test suite clean (with FOUNDRY_PG_PASSWORD sourced so Postgres tests run, not skip).",
+      "status": "VERIFIED",
+      "evidence": [
+        "https://github.com/SangLeeVX/eigen-foundry/commit/723f36e"
+      ]
+    }
+  ],
+  "validation_commands": [
+    "python3 forge/check_secrets.py",
+    "python3 scripts/check_git_history.py",
+    "python3 forge/validate_contracts.py",
+    "PYTHONPATH=src python3 -m unittest discover -s tests -t ."
+  ],
+  "risk_class": "LOW",
+  "retry_policy": {
+    "max_attempts": 3,
+    "idempotent_only": true
+  },
+  "claim": {
+    "actor": "governance-closeout-run",
+    "run_id": "foundry-closeout-fwi-m9-026",
+    "claimed_at": "2026-08-17T05:41:54.409412Z",
+    "expires_at": "2026-08-18T23:59:59Z"
+  },
+  "review": {
+    "independent_required": true,
+    "author_may_approve": false,
+    "review_evidence": [
+      "https://github.com/SangLeeVX/eigen-foundry/pull/58",
+      "https://github.com/SangLeeVX/eigen-foundry/commit/723f36e",
+      "https://github.com/SangLeeVX/eigen-foundry/commit/99a7b58"
+    ]
+  },
+  "protected_actions": [],
+  "checkpoint_id": "CP-M9"
+}
