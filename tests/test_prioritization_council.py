@@ -13,6 +13,7 @@ from foundry_council.models import SnapshotRef
 from foundry_council.prioritization_council import (
     PrioritizationCouncil,
     PrioritizationResult,
+    default_prioritization_seat_factory,
 )
 from foundry_council.prioritization_models import (
     Axis,
@@ -154,6 +155,79 @@ class DebateConvergenceTests(unittest.TestCase):
         self.assertGreaterEqual(len(result.debate), 1)
         # Scientific got challenged (it revised).
         self.assertGreater(scientific.calls, 0)
+
+
+class SeatDifferentiationTests(unittest.TestCase):
+    """The 3 role seats genuinely differ and the disagreement/challenge mechanism
+    actually triggers — using the real default factory (deterministic path, so the
+    test is hermetic and network-free)."""
+
+    def _candidate(self, cid: str, *, evidence: tuple = ("ev-1",)) -> Candidate:
+        return _candidate(cid, evidence=evidence)
+
+    def test_seats_differ_and_debate_triggers(self) -> None:
+        # 3+ candidates with genuine scientific/commercial tension: candidate A is
+        # scientifically strong but commercially weak; B is commercially strong but
+        # scientifically thin; C is a balanced mid-tier.
+        pool = (
+            self._candidate("C-SCI-STRONG", evidence=("ev-strong", "ev-rep", "ev-mech")),
+            self._candidate("C-COMM-STRONG", evidence=("ev-market",)),
+            self._candidate("C-BALANCED", evidence=("ev-mix", "ev-anchor")),
+        )
+        # Force the deterministic default factory (FOUNDRY_SEAT_MODEL unset or
+        # non-live) so the run is hermetic.
+        council = PrioritizationCouncil(
+            pool,
+            seat_model_factory=default_prioritization_seat_factory,
+            max_rounds=3,
+        )
+        result = council.run()
+
+        # (1) Non-identical scores across seats on at least one axis for at least
+        #     one candidate.
+        by_candidate: dict[str, dict[str, tuple[int | None, ...]]] = {}
+        for op in result.opinions:
+            by_candidate.setdefault(op.candidate_id, {})[op.seat_id] = tuple(
+                s.value for s in op.axis_scores
+            )
+        seats = ("scientific", "risk_feasibility", "commercial_strategic")
+        non_identical = False
+        for cand, opinions in by_candidate.items():
+            for axis_idx in range(len(Axis)):
+                vals = [opinions[s][axis_idx] for s in seats if s in opinions]
+                non_null = [v for v in vals if v is not None]
+                if len(non_null) >= 2 and len(set(non_null)) > 1:
+                    non_identical = True
+        self.assertTrue(
+            non_identical,
+            "expected at least one axis on at least one candidate to have "
+            "non-identical scores across the 3 role seats",
+        )
+
+        # (2) The disagreement/challenge mechanism actually triggered: at least one
+        #     debate turn carried at least one surfaced disagreement.
+        triggered = any(len(turn.disagreements) > 0 for turn in result.debate)
+        self.assertTrue(
+            triggered,
+            "expected the challenge mechanism to trigger a disagreement round",
+        )
+        # (3) Sanity: the ranking is still a valid shortlist (no regression).
+        self.assertIsInstance(result.shortlist, RankedShortlist)
+        self.assertTrue(result.shortlist.ranks)
+
+    def test_seat_prompts_are_lens_distinct(self) -> None:
+        """The seat-specific system/user prompts differ per lens — i.e. the fix is
+        not just cosmetic in the deterministic mock, the prompts themselves differ."""
+        council = PrioritizationCouncil((_candidate("C-1"),))
+        p_sci = council._score_prompt(_candidate("C-1"), "scientific")
+        p_risk = council._score_prompt(_candidate("C-1"), "risk_feasibility")
+        p_comm = council._score_prompt(_candidate("C-1"), "commercial_strategic")
+        self.assertNotEqual(p_sci, p_risk)
+        self.assertNotEqual(p_risk, p_comm)
+        self.assertNotEqual(p_sci, p_comm)
+        self.assertIn("scientific_validity", p_sci)
+        self.assertIn("feasibility_risk", p_risk)
+        self.assertIn("strategic_value", p_comm)
 
 
 class PacketIntegrityTests(unittest.TestCase):

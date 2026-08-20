@@ -1,7 +1,8 @@
 # Prioritization Council — Design
 
-**Status:** Design approved — locked for implementation (full debate loop, 0–10 scale,
-hypothesis+modality candidate unit; see §9). Not yet built.
+**Status:** Design approved and implemented. Full debate loop (0–10 scale,
+hypothesis+modality candidate unit) is built and seat-differentiated per §2.1 of
+`eigen-foundry-pipeline/PLAN.md` (2026-08-20).
 **Owner:** Eigen Bio Foundry
 **Date:** 2026-08-16
 **Branch:** `agent/fwi-m6-live-deepseek-hookup`
@@ -88,8 +89,35 @@ A small fixed set of role seats, each with a distinct lens and tool envelope:
 - **Commercial/strategic seat** — opportunity, market, fit, value.
 - (optional) **Fit seat** — explicit indication/asset match.
 
+**Distinct lenses (implemented).** Each of the three `ROLE_SEATS` gets its own
+seat-specific lens (`SEAT_LENSES` in `prioritization_council.py`) that is injected
+into both the live system prompt (`_prio_schema_guide(seat_id)`) and the per-candidate
+scoring prompt (`_score_prompt(candidate, seat_id, ...)`):
+
+- **scientific** — weigh mechanism plausibility, evidence quality/replication, and
+  biological credibility above all else; scrutinize `scientific_validity` and
+  `indication_fit` most closely.
+- **risk_feasibility** — weigh CMC/technical/execution risk, timeline risk, and
+  tractability above all else; scrutinize `feasibility_risk` most closely and flag
+  unvalidated claims/unproven manufacturability.
+- **commercial_strategic** — weigh market size, portfolio fit, and strategic/BD value
+  above all else; scrutinize `strategic_value` (and the commercial fit implied by
+  `indication_fit`) most closely.
+
+**Every seat still scores ALL FOUR axes.** Differentiation is in emphasis/scrutiny, not
+in which axes are scored — the aggregation step (`_aggregate`) takes the median across
+all seats' opinions per axis, so every seat must produce an opinion on every axis. The
+lens only tells the seat where to direct its most rigorous scrutiny.
+
+The deterministic hermetic model (`DeterministicPrioritizationModel`) mirrors the same
+lenses: it derives a stable per-`(seat, candidate)` hash base, adds a small emphasis
+toward the seat's own axis, and on a challenge/revision call dampens its deviation
+toward the base — so CI runs produce genuine, non-identical seat scores and a
+converging debate without any network access.
+
 Reused from the live layer: each seat is a `LiteralSeatModel` (DeepSeek by default,
-deterministic mock for hermetic CI), bound to a distinct run identity.
+deterministic mock for hermetic CI), bound to a distinct run identity (each seat carries
+its own `model_version`/`prompt_version` via `_assignment_for(seat_id)`).
 
 ## 5. Mechanism / Flow
 
