@@ -46,6 +46,36 @@ from .seat_runtime import LiteralSeatModel  # noqa: F401 (future protocol typing
 # Role seats: each has a distinct lens + envelope on the same candidate pool.
 ROLE_SEATS = ("scientific", "risk_feasibility", "commercial_strategic")
 
+# The distinct lens each role seat applies to the SAME candidate pool. Every seat
+# still scores ALL four axes (the aggregation needs every seat's opinion on every
+# axis), but each seat is told to give its own axis the most weight/scrutiny and
+# treat the others as secondary context.
+SEAT_LENSES = {
+    "scientific": (
+        "You are the SCIENTIFIC seat. Weigh mechanism plausibility, evidence quality "
+        "and replication, and biological credibility ABOVE all else. Apply your most "
+        "rigorous scrutiny to scientific_validity and indication_fit; treat "
+        "feasibility_risk and strategic_value as secondary context. Do not let a "
+        "famous target or large market inflate a scientific score the evidence "
+        "cannot support."
+    ),
+    "risk_feasibility": (
+        "You are the RISK/FEASIBILITY seat. Weigh CMC/technical/execution risk, "
+        "timeline risk, and tractability ABOVE all else. Apply your most rigorous "
+        "scrutiny to feasibility_risk; treat scientific_validity and strategic_value "
+        "as secondary context. Be the skeptical engineer: flag unvalidated claims and "
+        "unproven manufacturability rather than taking them at face value."
+    ),
+    "commercial_strategic": (
+        "You are the COMMERCIAL/STRATEGIC seat. Weigh market size, portfolio fit, and "
+        "strategic/BD value ABOVE all else. Apply your most rigorous scrutiny to "
+        "strategic_value and the commercial fit implied by indication_fit; treat "
+        "scientific_validity and feasibility_risk as secondary context. A large "
+        "addressable market matters, but do not let it override a candidate the "
+        "evidence and feasibility do not support."
+    ),
+}
+
 # Debate bounds.
 DEFAULT_MAX_ROUNDS = 3
 DEFAULT_SPREAD_THRESHOLD = 2  # |a - b| > threshold on an axis == disagreement
@@ -66,21 +96,41 @@ class PrioritizationBoundedError(Exception):
 
 class DeterministicPrioritizationModel:
     """Hermetic default seat: deterministic 0-10 scores so the loop is testable
-    offline. Base score + a stable per-candidate/per-axis offset from a hash, so
-    a ranking and (across the three seats) occasional disagreements emerge."""
+    offline. Scores are a stable per-(seat, candidate) hash base plus a seat-lens
+    emphasis toward the seat's own axis, so the three role seats genuinely differ
+    and the challenge mechanism has something to disagree about — while CI stays
+    network-free and reproducible."""
 
-    def __init__(self, base: float = 7.0) -> None:
+    # Each seat emphasizes its own axis in deterministic mode, mirroring the live
+    # SEAT_LENSES so hermetic/CI runs exercise real disagreement too.
+    _SEAT_AXIS_EMPHASIS = {
+        "scientific": Axis.SCIENTIFIC_VALIDITY,
+        "risk_feasibility": Axis.FEASIBILITY_RISK,
+        "commercial_strategic": Axis.STRATEGIC_VALUE,
+    }
+
+    def __init__(self, base: float = 7.0, seat_id: str = "scientific") -> None:
         self._base = base
+        self._seat_id = seat_id
 
     def run(self, prompt: str, context: dict) -> str:
         import hashlib
 
         cand = context.get("candidate", {}).get("candidate_id", "cand")
-        seed = int(hashlib.sha256(cand.encode()).hexdigest()[:8], 16)
+        seat = context.get("seat_id") or self._seat_id
+        seed = int(hashlib.sha256(f"{seat}:{cand}".encode()).hexdigest()[:8], 16)
+        emphasis_axis = self._SEAT_AXIS_EMPHASIS.get(seat)
+        # On a challenge/revision call the seat reconciles toward the base, so the
+        # hermetic loop actually converges within the bounded rounds instead of
+        # re-emitting the same extreme lens score forever.
+        damp = 0.5 if context.get("challenge") else 1.0
         axis_scores: dict[str, int | None] = {}
         for i, axis in enumerate(Axis):
-            offset = (seed >> (i * 3)) % 5 - 2  # -2..2
-            val = int(round(self._base + offset))
+            offset = (seed >> (i * 3)) % 5 - 2  # -2..2 per (seat, candidate, axis)
+            # +1 toward the seat's own lens so seats diverge deterministically.
+            if axis is emphasis_axis:
+                offset += 1
+            val = int(round(self._base + offset * damp))
             val = max(0, min(10, val))
             if not context.get("evidence"):
                 val = None  # no evidence -> UNKNOWN on every axis
@@ -95,10 +145,13 @@ class DeterministicPrioritizationModel:
         )
 
 
-def _prio_schema_guide() -> str:
+def _prio_schema_guide(seat_id: str | None = None) -> str:
     axes = ", ".join(a.value for a in Axis)
+    lens = SEAT_LENSES.get(seat_id or "")
+    prefix = (lens + "\n\n") if lens else ""
     return (
-        'Your entire reply must be EXACTLY ONE minified JSON object and nothing '
+        prefix
+        + 'Your entire reply must be EXACTLY ONE minified JSON object and nothing '
         'else (no markdown fences, no prose). Use exactly these keys: '
         '{"axis_scores": {<axis>: <0..10 integer or null>}, '
         '"rationale": {<axis>: string}, "confidence": <0..1> (float), '
@@ -113,13 +166,19 @@ def _prio_schema_guide() -> str:
 
 def default_prioritization_seat_factory(assignment, _template) -> "LiteralSeatModel":
     """Env-driven prioritization seat: FOUNDRY_SEAT_MODEL=live -> real model (with
-    the prioritization axis schema); default -> hermetic deterministic model."""
+    the prioritization axis schema); default -> hermetic deterministic model.
+
+    Both paths receive the seat's lens (``SEAT_LENSES[seat_id]``): the live model
+    gets it as its system prompt, the deterministic model uses it to emphasize the
+    seat's own axis, so the role seats genuinely differ in either mode.
+    """
     import os
 
+    seat_id = getattr(assignment, "actor_id", None)
     mode = os.environ.get("FOUNDRY_SEAT_MODEL", "deterministic").strip().lower()
     if mode == "live":
-        return LiveSeatModel.from_secrets_env(system_prompt=_prio_schema_guide())
-    return DeterministicPrioritizationModel()
+        return LiveSeatModel.from_secrets_env(system_prompt=_prio_schema_guide(seat_id))
+    return DeterministicPrioritizationModel(seat_id=seat_id or "scientific")
 
 
 class PrioritizationCouncil:
@@ -144,7 +203,8 @@ class PrioritizationCouncil:
 
     # ------------------------------------------------------------------ prompts
 
-    def _score_prompt(self, candidate: Candidate, challenger_context: str | None = None) -> str:
+    def _score_prompt(self, candidate: Candidate, seat_id: str, challenger_context: str | None = None) -> str:
+        lens = SEAT_LENSES.get(seat_id)
         base = (
             f"Score candidate {candidate.candidate_id} on each axis. "
             f"Hypothesis: {candidate.hypothesis}. Modality: {candidate.modality}. "
@@ -154,6 +214,8 @@ class PrioritizationCouncil:
             "Every non-null score must be justified in rationale and cite evidence ids. "
             "confidence = how sure you are of your overall assessment (0..1)."
         )
+        if lens:
+            base = f"Your seat lens ({seat_id}): {lens}\n\n" + base
         if challenger_context:
             base += "\nCHALLENGE CONTEXT (reconcile against the evidence):\n" + challenger_context
         return base
@@ -164,6 +226,7 @@ class PrioritizationCouncil:
             assignment, {"claim_id": f"pc-{candidate.candidate_id}", "state": "MODEL_PREDICTION"}
         )
         context = {
+            "seat_id": seat_id,
             "candidate": {
                 "candidate_id": candidate.candidate_id,
                 "hypothesis": candidate.hypothesis,
@@ -183,7 +246,7 @@ class PrioritizationCouncil:
             "score_range": f"{MIN_SCORE}..{MAX_SCORE} or null",
             "challenge": challenger,
         }
-        raw = model.run(self._score_prompt(candidate, challenger), context)
+        raw = model.run(self._score_prompt(candidate, seat_id, challenger), context)
         parsed = json.loads(raw) if isinstance(raw, dict) else _extract_json(raw)
         return self._parse_opinion(seat_id, candidate.candidate_id, parsed)
 
@@ -301,14 +364,14 @@ class PrioritizationCouncil:
         from .models import ActorKind, CaseType, ParticipantAssignment
 
         return ParticipantAssignment(
-            assignment_id="pc-seat",
+            assignment_id=f"pc-seat-{seat_id}",
             actor_id=seat_id,
             actor_kind=ActorKind.AGENT,
             role="candidate_prioritizer",
             case=CaseType.SCIENTIFIC,
             run_id="pc-run-001",
-            model_version="pc-model-v1",
-            prompt_version="pc-prompt-v1",
+            model_version=f"pc-model-{seat_id}",
+            prompt_version=f"pc-prompt-{seat_id}",
             independence_group="pc-group-a",
         )
 
@@ -489,9 +552,12 @@ def _merge_axes(orig: SeatOpinion, revised: SeatOpinion, round_: int) -> SeatOpi
 
 
 def _apply_revisions(base: tuple[SeatOpinion, ...], revisions: tuple[SeatOpinion, ...]) -> tuple[SeatOpinion, ...]:
-    pool = {o.seat_id: o for o in base}
+    # Key by (seat, candidate): a seat holds one opinion PER candidate; keying by
+    # seat alone would collapse a seat's opinions across the whole pool, silently
+    # dropping every candidate except the last revised one.
+    pool = {(o.seat_id, o.candidate_id): o for o in base}
     for r in revisions:
-        pool[r.seat_id] = r
+        pool[(r.seat_id, r.candidate_id)] = r
     return tuple(pool.values())
 
 
